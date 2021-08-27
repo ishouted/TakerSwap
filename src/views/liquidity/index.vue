@@ -86,7 +86,6 @@
 
 <script>
 import {
-  ref,
   defineComponent,
   computed,
   onMounted,

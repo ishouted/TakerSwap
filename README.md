@@ -1,4 +1,4 @@
-# talon
+# Curium Swap
 
 ## Project setup
 ```

@@ -23,6 +23,7 @@
       :assetList="assetsList"
       :balance="fromAsset.available"
       :errorTip="fromAmountError"
+      :selectedAsset="fromAsset || null"
       @selectAsset="selectAsset($event, 'from')"
       @max="max('from')"
     ></custom-input>
@@ -35,6 +36,7 @@
       :assetList="assetsList"
       :balance="toAsset.available"
       :errorTip="toAmountError"
+      :selectedAsset="toAsset || null"
       @selectAsset="asset => selectAsset(asset, 'to')"
       @max="max('to')"
     ></custom-input>
@@ -60,17 +62,17 @@
         type="primary"
         v-if="insufficient"
         @click="createPair"
-        :disabled="disableCreate"
+        :disabled="disableCreate || !!fromAmountError || !!toAmountError"
       >
-        {{ $t("liquidity.liquidity13") }}
+        {{ fromAmountError || toAmountError || $t("liquidity.liquidity13") }}
       </el-button>
       <el-button
         type="primary"
         v-else
         @click="addLiquidity"
-        :disabled="disableAdd || !!fromAmountError"
+        :disabled="disableAdd || !!fromAmountError || !!toAmountError"
       >
-        {{ fromAmountError || $t("liquidity.liquidity9") }}
+        {{ fromAmountError || toAmountError || $t("liquidity.liquidity9") }}
       </el-button>
     </div>
   </div>
@@ -97,7 +99,8 @@ import {
   Times,
   divisionDecimals,
   tofix,
-  Plus
+  Plus,
+  toNumberStr
 } from "@/api/util";
 import { useI18n } from "vue-i18n";
 import { useStore } from "vuex";
@@ -139,14 +142,32 @@ export default defineComponent({
       state.fromAmount = "";
       state.toAmount = "";
       if (type === "from") {
-        state.fromAsset = asset;
-        if (state.fromAsset.assetKey === state.toAsset.assetKey) {
-          state.toAsset = {};
+        if (state.toAsset && state.toAsset.assetKey === asset.assetKey) {
+          state.toAsset = { ...state.fromAsset };
+          state.fromAsset = asset;
+        } else {
+          state.fromAsset = asset;
+          if (state.toAsset) {
+            if (
+              state.fromAsset &&
+              state.fromAsset.assetKey === state.toAsset.assetKey
+            ) {
+              state.toAsset = {};
+            }
+          }
         }
       } else {
-        state.toAsset = asset;
-        if (state.fromAsset.assetKey === state.toAsset.assetKey) {
-          state.fromAsset = {};
+        if (state.fromAsset && asset.assetKey === state.fromAsset.assetKey) {
+          state.fromAsset = { ...state.toAsset };
+          state.toAsset = asset;
+        } else {
+          state.toAsset = asset;
+          if (
+            state.fromAsset &&
+            state.fromAsset.assetKey === state.toAsset.assetKey
+          ) {
+            state.fromAsset = {};
+          }
         }
       }
 
@@ -206,7 +227,9 @@ export default defineComponent({
             !Number(state.fromAsset.available) ||
             Minus(state.fromAsset.available, val) < 0
           ) {
-            state.fromAmountError = t("transfer.transfer15");
+            state.fromAmountError = `${state.fromAsset.symbol || ""}${t(
+              "transfer.transfer15"
+            )}`;
           } else {
             state.fromAmountError = "";
           }
@@ -225,6 +248,7 @@ export default defineComponent({
           }
         } else {
           state.toAmount = "";
+          state.toAmountError = "";
           state.fromAmountError = "";
           // getSwapRate(true);
         }
@@ -238,7 +262,9 @@ export default defineComponent({
             !Number(state.toAsset.available) ||
             Minus(state.toAsset.available, val) < 0
           ) {
-            state.toAmountError = t("transfer.transfer15");
+            state.toAmountError = `${state.toAsset.symbol || ""}${t(
+              "transfer.transfer15"
+            )}`;
           } else {
             state.toAmountError = "";
           }
@@ -258,6 +284,7 @@ export default defineComponent({
         } else {
           state.fromAmount = "";
           state.fromAmountError = "";
+          state.toAmountError = "";
           // getSwapRate(true);
         }
       }
@@ -326,13 +353,25 @@ export default defineComponent({
           };
         } else {
           // 添加流动性
-          const from_to = fixNumber(
-            Division(info.reserveTo, info.reserveFrom).toFixed(),
-            state.toAsset.decimals
+          // const from_to = fixNumber(
+          //   Division(info.reserveTo, info.reserveFrom).toFixed(),
+          //   state.toAsset.decimals
+          // );
+          const from_to = toNumberStr(
+            Division(
+              divisionDecimals(info.reserveTo, state.toAsset.decimals),
+              divisionDecimals(info.reserveFrom, state.fromAsset.decimals)
+            )
           );
-          const to_from = fixNumber(
-            Division(info.reserveFrom, info.reserveTo).toFixed(),
-            state.fromAsset.decimals
+          // const to_from = fixNumber(
+          //   Division(info.reserveFrom, info.reserveTo).toFixed(),
+          //   state.fromAsset.decimals
+          // );
+          const to_from = toNumberStr(
+            Division(
+              divisionDecimals(info.reserveFrom, state.fromAsset.decimals),
+              divisionDecimals(info.reserveTo, state.toAsset.decimals)
+            )
           );
           let share = 0;
           if (fromAmount && toAmount) {

@@ -5,11 +5,11 @@
       <div class="detail-info">
         <div>
           <span>{{ info && info.token0.symbol }}</span>
-          <span>{{ expectedAmountA }}</span>
+          <span>{{ (!!expectedAmountA && expectedAmountA) || 0 }}</span>
         </div>
         <div>
           <span>{{ info && info.token1.symbol }}</span>
-          <span>{{ expectedAmountB }}</span>
+          <span>{{ (!!expectedAmountB && expectedAmountB) || 0 }}</span>
         </div>
       </div>
     </div>
@@ -130,14 +130,13 @@ export default defineComponent({
         tokenB,
         nervePair
       );
-      console.log(amountA, amountB);
       expectedAmountA.value = divisionDecimals(
         amountA.toString(),
         token0.decimals
       );
       expectedAmountB.value = divisionDecimals(
         amountB.toString(),
-        token0.decimals
+        token1.decimals
       );
     }
 

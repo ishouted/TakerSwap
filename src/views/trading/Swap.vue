@@ -427,10 +427,6 @@ export default defineComponent({
                   ],
                   idKeys
                 };
-                console.log(
-                  storedSwapPairInfo,
-                  "storedSwapPairInfostoredSwapPairInfostoredSwapPairInfo"
-                );
               }
             }
           } else {
@@ -498,7 +494,6 @@ export default defineComponent({
                 tokenAStr: middleKey,
                 tokenBStr: toAssetKey
               });
-              console.log(result1, result2, "result2result2result2result2");
               if (result1 && result2) {
                 const pairs = [
                   nerve.swap.pair(
@@ -585,36 +580,41 @@ export default defineComponent({
     }
 
     async function changeDirection() {
-      if (
-        !state.fromAsset ||
-        !state.toAsset ||
-        !state.fromAmount ||
-        !state.toAmount
-      )
+      if (!state.fromAsset || !state.toAsset) {
         return false;
-      const tempToAsset = { ...state.toAsset };
-      const tempFromAsset = { ...state.fromAsset };
-      const tempToAmount = state.toAmount;
-      const tempFromAmount = state.fromAmount;
-      console.log(tempToAmount, tempFromAmount, "tempToAmount tempFromAmount");
-      state.computedFlag = true;
-      state.fromAsset = tempToAsset;
-      state.toAsset = tempFromAsset;
-      // await storeSwapPairInfo(true);
-      if (state.customerType === "from") {
-        state.toAmount = tempFromAmount;
-        state.fromAmount = state.tempToAmount;
-        console.log(state.tempToAmount, "state.tempToAmount");
-        state.customerType = "to";
-      } else if (state.customerType === "to") {
-        state.fromAmount = tempToAmount;
-        state.toAmount = state.tempFromAmount;
-        state.customerType = "from";
+      } else if (
+        state.fromAsset &&
+        state.toAsset &&
+        (!state.fromAmount || !state.toAmount)
+      ) {
+        const tempToAsset = { ...state.toAsset };
+        const tempFromAsset = { ...state.fromAsset };
+        state.fromAsset = tempToAsset;
+        state.toAsset = tempFromAsset;
+      } else {
+        const tempToAsset = { ...state.toAsset };
+        const tempFromAsset = { ...state.fromAsset };
+        const tempToAmount = state.toAmount;
+        const tempFromAmount = state.fromAmount;
+        state.computedFlag = true;
+        state.fromAsset = tempToAsset;
+        state.toAsset = tempFromAsset;
+        // await storeSwapPairInfo(true);
+        if (state.customerType === "from") {
+          state.toAmount = tempFromAmount;
+          state.fromAmount = state.tempToAmount;
+          console.log(state.tempToAmount, "state.tempToAmount");
+          state.customerType = "to";
+        } else if (state.customerType === "to") {
+          state.fromAmount = tempToAmount;
+          state.toAmount = state.tempFromAmount;
+          state.customerType = "from";
+        }
+        swapDirection.value = "to-from";
+        state.computedFlag = false;
+        toggleDirection();
+        await storeSwapPairInfo();
       }
-      swapDirection.value = "to-from";
-      state.computedFlag = false;
-      toggleDirection();
-      await storeSwapPairInfo();
       // refreshRate();
       // if (state.fromAmount) {
       //   toggleDirection();
@@ -675,13 +675,17 @@ export default defineComponent({
           if (!state.disableWatchFromAmount && !state.computedFlag) {
             const [res, priceImpact] = getSwapAmount(val, "to"); // 通过from计算to
             state.priceImpact = priceImpact || 0;
-            state.tempToAmount = getTempSwapAmount(val, "from")[0];
-            // console.log(state.tempToAmount, "state.tempToAmount");
-            console.log(
-              state.tempToAmount,
-              getTempSwapAmount(val, "from")[0],
-              "state.tempFromAmount"
-            );
+            if (
+              !state.reserveTo ||
+              !(
+                Minus(
+                  divisionDecimals(state.reserveTo, state.tempDecimals),
+                  val
+                ) < 0
+              )
+            ) {
+              state.tempToAmount = getTempSwapAmount(val, "from")[0];
+            }
             state.insufficient = res === 0;
             if (res) {
               state.disableWatchToAmount = true; // 避免进入无限循环计算
@@ -695,7 +699,9 @@ export default defineComponent({
           }
         } else {
           state.priceImpact = "";
-          state.toAmount = "";
+          if (!state.fromAmountError) {
+            state.toAmount = "";
+          }
           getSwapRate(true);
         }
       }
@@ -718,6 +724,7 @@ export default defineComponent({
                   item.assetId === state.toAsset.assetId
                 );
               }).decimals;
+            state.tempDecimals = tempDecimals;
             let tempToken = "";
             if (
               storedSwapPairInfo[key] &&
@@ -757,7 +764,9 @@ export default defineComponent({
             if (
               Minus(divisionDecimals(state.reserveTo, tempDecimals), val) < 0
             ) {
-              state.fromAmountError = "交易流动性不足";
+              state.fromAmountError = t("trading.trading17");
+              swapRate.value = "";
+              state.fromAmount = "";
               return false;
             }
           } else {
@@ -820,11 +829,7 @@ export default defineComponent({
       }
     );
     async function refreshRate() {
-      if (timer) clearInterval(timer);
-      await storeSwapPairInfo(true);
-      timer = setInterval(() => {
-        storeSwapPairInfo(true);
-      }, 10000);
+      if (!state.fromAmount && !state.toAmount) return;
       const [res, priceImpact] = getSwapAmount(state.fromAmount, "to"); // 通过from计算to
       state.priceImpact = priceImpact || 0;
       // console.log(res, "fff");
@@ -840,14 +845,19 @@ export default defineComponent({
       }
     }
     let timer;
+    let timer1; // 定时刷新汇率
     onMounted(() => {
       timer = setInterval(() => {
         storeSwapPairInfo(true);
         // storeTempSwapPairInfo(true);
       }, 10000);
+      timer1 = setInterval(() => {
+        refreshRate();
+      }, 10000);
     });
     onBeforeUnmount(() => {
       clearInterval(timer);
+      clearInterval(timer1);
     });
 
     // 计算能兑换的数量 type- 计算from/to的数量
@@ -879,10 +889,6 @@ export default defineComponent({
             res,
             tokenPathArray,
             pairsArray
-          );
-          console.log(
-            priceImpact.toString(),
-            "priceImpactpriceImpactpriceImpactpriceImpact"
           );
           console.log(
             res,
@@ -936,10 +942,6 @@ export default defineComponent({
             pairsArray
           );
           console.log(
-            priceImpact.toString(),
-            "priceImpactpriceImpactpriceImpactpriceImpact"
-          );
-          console.log(
             res,
             amount,
             tokenPathArray,
@@ -969,15 +971,15 @@ export default defineComponent({
       const fromAmount = state.fromAmount;
       const toAmount = state.toAmount;
       if (swapDirection.value === "from-to") {
-        swapRate.value = `1 ${state.fromAsset.symbol} ≈ ${fixNumber(
-          Division(toAmount, fromAmount).toFixed(),
-          state.toAsset.decimals
-        )} ${state.toAsset.symbol}`;
+        swapRate.value = `1 ${state.fromAsset.symbol} ≈ ${Division(
+          toAmount,
+          fromAmount
+        ).toFixed()} ${state.toAsset.symbol}`;
       } else {
-        swapRate.value = `1 ${state.toAsset.symbol} ≈ ${fixNumber(
-          Division(fromAmount, toAmount).toFixed(),
-          state.fromAsset.decimals
-        )} ${state.fromAsset.symbol}`;
+        swapRate.value = `1 ${state.toAsset.symbol} ≈ ${Division(
+          fromAmount,
+          toAmount
+        ).toFixed()} ${state.fromAsset.symbol}`;
       }
     }
 
@@ -1038,7 +1040,8 @@ export default defineComponent({
     });
 
     const priceImpactFloat = computed(() => {
-      let str = tofix(Times(state.priceImpact, 100), 2, -1);
+      const tempPriceImpact = state.priceImpact.toString().slice(0, 6);
+      let str = tofix(Times(tempPriceImpact, 100), 2, -1);
       if (Minus(str, 0.01) < 0) {
         return `<${0.01}%`;
       }
@@ -1075,8 +1078,8 @@ export default defineComponent({
         state.protectPercent = 1;
       }
       if (Number(val) > 100) {
-        state.protectError = "请填写0-100的数字";
-        state.protectPercent = 1;
+        state.protectError = t("trading.trading16");
+        state.protectPercent = "1";
       } else {
         state.protectError = "";
       }

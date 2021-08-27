@@ -89,9 +89,9 @@ export default defineComponent({
         pairAddress,
         userAddress: talonAddress.value
       };
-      state.orderLoading = true;
+      // state.orderLoading = true;
       const res = await userTradeHistoryPage(data);
-      state.orderLoading = false;
+      // state.orderLoading = false;
       if (res) {
         state.orderTotal = res.total || 0;
         const list = [];
