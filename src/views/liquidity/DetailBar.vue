@@ -1,0 +1,302 @@
+<template>
+  <div>
+    <div class="info-bar" v-if="showInfo">
+      <div class="text-e3 size-20">{{ $t("liquidity.liquidity15") }}</div>
+      <div class="detail-info">
+        <div>
+          <span>{{ info && info.token0.symbol }}</span>
+          <span>{{ expectedAmountA }}</span>
+        </div>
+        <div>
+          <span>{{ info && info.token1.symbol }}</span>
+          <span>{{ expectedAmountB }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="detail-bar">
+      <!--:value="quitNumber"-->
+      <el-input
+        placeholder=""
+        v-model="quitNumber"
+        @input="handleInput"
+      ></el-input>
+      <div class="text-red" v-if="amountError">{{ amountError }}</div>
+      <div class="rate">
+        <span
+          class="click"
+          v-for="(item, index) in rates"
+          :key="item"
+          :class="{ active_click: currentIndex === index }"
+          @click="getNumber(item, index)"
+        >
+          {{ item }}%
+        </span>
+      </div>
+      <div class="confirm-wrap">
+        <el-button :disabled="quitNumber === ''" @click="quit">
+          {{ $t("liquidity.liquidity6") }}
+        </el-button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { defineComponent, ref, computed } from "vue";
+import { Times, timesDecimals, divisionDecimals, Minus } from "@/api/util";
+import nerve from "nerve-sdk-js";
+import { ElMessage } from "element-plus";
+import { useI18n } from "vue-i18n";
+import { NTransfer } from "@/api/api";
+import { useStore } from "vuex";
+import { calMinAmountOnSwapRemoveLiquidity, getSwapPairInfo } from "@/model";
+
+export default defineComponent({
+  props: {
+    info: Object,
+    talonAddress: String
+  },
+  setup(props, context) {
+    const { t } = useI18n();
+    const store = useStore();
+    const rates = ref([25, 50, 75, 100]);
+    const quitNumber = ref("");
+    const showInfo = ref(false);
+    const expectedAmountA = ref("");
+    const expectedAmountB = ref("");
+    const currentIndex = ref(-1);
+    const amountError = ref("");
+    function handleInput(val) {
+      if (!Number(val)) showInfo.value = false;
+      const availableLiquidity = props.info.amount;
+      currentIndex.value = -1;
+      if (Minus(availableLiquidity, val) < 0) {
+        showInfo.value = false;
+        amountError.value = "超过最大撤出数量";
+        return;
+      } else {
+        amountError.value = "";
+        Number(val) !== 0 && calRemoveLiquidity();
+      }
+      // const patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d])?$");
+      // if (patrn.exec(val) || val === "") {
+      //   quitNumber.value = val;
+      // }
+    }
+
+    async function getNumber(item, index) {
+      amountError.value = "";
+      currentIndex.value = index;
+      showInfo.value = true;
+      quitNumber.value = Times(props.info.amount, item / 100).toFixed();
+      await calRemoveLiquidity();
+    }
+    // 计算撤出流动性将获得的资产
+    async function calRemoveLiquidity() {
+      const { token0, token1 } = props.info;
+      const tokenAStr = `${token0["assetChainId"]}-${token0["assetId"]}`;
+      const tokenBStr = `${token1["assetChainId"]}-${token1["assetId"]}`;
+      const params = {
+        tokenAStr,
+        tokenBStr
+      };
+      const {
+        token0: tempToken0,
+        token1: tempToken1,
+        reserve0,
+        reserve1,
+        tokenLP,
+        totalLP
+      } = await getSwapPairInfo(params);
+      const tempNervePair = nerve.swap.pair(
+        tempToken0,
+        tempToken1,
+        reserve0,
+        reserve1
+      );
+      const nervePair = { ...tempNervePair, totalSupply: totalLP };
+      // console.log(tempToken0, tempToken1, "tempToken0tempToken0tempToken0");
+      const tokenA = nerve.swap.token(
+        tempToken0.assetChainId,
+        tempToken0.assetId
+      );
+      const tokenB = nerve.swap.token(
+        tempToken1.assetChainId,
+        tempToken1.assetId
+      );
+      const { amountA, amountB } = await nerve.swap.calRemoveLiquidity(
+        timesDecimals(quitNumber.value, tokenLP.decimals),
+        tokenA,
+        tokenB,
+        nervePair
+      );
+      console.log(amountA, amountB);
+      expectedAmountA.value = divisionDecimals(
+        amountA.toString(),
+        token0.decimals
+      );
+      expectedAmountB.value = divisionDecimals(
+        amountB.toString(),
+        token0.decimals
+      );
+    }
+
+    async function quit() {
+      if (!Number(quitNumber.value)) return;
+      try {
+        context.emit("loading", true);
+        const fromAddress = props.talonAddress;
+        const toAddress = props.talonAddress;
+        const LP = props.info.lpTokenAmount;
+        const tokenA = props.info.token0;
+        const tokenB = props.info.token1;
+        const removeAmount = timesDecimals(
+          quitNumber.value,
+          LP.token.decimals
+        ).split(".")[0];
+        // 移除的资产LP的数量
+        const tokenAmountLP = nerve.swap.tokenAmount(
+          LP.token.assetChainId,
+          LP.token.assetId,
+          removeAmount
+        );
+        const minRemove = await calMinAmountOnSwapRemoveLiquidity({
+          amountLP: removeAmount, //LP.amount,
+          tokenAStr: tokenA.assetChainId + "-" + tokenA.assetId,
+          tokenBStr: tokenB.assetChainId + "-" + tokenB.assetId
+        });
+        if (!minRemove) {
+          throw "Cal min removeAmount failed";
+        }
+        // 资产A最小移除值
+        const tokenAmountAMin = nerve.swap.tokenAmount(
+          tokenA.assetChainId,
+          tokenA.assetId,
+          minRemove.amountAMin
+        );
+        // 资产B最小移除值
+        const tokenAmountBMin = nerve.swap.tokenAmount(
+          tokenB.assetChainId,
+          tokenB.assetId,
+          minRemove.amountBMin
+        );
+        const deadline = nerve.swap.currentTime() + 300;
+        const tx = await nerve.swap.swapRemoveLiquidity(
+          fromAddress,
+          tokenAmountLP,
+          tokenAmountAMin,
+          tokenAmountBMin,
+          deadline,
+          toAddress,
+          ""
+        );
+        const res = await handleHex(tx.hex);
+        if (res && res.hash) {
+          quitNumber.value = "";
+          ElMessage.success({
+            message: t("transfer.transfer14"),
+            type: "success"
+          });
+        } else {
+          ElMessage.warning({
+            message: "Remove liquidity Failed",
+            type: "warning"
+          });
+        }
+      } catch (e) {
+        console.log(e, "Remove-liquidity-error");
+        ElMessage.warning({
+          message: e.message || e,
+          type: "warning"
+        });
+      }
+      context.emit("loading", false);
+    }
+
+    const addressInfo = computed(() => {
+      return store.state.addressInfo;
+    });
+
+    async function handleHex(hex) {
+      const tAssemble = nerve.deserializationTx(hex);
+      const transfer = new NTransfer({ chain: "NERVE" });
+      const txHex = await transfer.getTxHex({
+        tAssemble,
+        pub: addressInfo.value?.pub,
+        signAddress: addressInfo.value?.address?.Ethereum
+      });
+      console.log(txHex, "===txHex===");
+      return await transfer.broadcastHex(txHex);
+    }
+    return {
+      rates,
+      quitNumber,
+      showInfo,
+      expectedAmountA,
+      expectedAmountB,
+      currentIndex,
+      amountError,
+      handleInput,
+      getNumber,
+      quit
+    };
+  }
+});
+</script>
+
+<style lang="scss" scoped>
+.detail-bar {
+  height: 174px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid #e4efff;
+  .rate {
+    margin: 10px 0 20px;
+    display: flex;
+    span {
+      width: 65px;
+      height: 28px;
+      background-color: #e3eeff;
+      color: #4a5ef2;
+      text-align: center;
+      line-height: 28px;
+      border-radius: 6px;
+      margin-right: 30px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+  :deep(.el-input) {
+    border: 1px solid #e4efff;
+  }
+}
+.active_click {
+  background-color: #4a5ef2 !important;
+  color: #ffffff !important;
+}
+.info-bar {
+  .text-e3 {
+    color: #4a5ef2;
+  }
+  .size-20 {
+    font-size: 14px;
+  }
+  .detail-info {
+    font-size: 13px;
+    div {
+      display: flex;
+      margin-top: 15px;
+      align-items: center;
+      justify-content: space-between;
+      &:nth-child(2) {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}
+.text-red {
+  color: red;
+  font-size: 14px;
+}
+</style>
