@@ -128,6 +128,8 @@ export default defineComponent({
       for (let item of props.list) {
         if (item.farmHash === hash) {
           item.showDetail = !item.showDetail;
+        } else {
+          item.showDetail = false;
         }
       }
     }

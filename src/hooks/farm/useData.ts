@@ -1,5 +1,5 @@
 import { reactive, toRefs, computed, watch } from "vue";
-import { listen, unListen } from "@/api/promiseSocket";
+import { listen } from "@/api/promiseSocket";
 import * as subSocket from "@/api/websocket";
 import config from "@/config";
 import {
@@ -8,7 +8,7 @@ import {
   divisionAndFix,
   divisionDecimals,
   Times,
-  tofix
+  Minus
 } from "@/api/util";
 import { contractAddress, abi, abiTwo, abiThree } from "./contractConfig";
 // @ts-ignore
@@ -44,6 +44,7 @@ export interface TalonFarmItem {
   stakeUSD: number; // 用户已参与质押USD
   pendingReward: number; // 用户未领取奖励数量
   pendingRewardUSD: number; // 用户未领取奖励USD
+  isLocked: boolean; // 是否已解锁
 }
 
 interface UserStakeFarm {
@@ -69,11 +70,12 @@ export default function useData() {
     talonList: [],
     uniList: []
   });
-  let totalUniList: any = []
-  let totalTalonList: any = []
+  let totalUniList: any = [];
+  let totalTalonList: any = [];
   let filterType = "1"; // 排序类型 1.按照收益排名 2.按照流动性排名
   let onlySeeMortgage = false; // 只看已质押
   async function getFarmData() {
+    const times = +new Date();
     const channel = "farmList";
     const params = {
       method: channel,
@@ -92,15 +94,17 @@ export default function useData() {
       v.stakeUSD = 0;
       v.pendingRewardUSD = 0;
       v.pendingReward = 0;
+      // @ts-ignore
+      v.isLocked = Minus(Times(v.lockedTime, 1000), times) < 0;
     });
-    totalTalonList = [...data]
+    totalTalonList = [...data];
     state.talonList = filter(data, filterType, onlySeeMortgage);
   }
 
-  const addressInfo = computed(()=> store.state.addressInfo);
+  const addressInfo = computed(() => store.state.addressInfo);
   // 用户参与的farm
   function getUserFarm() {
-    const address = addressInfo.value?.address?.Talon
+    const address = addressInfo.value?.address?.Talon;
     if (!address) return;
     const channel = "farmListSub";
     subSocket.listen({
@@ -130,7 +134,6 @@ export default function useData() {
       }
     });
   }
-
 
   // 网络是否错误
   const disableTx = computed(() => {
@@ -197,7 +200,6 @@ export default function useData() {
 
       const decimalsValue = await contractTwo.decimals();
       tokenInfo.stakeTokenDecimals = decimalsValue.toString();
-      
 
       // 奖励资产信息
       const contractThree = new ethers.Contract(
@@ -285,7 +287,7 @@ export default function useData() {
       tokenList.push(tokenInfo);
     }
     // console.log(tokenList, "===tokenList===");
-    totalUniList = [...tokenList]
+    totalUniList = [...tokenList];
     state.uniList = filter(tokenList, filterType, onlySeeMortgage);
     // state.uniList = tokenList;
   }
@@ -294,28 +296,28 @@ export default function useData() {
     filterType = type;
     onlySeeMortgage = mortgage;
     if (totalUniList.length) {
-      const uniList = filter([...totalUniList], type, mortgage)
+      const uniList = filter([...totalUniList], type, mortgage);
       state.uniList = uniList;
     }
     if (totalTalonList.length) {
-      const talonList = filter([...totalTalonList], type, mortgage)
-      console.log(talonList, 11)
+      const talonList = filter([...totalTalonList], type, mortgage);
+      console.log(talonList, 11);
       state.talonList = talonList;
     }
   }
 
   function filter(list: any, type: string, mortgage: boolean) {
-    let newList = [...list]
+    let newList = [...list];
     if (mortgage) {
       newList = [...newList].filter(v => Number(v.stakeAmount));
     }
     const sortBy = type === "1" ? "apr" : "tatalStakeTokenUSD";
     const res = [...newList].sort((a, b) => {
-      return b[sortBy] - a[sortBy]
-    })
+      return b[sortBy] - a[sortBy];
+    });
     return [...newList].sort((a, b) => {
-      return b[sortBy] - a[sortBy]
-    })
+      return b[sortBy] - a[sortBy];
+    });
   }
 
   return {

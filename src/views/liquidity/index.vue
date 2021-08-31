@@ -85,13 +85,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  computed,
-  onMounted,
-  reactive,
-  toRefs
-} from "vue";
+import { defineComponent, computed, onMounted, reactive, toRefs } from "vue";
 import AddLiquidity from "./AddLiquidity.vue";
 import CollapseTransition from "@/components/CollapseTransition.vue";
 import DetailBar from "./DetailBar.vue";
@@ -130,7 +124,7 @@ export default defineComponent({
           userAddress: talonAddress.value
         });
         if (res) {
-          console.log(res, "resresres")
+          console.log(res, "resresres");
           const list = [];
           res.list.map(v => {
             const info = v.lpTokenAmount;
@@ -174,7 +168,13 @@ export default defineComponent({
     }
 
     function toggleDetail(item) {
-      item.showDetail = !item.showDetail;
+      for (let liquidityItem of state.liquidityList) {
+        if (item.amount === liquidityItem.amount) {
+          item.showDetail = !item.showDetail;
+        } else {
+          liquidityItem.showDetail = false;
+        }
+      }
     }
 
     function handleLoadig(loading) {

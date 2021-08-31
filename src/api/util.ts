@@ -388,3 +388,17 @@ export function toNumberStr(num: number, digits: number) {
     return "" + num;
   }
 }
+
+export function formatFloat(num: string, digit: number) {
+  if (!num) return false;
+  const int = num.toString().split(".")[0];
+  const float = num.toString().split(".")[1];
+  if (!float) return int;
+  // @ts-ignore
+  if (float.lastIndexOf("0") > digit) {
+    // @ts-ignore
+    return `${int}.${float.substr(0, float.lastIndexOf("0") + digit + 1)}`;
+  } else {
+    return `${int}.${float.substr(0, digit + 1)}`;
+  }
+}

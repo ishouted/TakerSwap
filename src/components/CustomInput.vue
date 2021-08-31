@@ -57,7 +57,7 @@
               <span>ID: {{ item.assetKey }}</span>
             </div>
             <div class="asset-price">
-              <span>{{ item.available }}</span>
+              <span>{{ item.listAvailable }}</span>
               <!--<span>≈{{ item.usdPrice }}</span>-->
             </div>
           </div>
@@ -115,6 +115,12 @@ export default {
           this.allAssetsList = [...val];
           this.filter(this.searchVal);
         }
+      }
+    },
+    selectedAsset: {
+      immediate: true,
+      handler(val) {
+        this.chooseAsset = val;
       }
     }
   },

@@ -94,7 +94,7 @@ import {
   Division,
   fixNumber,
   timesDecimals,
-  parseChainInfo,
+  formatFloat,
   divisionAndFix,
   Times,
   divisionDecimals,
@@ -334,16 +334,10 @@ export default defineComponent({
           let from_to = "-";
           let to_from = "-";
           let share = 0;
-          console.log(Division(fromAmount, toAmount).toFixed(), 798798);
+          console.log(Division(fromAmount, toAmount), 798798);
           if (fromAmount && toAmount) {
-            from_to = fixNumber(
-              Division(fromAmount, toAmount).toFixed(),
-              state.toAsset.decimals
-            );
-            to_from = fixNumber(
-              Division(toAmount, fromAmount).toFixed(),
-              state.fromAsset.decimals
-            );
+            from_to = formatFloat(Division(fromAmount, toAmount).toFixed(), 2);
+            to_from = formatFloat(Division(toAmount, fromAmount).toFixed(), 2);
             share = 100;
           }
           return {

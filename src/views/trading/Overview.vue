@@ -6,7 +6,7 @@
         <symbol-icon class="img2" :icon="swapSymbol[1]"></symbol-icon>
         <div class="pair">{{ swapSymbol[0] }}/{{ swapSymbol[1] }}</div>
       </div>
-      <div class="bottom">{{ swapRate }}</div>
+      <div class="bottom" v-if="swapRate">{{ swapRate }}</div>
     </div>
     <div class="order-history">
       <div class="title">{{ $t("trading.trading1") }}</div>
@@ -50,7 +50,7 @@ export default defineComponent({
       type: Array,
       default: () => []
     },
-    swapRate: String,
+    swapRate: [String, Number],
     list: Array,
     loading: Boolean
   },

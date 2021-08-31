@@ -284,7 +284,11 @@ export default {
           channel
         },
         success: data => {
-          this.txInfo = data;
+          this.txInfo = {
+            ...data,
+            amount: divisionDecimals(data.amount, 6),
+            fee: divisionDecimals(data.fee, 6)
+          };
         }
       });
     },

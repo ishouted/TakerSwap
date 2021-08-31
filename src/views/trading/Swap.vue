@@ -78,6 +78,10 @@
           {{
             toAmountError ||
             fromAmountError ||
+            (toAsset &&
+              fromAsset &&
+              routesSymbol.length === 0 &&
+              $t("trading.trading17")) ||
             (insufficient ? $t("public.public17") : $t("public.public10"))
           }}
         </el-button>
@@ -237,8 +241,8 @@ export default defineComponent({
       feeRate: 0.3, // 千三的手续费
       fromAmount: "",
       toAmount: "",
-      fromAsset: {},
-      toAsset: {},
+      fromAsset: null,
+      toAsset: null,
       fromAmountError: "",
       toAmountError: "",
       disableWatchFromAmount: false, // 停止监听fromAmount
@@ -407,7 +411,7 @@ export default defineComponent({
                 tokenAStr: fromAssetKey,
                 tokenBStr: toAssetKey
               });
-              console.log(result, "result result result 123");
+              // console.log(result, "result result result 123");
               if (result) {
                 storedSwapPairInfo[key] = {
                   routes,
@@ -441,7 +445,7 @@ export default defineComponent({
                   res.tokenAmountOut.token.decimals
                 )
               : "0" || 0;
-          storedSwapPairInfo[key].swapRate = rate + state.toAsset.symbol; // 兑换比例 1 in / n out
+          storedSwapPairInfo[key].swapRate = rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
           context.emit("updateRate", storedSwapPairInfo[key].swapRate);
         }
       }
@@ -591,6 +595,8 @@ export default defineComponent({
         const tempFromAsset = { ...state.fromAsset };
         state.fromAsset = tempToAsset;
         state.toAsset = tempFromAsset;
+        await storeSwapPairInfo();
+        context.emit("selectAsset", state.fromAsset, state.toAsset);
       } else {
         const tempToAsset = { ...state.toAsset };
         const tempFromAsset = { ...state.fromAsset };
@@ -603,7 +609,7 @@ export default defineComponent({
         if (state.customerType === "from") {
           state.toAmount = tempFromAmount;
           state.fromAmount = state.tempToAmount;
-          console.log(state.tempToAmount, "state.tempToAmount");
+          // console.log(state.tempToAmount, "state.tempToAmount");
           state.customerType = "to";
         } else if (state.customerType === "to") {
           state.fromAmount = tempToAmount;
@@ -614,6 +620,7 @@ export default defineComponent({
         state.computedFlag = false;
         toggleDirection();
         await storeSwapPairInfo();
+        context.emit("selectAsset", state.fromAsset, state.toAsset);
       }
       // refreshRate();
       // if (state.fromAmount) {
@@ -830,13 +837,29 @@ export default defineComponent({
     );
     async function refreshRate() {
       if (!state.fromAmount && !state.toAmount) return;
-      const [res, priceImpact] = getSwapAmount(state.fromAmount, "to"); // 通过from计算to
+      // const [res, priceImpact] = getSwapAmount(state.fromAmount, "to"); // 通过from计算to
+      let res, priceImpact;
+      console.log(
+        state.customerType,
+        state.toAmount,
+        "state.customerType state.customerTypestate.customerTypestate.customerType"
+      );
+      if (state.customerType === "from") {
+        [res, priceImpact] = getSwapAmount(state.fromAmount, "to"); // 通过from计算to
+      } else if (state.customerType === "to") {
+        [res, priceImpact] = getSwapAmount(state.toAmount, "from"); // 通过from计算to
+      }
       state.priceImpact = priceImpact || 0;
       // console.log(res, "fff");
       state.insufficient = res === 0;
       if (res) {
         state.disableWatchToAmount = true; // 避免进入无限循环计算
-        state.toAmount = res;
+        // state.toAmount = res;
+        if (state.customerType === "from") {
+          state.toAmount = res;
+        } else {
+          state.fromAmount = res;
+        }
         getSwapRate();
         await nextTick();
         state.disableWatchToAmount = false;

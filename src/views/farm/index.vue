@@ -84,6 +84,7 @@ export default defineComponent({
       getUniData,
       filterList
     } = useFarmData();
+    console.log(talonList, "talonListtalonListtalonListtalonList");
     watch(
       () => [state.sortValue, state.mortgageValue],
       ([type, status]) => {

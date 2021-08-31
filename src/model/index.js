@@ -58,9 +58,19 @@ export async function getAssetList(address) {
       Times(item.number || 0, item.usdPrice).toFixed(2);
     item.available = toNumberStr(
       parseFloat(
-        tofix(divisionDecimals(item.balanceStr, decimal).toString(), 8, -1)
+        tofix(
+          divisionDecimals(item.balanceStr, decimal).toString(),
+          decimal,
+          -1
+        )
       ),
-      8
+      decimal
+    );
+    item.listAvailable = toNumberStr(
+      parseFloat(
+        tofix(divisionDecimals(item.balanceStr, decimal).toString(), 6, -1)
+      ),
+      6
     );
   });
   // 返回按字母排序

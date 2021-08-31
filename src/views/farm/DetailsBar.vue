@@ -54,7 +54,11 @@
               type="primary"
               size="small"
               icon="el-icon-minus"
-              :disabled="!!!Number(tokenInfo.stakeAmount) || !talonAddress"
+              :disabled="
+                !!!Number(tokenInfo.stakeAmount) ||
+                !talonAddress ||
+                !tokenInfo.isLocked
+              "
               @click="handleLP('minus')"
             ></el-button>
             <el-button
@@ -429,6 +433,7 @@ export default defineComponent({
       border: 1px solid #e4efff;
       border-radius: 10px;
       .left {
+        width: 170px;
         .info-title {
           font-size: 14px;
           margin-bottom: 5px;
