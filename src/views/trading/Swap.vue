@@ -447,7 +447,8 @@ export default defineComponent({
                 )
               : "0" || 0;
           if (storedSwapPairInfo[key]?.routes?.length) {
-            storedSwapPairInfo[key].swapRate = rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
+            storedSwapPairInfo[key].swapRate =
+              rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
             context.emit("updateRate", storedSwapPairInfo[key].swapRate);
           }
         }
