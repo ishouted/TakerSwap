@@ -225,6 +225,10 @@ export default defineComponent({
         if (val) {
           state.fromAsset = val;
         }
+      },
+      {
+        deep: true,
+        immediate: true
       }
     );
 
@@ -346,8 +350,8 @@ export default defineComponent({
           let share = 0;
           console.log(Division(fromAmount, toAmount), 798798);
           if (fromAmount && toAmount) {
-            from_to = formatFloat(Division(fromAmount, toAmount).toFixed(), 2);
-            to_from = formatFloat(Division(toAmount, fromAmount).toFixed(), 2);
+            from_to = formatFloat(Division(fromAmount, toAmount).toFixed(), 1);
+            to_from = formatFloat(Division(toAmount, fromAmount).toFixed(), 1);
             share = 100;
           }
           return {
@@ -361,21 +365,27 @@ export default defineComponent({
           //   Division(info.reserveTo, info.reserveFrom).toFixed(),
           //   state.toAsset.decimals
           // );
-          const from_to = toNumberStr(
-            Division(
-              divisionDecimals(info.reserveTo, state.toAsset.decimals),
-              divisionDecimals(info.reserveFrom, state.fromAsset.decimals)
-            )
+          const from_to = formatFloat(
+            toNumberStr(
+              Division(
+                divisionDecimals(info.reserveTo, state.toAsset.decimals),
+                divisionDecimals(info.reserveFrom, state.fromAsset.decimals)
+              )
+            ),
+            1
           );
           // const to_from = fixNumber(
           //   Division(info.reserveFrom, info.reserveTo).toFixed(),
           //   state.fromAsset.decimals
           // );
-          const to_from = toNumberStr(
-            Division(
-              divisionDecimals(info.reserveFrom, state.fromAsset.decimals),
-              divisionDecimals(info.reserveTo, state.toAsset.decimals)
-            )
+          const to_from = formatFloat(
+            toNumberStr(
+              Division(
+                divisionDecimals(info.reserveFrom, state.fromAsset.decimals),
+                divisionDecimals(info.reserveTo, state.toAsset.decimals)
+              )
+            ),
+            1
           );
           let share = 0;
           if (fromAmount && toAmount) {

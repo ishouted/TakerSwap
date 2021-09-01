@@ -389,16 +389,24 @@ export function toNumberStr(num: number, digits: number) {
   }
 }
 
+// 小数保留有效小数位数
 export function formatFloat(num: string, digit: number) {
   if (!num) return false;
   const int = num.toString().split(".")[0];
   const float = num.toString().split(".")[1];
   if (!float) return int;
-  // @ts-ignore
-  if (float.lastIndexOf("0") > digit) {
-    // @ts-ignore
-    return `${int}.${float.substr(0, float.lastIndexOf("0") + digit + 1)}`;
+  const floatArr = float.split("");
+  const tempIndex = floatArr.findIndex(item => item !== "0");
+  if (tempIndex > 5) {
+    if (tempIndex > digit) {
+      return `${int}.${float.substr(0, tempIndex + digit)}`;
+    } else {
+      return `${int}.${float.substr(0, digit + 1)}`;
+    }
   } else {
-    return `${int}.${float.substr(0, digit + 1)}`;
+    if (floatArr.length > 6) {
+      return tofix(`${int}.${float}`, 6, 1);
+    }
+    return `${int}.${float}`;
   }
 }

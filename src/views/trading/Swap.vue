@@ -210,7 +210,8 @@ import {
   Minus,
   Times,
   timesDecimals,
-  tofix
+  tofix,
+  formatFloat
 } from "@/api/util";
 import { useI18n } from "vue-i18n";
 import { getBestTradeExactIn, getSwapPairInfo } from "@/model";
@@ -634,7 +635,6 @@ export default defineComponent({
     watch(
       () => state.fromAmount,
       async val => {
-        console.log(val, 55)
         // debugger;
         if (val) {
           if (!state.fromAsset) return false;
@@ -990,15 +990,15 @@ export default defineComponent({
       const fromAmount = state.fromAmount;
       const toAmount = state.toAmount;
       if (swapDirection.value === "from-to") {
-        swapRate.value = `1 ${state.fromAsset.symbol} ≈ ${Division(
-          toAmount,
-          fromAmount
-        ).toFixed()} ${state.toAsset.symbol}`;
+        swapRate.value = `1 ${state.fromAsset.symbol} ≈ ${formatFloat(
+          Division(toAmount, fromAmount).toFixed(),
+          1
+        )} ${state.toAsset.symbol}`;
       } else {
-        swapRate.value = `1 ${state.toAsset.symbol} ≈ ${Division(
-          fromAmount,
-          toAmount
-        ).toFixed()} ${state.fromAsset.symbol}`;
+        swapRate.value = `1 ${state.toAsset.symbol} ≈ ${formatFloat(
+          Division(fromAmount, toAmount).toFixed(),
+          1
+        )} ${state.fromAsset.symbol}`;
       }
     }
 

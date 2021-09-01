@@ -197,7 +197,13 @@ export default defineComponent({
     function handleLoadig(loading) {
       state.loading = loading;
     }
-    return { talonAddress, ...toRefs(state), toggleDetail, handleLoadig };
+    return {
+      talonAddress,
+      ...toRefs(state),
+      toggleDetail,
+      handleLoadig,
+      getUserLiquidity
+    };
   }
 });
 </script>
