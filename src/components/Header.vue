@@ -27,7 +27,7 @@
     </div>
     <div class="account-wrap">
       <div class="asset-icon" v-if="address">
-        <i class="iconfont icon-qianbao" @click="toAsset"></i>
+        <img src="../assets/img/wallet.png" alt="" @click="toAsset" />
       </div>
       <div class="account">
         <!--<i class="el-icon-s-finance"></i>-->
@@ -46,18 +46,18 @@
     </div>
     <div class="custom-overlay">
       <el-dialog
-          title="Connect to a wallet"
-          custom-class="connect-dialog"
-          :show-close="false"
-          v-model="showConnect"
-          @closed="showConnectDialog(false)"
+        title="Connect to a wallet"
+        custom-class="connect-dialog"
+        :show-close="false"
+        v-model="showConnect"
+        @closed="showConnectDialog(false)"
       >
         <div class="list">
           <div
-              class="connect-btn"
-              v-for="(item, index) in providerList"
-              :key="index"
-              @click="connectProvider(item.provider)"
+            class="connect-btn"
+            v-for="(item, index) in providerList"
+            :key="index"
+            @click="connectProvider(item.provider)"
           >
             {{ item.name }}
             <img class="fr" :src="item.src" alt="" />
@@ -297,10 +297,14 @@ export default defineComponent({
   .account-wrap {
     display: flex;
     align-items: center;
-    .asset-icon i {
-      color: #fff;
-      font-size: 30px;
-      cursor: pointer;
+    .asset-icon {
+      height: 30px;
+      width: 32.5px;
+      img {
+        cursor: pointer;
+        height: 100%;
+        width: 100%;
+      }
     }
   }
   .account {
