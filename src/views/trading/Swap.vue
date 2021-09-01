@@ -210,7 +210,8 @@ import {
   Minus,
   Times,
   timesDecimals,
-  tofix
+  tofix,
+  formatFloat
 } from "@/api/util";
 import { useI18n } from "vue-i18n";
 import { getBestTradeExactIn, getSwapPairInfo } from "@/model";
@@ -445,7 +446,8 @@ export default defineComponent({
                   res.tokenAmountOut.token.decimals
                 )
               : "0" || 0;
-          storedSwapPairInfo[key].swapRate = rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
+          storedSwapPairInfo[key].swapRate =
+            rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
           context.emit("updateRate", storedSwapPairInfo[key].swapRate);
         }
       }
@@ -994,15 +996,15 @@ export default defineComponent({
       const fromAmount = state.fromAmount;
       const toAmount = state.toAmount;
       if (swapDirection.value === "from-to") {
-        swapRate.value = `1 ${state.fromAsset.symbol} ≈ ${Division(
-          toAmount,
-          fromAmount
-        ).toFixed()} ${state.toAsset.symbol}`;
+        swapRate.value = `1 ${state.fromAsset.symbol} ≈ ${formatFloat(
+          Division(toAmount, fromAmount).toFixed(),
+          1
+        )} ${state.toAsset.symbol}`;
       } else {
-        swapRate.value = `1 ${state.toAsset.symbol} ≈ ${Division(
-          fromAmount,
-          toAmount
-        ).toFixed()} ${state.fromAsset.symbol}`;
+        swapRate.value = `1 ${state.toAsset.symbol} ≈ ${formatFloat(
+          Division(fromAmount, toAmount).toFixed(),
+          1
+        )} ${state.fromAsset.symbol}`;
       }
     }
 
