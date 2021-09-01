@@ -634,6 +634,7 @@ export default defineComponent({
     watch(
       () => state.fromAmount,
       async val => {
+        console.log(val, 55)
         // debugger;
         if (val) {
           if (!state.fromAsset) return false;
@@ -897,13 +898,6 @@ export default defineComponent({
         amount = timesDecimals(amount, fromDecimal);
         const key = fromAssetKey + "_" + toAssetKey;
         const info = storedSwapPairInfo[key];
-        if (!info) {
-          // setTimeout(() => {
-          //   getSwapAmount(amount, type);
-          // }, 200);
-          // return false;
-        }
-        // debugger;
         if (info && info.routes.length) {
           const { idKeys: tokenPathArray, pairs: pairsArray } = info;
           let res =
@@ -933,7 +927,7 @@ export default defineComponent({
           return [0, 0];
         }
       }
-      return false;
+      return [0, 0];
     }
 
     // 反算
