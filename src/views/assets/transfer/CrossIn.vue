@@ -27,6 +27,7 @@
         :assetList="assetsList"
         :balance="balance"
         :errorTip="amountErrorTip"
+        :show-amount="false"
         @selectAsset="selectAsset"
         @max="max"
       ></custom-input>
@@ -106,7 +107,8 @@ export default defineComponent({
       fee: 0,
       needAuth: false, // token资产是否需要授权
       assetsList: [],
-      amountErrorTip: ""
+      amountErrorTip: "",
+      timer: null
     };
   },
   computed: {
@@ -143,8 +145,12 @@ export default defineComponent({
     },
     async selectAsset(asset) {
       console.log(asset, 789654, this.father);
+      if (this.timer) clearInterval(this.timer);
       if (this.father.disableTx) return;
-      this.checkAsset(asset);
+      await this.checkAsset(asset);
+      this.timer = setInterval(() => {
+        this.checkAsset(asset);
+      }, 10000);
     },
     // 检查资产是否支持从该异构链转入
     async checkAsset(asset) {
@@ -285,6 +291,10 @@ export default defineComponent({
       const { origin } = _networkInfo[network];
       window.open(origin + "/address/" + address);
     }
+  },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer);
+    this.timer = null;
   }
 });
 </script>

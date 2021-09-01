@@ -57,7 +57,7 @@
               <span>ID: {{ item.assetKey }}</span>
             </div>
             <div class="asset-price">
-              <span>{{ item.listAvailable }}</span>
+              <span v-if="showAmount">{{ item.listAvailable }}</span>
               <!--<span>≈{{ item.usdPrice }}</span>-->
             </div>
           </div>
@@ -86,6 +86,10 @@ export default {
     selectedAsset: {
       type: Object,
       default: () => null
+    },
+    showAmount: {
+      type: Boolean,
+      default: true
     }
   },
   components: {
