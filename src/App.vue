@@ -2,13 +2,12 @@
   <ElConfigProvider :locale="locale">
     <Header></Header>
     <router-view></router-view>
-    <Bottom></Bottom>
   </ElConfigProvider>
+  <div class="cover-bg"></div>
 </template>
 
 <script>
 import Header from "./components/Header.vue";
-import Bottom from "./components/Bottom.vue";
 import { ElConfigProvider } from "element-plus";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import enLocale from "element-plus/lib/locale/lang/en";
@@ -35,7 +34,6 @@ export default {
   },
   components: {
     Header,
-    Bottom,
     ElConfigProvider
   }
 };
@@ -47,11 +45,19 @@ export default {
 #app {
   width: 100%;
   min-height: 100%;
+  padding-bottom: 60px;
+  word-break: break-all;
+}
+.cover-bg {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url("assets/img/bg.jpg");
-  padding-bottom: 60px;
-  word-break: break-all;
+  z-index: -1;
 }
 </style>

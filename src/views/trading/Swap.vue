@@ -445,8 +445,10 @@ export default defineComponent({
                   res.tokenAmountOut.token.decimals
                 )
               : "0" || 0;
-          storedSwapPairInfo[key].swapRate = rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
-          context.emit("updateRate", storedSwapPairInfo[key].swapRate);
+          if (storedSwapPairInfo[key]?.routes?.length) {
+            storedSwapPairInfo[key].swapRate = rate == 0 ? 0 : rate + state.toAsset.symbol; // 兑换比例 1 in / n out
+            context.emit("updateRate", storedSwapPairInfo[key].swapRate);
+          }
         }
       }
       state.routesSymbol = storedSwapPairInfo[key]
@@ -899,7 +901,7 @@ export default defineComponent({
           // setTimeout(() => {
           //   getSwapAmount(amount, type);
           // }, 200);
-          return false;
+          // return false;
         }
         // debugger;
         if (info && info.routes.length) {
@@ -1377,7 +1379,7 @@ export default defineComponent({
 }
 @keyframes expand {
   0% {
-    height: 0px;
+    height: 0;
   }
   100% {
     height: 245px;

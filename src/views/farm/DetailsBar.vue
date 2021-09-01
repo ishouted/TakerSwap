@@ -118,6 +118,7 @@ export default defineComponent({
     isTalon: Boolean,
     talonAddress: String
   },
+  emits: ["loading"],
   setup(props, { emit }) {
     const store = useStore();
     const { t } = useI18n();
@@ -253,16 +254,13 @@ export default defineComponent({
         const address = addressInfo.value?.address?.Ethereum;
         if (contractAddress) {
           const decimal = props.tokenInfo.stakeTokenDecimals;
-          const res = await transfer.getERC20Balance(
+          balance.value = await transfer.getERC20Balance(
             contractAddress,
             Number(decimal),
             address
           );
-          // console.log(res);
-          balance.value = res;
         } else {
-          const res = await transfer.getEthBalance(address);
-          balance.value = res;
+          balance.value= await transfer.getEthBalance(address);
         }
       }
     }

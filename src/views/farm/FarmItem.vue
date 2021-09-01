@@ -108,6 +108,7 @@ export default defineComponent({
     list: Array,
     isTalon: Boolean
   },
+  emits: ["handleLoading"],
   setup(props, { emit }) {
     const router = useRouter();
     const store = useStore();

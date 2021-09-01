@@ -73,12 +73,13 @@ import { useI18n } from "vue-i18n";
 export default defineComponent({
   props: {
     showLPDialog: Boolean,
-    balance: String,
+    balance: [String, Number],
     loading: Boolean,
     addOrMinus: String,
     lpName: String,
-    decimal: String
+    decimal: [String, Number]
   },
+  emits: ["confirm"],
   setup(props, { emit }) {
     const { t } = useI18n();
     const show = ref(false);
