@@ -113,7 +113,8 @@ export default defineComponent({
   name: "addLiquidity",
   props: {
     assetsList: Array,
-    talonAddress: String
+    talonAddress: String,
+    defaultAsset: Object
   },
   components: {
     CustomInput
@@ -217,6 +218,15 @@ export default defineComponent({
         state.toAmount = state.toAsset.available;
       }
     }
+    // 默认选择的资产
+    watch(
+      () => props.defaultAsset,
+      val => {
+        if (val) {
+          state.fromAsset = val;
+        }
+      }
+    );
 
     // 监听fromAmount变化
     watch(

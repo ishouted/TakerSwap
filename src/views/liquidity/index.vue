@@ -76,6 +76,7 @@
       <add-liquidity
         v-else
         v-model:show="addLiquidity"
+        :defaultAsset="defaultAsset"
         :assetsList="assetsList"
         :talonAddress="talonAddress"
         @updateList="getUserLiquidity"
@@ -85,7 +86,14 @@
 </template>
 
 <script>
-import { defineComponent, computed, onMounted, reactive, toRefs } from "vue";
+import {
+  defineComponent,
+  computed,
+  onMounted,
+  reactive,
+  toRefs,
+  onBeforeUnmount
+} from "vue";
 import AddLiquidity from "./AddLiquidity.vue";
 import CollapseTransition from "@/components/CollapseTransition.vue";
 import DetailBar from "./DetailBar.vue";
@@ -110,11 +118,20 @@ export default defineComponent({
       assetsList: [],
       liquidityList: [],
       myLoading: false,
-      loading: false
+      loading: false,
+      defaultAsset: null
     });
+    let timer;
     onMounted(async () => {
-      getUserLiquidity();
+      await getUserLiquidity();
       state.assetsList = await getAssetList(talonAddress.value);
+      state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
+      timer = setInterval(async () => {
+        state.assetsList = await getAssetList(talonAddress.value);
+      }, 10000);
+    });
+    onBeforeUnmount(() => {
+      clearInterval(timer);
     });
     async function getUserLiquidity() {
       console.log(talonAddress.value, 99);
