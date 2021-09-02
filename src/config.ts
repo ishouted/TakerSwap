@@ -44,8 +44,8 @@ const config = {
     symbol: "NVT",
     timeout,
     ETHNET: "homestead",
-    feeAddress: "",
-    destroyAddress: ""
+    feeAddress: "NERVEepb69f573sRzfoTX9Kn67WeNtXhG6Y6W8",
+    destroyAddress: "NERVEepb63T1M8JgQ26jwZpZXYL8ZMLdUAK31L"
   }
 };
 

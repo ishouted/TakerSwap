@@ -75,19 +75,19 @@ function getPub() {
   return account ? account.pub : null;
 }
 
-router.beforeEach((to, from, next) => {
-  // console.log(666999, window.ethereum.selectedAddress)
-  if (to.meta.requireAuth) {
-    const pub = getPub();
-    const accountList = JSON.parse(<string>localStorage.getItem("accountList"));
-    if (!pub && !accountList) {
-      next("/login");
-    } else {
-      next();
-    }
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   // console.log(666999, window.ethereum.selectedAddress)
+//   if (to.meta.requireAuth) {
+//     const pub = getPub();
+//     const accountList = JSON.parse(<string>localStorage.getItem("accountList"));
+//     if (!pub && !accountList) {
+//       next("/login");
+//     } else {
+//       next();
+//     }
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

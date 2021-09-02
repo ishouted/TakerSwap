@@ -10,6 +10,8 @@ export interface State {
   chainId: string;
   showConnect: boolean;
   lang: string | null;
+  destroyAddress: string | undefined;
+  feeAddress: string | undefined;
 }
 
 // 定义注入类型
@@ -21,7 +23,9 @@ export default createStore<State>({
     addressInfo: {},
     chainId: "",
     showConnect: false,
-    lang: localStorage.getItem("lang")
+    lang: localStorage.getItem("lang"),
+    destroyAddress: config["destroyAddress"],
+    feeAddress: config["destroyAddress"]
   },
   getters: {
     // 异构链名称Ethereum..

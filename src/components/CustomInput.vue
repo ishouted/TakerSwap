@@ -2,7 +2,7 @@
   <div class="custom-input">
     <div class="info flex-between">
       <span>{{ label }}</span>
-      <span>{{ $t("public.public12") }}{{ balance }}</span>
+      <span v-if="talonAddress">{{ $t("public.public12") }}{{ balance }}</span>
     </div>
     <div class="inner flex-between">
       <el-input
@@ -12,7 +12,9 @@
         @focus="customerFocus"
         placeholder="0.0"
       >
-        <template #append><span @click="max">Max</span></template>
+        <template #append v-if="talonAddress">
+          <span @click="max">Max</span>
+        </template>
       </el-input>
       <div class="select-wrap flex-center" @click="showDialog = true">
         <template v-if="icon">
@@ -60,8 +62,10 @@
               <span v-if="showAmount">ID: {{ item.assetKey }}</span>
               <span v-else>{{ item.contractAddress }}</span>
             </div>
-            <div class="asset-price">
-              <span v-if="showAmount">{{ item.listAvailable }}</span>
+            <div class="asset-price" v-if="talonAddress">
+              <span v-if="showAmount">
+                {{ item.listAvailable }}
+              </span>
               <!--<span>≈{{ item.usdPrice }}</span>-->
             </div>
           </div>
@@ -130,6 +134,11 @@ export default {
       handler(val) {
         this.chooseAsset = val;
       }
+    }
+  },
+  computed: {
+    talonAddress() {
+      return this.$store.getters.talonAddress;
     }
   },
   mounted() {

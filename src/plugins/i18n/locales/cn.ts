@@ -110,7 +110,7 @@ const cn = {
   },
   login: {
     login1: "请先生成Curium地址",
-    login2: "立即生成",
+    login2: "立即生成Curium地址",
     login3: "生成Curium地址失败: ",
     login4: "连接钱包"
   },

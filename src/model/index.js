@@ -9,6 +9,7 @@ import {
   divisionDecimals
 } from "@/api/util";
 import config from "@/config";
+import store from "@/store";
 
 const url = config.WS_URL;
 
@@ -31,8 +32,7 @@ export async function broadcastHex(txHex) {
 }
 
 // 获取账户资产列表
-export async function getAssetList(address) {
-  if (!address) return [];
+export async function getAssetList(address = store.state.destroyAddress) {
   const channel = "getAccountLedgerList";
   const params = createRPCParams(channel);
   params.params.push(address);

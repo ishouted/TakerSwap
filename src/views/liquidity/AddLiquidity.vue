@@ -58,22 +58,27 @@
       </div>
     </div>
     <div class="confirm-wrap">
-      <el-button
-        type="primary"
-        v-if="insufficient"
-        @click="createPair"
-        :disabled="disableCreate || !!fromAmountError || !!toAmountError"
-      >
-        {{ fromAmountError || toAmountError || $t("liquidity.liquidity13") }}
-      </el-button>
-      <el-button
-        type="primary"
-        v-else
-        @click="addLiquidity"
-        :disabled="disableAdd || !!fromAmountError || !!toAmountError"
-      >
-        {{ fromAmountError || toAmountError || $t("liquidity.liquidity9") }}
-      </el-button>
+      <template v-if="talonAddress">
+        <el-button
+          type="primary"
+          v-if="insufficient"
+          @click="createPair"
+          :disabled="disableCreate || !!fromAmountError || !!toAmountError"
+        >
+          {{ fromAmountError || toAmountError || $t("liquidity.liquidity13") }}
+        </el-button>
+        <el-button
+          type="primary"
+          v-else
+          @click="addLiquidity"
+          :disabled="disableAdd || !!fromAmountError || !!toAmountError"
+        >
+          {{ fromAmountError || toAmountError || $t("liquidity.liquidity9") }}
+        </el-button>
+      </template>
+      <template v-else>
+        <AuthButton @loading="handleLoading"/>
+      </template>
     </div>
   </div>
 </template>
@@ -88,6 +93,7 @@ import {
   computed,
   onBeforeUnmount
 } from "vue";
+import AuthButton from "../../components/AuthButton";
 import CustomInput from "@/components/CustomInput.vue";
 import {
   Minus,
@@ -117,7 +123,8 @@ export default defineComponent({
     defaultAsset: Object
   },
   components: {
-    CustomInput
+    CustomInput,
+    AuthButton
   },
   setup(props, context) {
     const { t } = useI18n();
@@ -137,6 +144,10 @@ export default defineComponent({
       loading: false,
       disableCreate: false
     });
+
+    function handleLoading(status) {
+      state.loading = status;
+    }
 
     function selectAsset(asset, type) {
       // console.log(asset, type, 9999);
@@ -320,7 +331,7 @@ export default defineComponent({
           // setTimeout(() => {
           //   getLiquidAmount(amount, type);
           // }, 200);
-          return;
+          return false;
         } else {
           const reserveA = type === "from" ? info.reserveTo : info.reserveFrom;
           const reserveB = type === "from" ? info.reserveFrom : info.reserveTo;
@@ -361,10 +372,6 @@ export default defineComponent({
           };
         } else {
           // 添加流动性
-          // const from_to = fixNumber(
-          //   Division(info.reserveTo, info.reserveFrom).toFixed(),
-          //   state.toAsset.decimals
-          // );
           const from_to = formatFloat(
             toNumberStr(
               Division(
@@ -374,10 +381,6 @@ export default defineComponent({
             ),
             1
           );
-          // const to_from = fixNumber(
-          //   Division(info.reserveFrom, info.reserveTo).toFixed(),
-          //   state.fromAsset.decimals
-          // );
           const to_from = formatFloat(
             toNumberStr(
               Division(
@@ -593,7 +596,8 @@ export default defineComponent({
       createPair,
       addLiquidity,
       disableCreate,
-      disableAdd
+      disableAdd,
+      handleLoading
     };
   }
 });
@@ -601,6 +605,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .add-liquidity {
+  overflow: hidden;
   padding: 30px;
   .head {
     position: relative;

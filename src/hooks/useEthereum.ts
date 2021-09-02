@@ -55,7 +55,7 @@ export default function useEthereum() {
     const provider = getProvider();
     provider?.on("accountsChanged", (accounts: string) => {
       console.log(accounts, "=======accountsChanged");
-      reload()
+      reload();
       if (accounts.length) {
         state.address = accounts[0];
       } else {
@@ -71,7 +71,7 @@ export default function useEthereum() {
       console.log(chainId, "=======chainId");
       if (chainId) {
         state.chainId = provider.chainId;
-        reload()
+        reload();
         // checkNetwork(chainId);
       }
     });
@@ -89,17 +89,17 @@ export default function useEthereum() {
     localStorage.setItem("providerType", providerType);
     listenAccountChange();
     listenNetworkChange();
-    reload()
+    reload();
   }
 
   function disconnect() {
     localStorage.removeItem("providerType");
     state.address = "";
-    reload()
+    reload();
   }
 
   function reload() {
-    window.location.reload()
+    window.location.reload();
   }
 
   return {

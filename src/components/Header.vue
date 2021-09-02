@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="account-wrap">
-      <div class="asset-icon" v-if="address">
+      <div class="asset-icon" v-if="talonAddress">
         <img src="../assets/img/wallet.png" alt="" @click="toAsset" />
       </div>
       <div class="account">
@@ -135,16 +135,18 @@ export default defineComponent({
     // const showConnect = store.state.showConnect;
     const { address, chainId, initProvider, connect, disconnect } =
       useEthereum();
-    // console.log(address.value, 4444)
+    const talonAddress = computed(() => {
+      return store.getters.talonAddress;
+    });
     initProvider();
     watch(
       () => address.value,
       val => {
         if (val) {
           const currentAccount = getCurrentAccount(val);
-          if (!currentAccount) {
-            router.push("/login");
-          }
+          // if (!currentAccount) {
+          //   router.push("/login");
+          // }
           // console.log(currentAccount, 9999);
           store.commit("setCurrentAddress", currentAccount || {});
         }
@@ -215,7 +217,8 @@ export default defineComponent({
       lang,
       switchLang,
       openUrl,
-      showMenu
+      showMenu,
+      talonAddress
     };
   },
   data() {

@@ -65,6 +65,7 @@
       <div class="confirm-wrap">
         <el-button
           type="primary"
+          v-if="talonAddress"
           :class="{
             deep_color:
               !toAmountError &&
@@ -85,6 +86,9 @@
             (insufficient ? $t("public.public17") : $t("public.public10"))
           }}
         </el-button>
+        <template v-else>
+          <AuthButton @loading="handleLoading" />
+        </template>
       </div>
     </div>
     <div
@@ -202,6 +206,7 @@ import {
   watch
 } from "vue";
 import CustomInput from "@/components/CustomInput.vue";
+import AuthButton from "@/components/AuthButton";
 import {
   Division,
   divisionAndFix,
@@ -225,7 +230,8 @@ export default defineComponent({
   name: "swap",
   components: {
     CustomInput,
-    SymbolIcon
+    SymbolIcon,
+    AuthButton
   },
   props: {
     assetsList: Array,
@@ -261,9 +267,13 @@ export default defineComponent({
       tempFromAmount: "",
       computedFlag: false,
       tempToAsset: {},
-      tempFromAsset: {}
+      tempFromAsset: {},
+      showLoading: false
     });
 
+    function handleLoading(status) {
+      state.loading = status;
+    }
     // 选择swap资产 asset-选择的资产, type-from/to
     async function selectAsset(asset, type) {
       console.log(asset, type, 9999);
@@ -1205,7 +1215,9 @@ export default defineComponent({
       changeDirection,
       customerFocus,
       maxSale,
-      protectPercentInput
+      protectPercentInput,
+      talonAddress,
+      handleLoading
     };
   }
 });
@@ -1216,6 +1228,7 @@ export default defineComponent({
   width: 470px;
   /* height: 752px; */
   padding-bottom: 30px;
+  overflow: hidden;
   .icon-wrap {
     .left {
       width: 27px;
