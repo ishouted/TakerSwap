@@ -39,7 +39,7 @@
           {{ $t("header.header3") }}
         </div>
         <div v-else @click="manageAccount = true">
-          {{ superLong(address, 4) }}
+          L1:{{ superLong(address, 4) }}
         </div>
       </div>
       <div class="language" @click="switchLang">{{ lang }}</div>

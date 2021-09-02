@@ -17,7 +17,10 @@
       <div class="select-wrap flex-center" @click="showDialog = true">
         <template v-if="icon">
           <symbol-icon :icon="icon" />
-          <span>{{ icon }}</span>
+          <!--          <span class="coin-name">{{ icon }}</span>-->
+          <el-tooltip effect="dark" :content="icon" placement="top">
+            <span class="click">{{ icon }}</span>
+          </el-tooltip>
           <i class="el-icon-arrow-down"></i>
         </template>
         <template v-else>
@@ -37,7 +40,7 @@
     >
       <el-input
         v-model="searchVal"
-        :placeholder="$t('assets.assets8')"
+        :placeholder="$t(showAmount ? 'assets.assets8' : 'assets.assets9')"
       ></el-input>
       <ul class="list-wrap">
         <li
@@ -54,7 +57,8 @@
               <div>
                 {{ item.symbol }}
               </div>
-              <span>ID: {{ item.assetKey }}</span>
+              <span v-if="showAmount">ID: {{ item.assetKey }}</span>
+              <span v-else>{{ item.contractAddress }}</span>
             </div>
             <div class="asset-price">
               <span v-if="showAmount">{{ item.listAvailable }}</span>
@@ -220,6 +224,12 @@ export default {
       font-weight: 600;
       margin: 0 5px;
       color: #3a3c44;
+      max-width: 80px;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     i {
       color: #8da9d4;

@@ -28,30 +28,33 @@
             <div v-for="(item, index) in liquidityList" :key="index">
               <div :class="['list-item', item.showDetail ? 'hide-border' : '']">
                 <div class="symbol">
-                  <div class="img-wrap">
-                    <symbol-icon
-                      class="symbol1"
-                      :icon="item.token0.symbol"
-                    ></symbol-icon>
-                    <symbol-icon
-                      class="symbol2"
-                      :icon="item.token1.symbol"
-                    ></symbol-icon>
+                  <div class="symbol-cont">
+                    <div class="img-wrap">
+                      <symbol-icon
+                        class="symbol1"
+                        :icon="item.token0.symbol"
+                      ></symbol-icon>
+                      <symbol-icon
+                        class="symbol2"
+                        :icon="item.token1.symbol"
+                      ></symbol-icon>
+                    </div>
+                    <span>{{ item.lpTokenAmount.token.symbol }}</span>
                   </div>
-                  <span>{{ item.lpTokenAmount.token.symbol }}</span>
+                  <div class="amount-cont">{{ item.amount }}</div>
                 </div>
-                <div class="value">
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    :content="item.amount"
-                    placement="top"
-                  >
-                    <span class="click">{{ item.amountSlice }}</span>
-                  </el-tooltip>
-                </div>
+                <!--                <div class="value">-->
+                <!--                  <el-tooltip-->
+                <!--                    class="item"-->
+                <!--                    effect="dark"-->
+                <!--                    :content="item.amount"-->
+                <!--                    placement="top"-->
+                <!--                  >-->
+                <!--                    <span class="click">{{ item.amountSlice }}</span>-->
+                <!--                  </el-tooltip>-->
+                <!--                </div>-->
                 <div class="view-detail" @click="toggleDetail(item)">
-                  {{ $t("liquidity.liquidity5") }}
+                  <!--{{ $t("liquidity.liquidity5") }}-->
                   <i
                     :class="{
                       'el-icon-arrow-right': true,
@@ -178,7 +181,7 @@ export default defineComponent({
               showDetail: false
             }); */
           });
-          state.liquidityList = res.list;
+          state.liquidityList = res.list.filter(item => item.amount !== "0");
         }
         state.myLoading = false;
       }
@@ -231,7 +234,7 @@ export default defineComponent({
     padding: 40px;
     border-top: 1px solid #e4efff;
     .liquidity-list {
-      margin-top: -10px;
+      //margin-top: -10px;
       .list-item {
         height: 74px;
         padding: 20px 0;
@@ -243,24 +246,32 @@ export default defineComponent({
         }
       }
       .symbol {
-        flex: 5;
+        //flex: 5;
         display: flex;
         align-items: center;
-        img {
-          width: 32px;
-          height: 32px;
-          overflow: hidden;
-        }
-        .img-wrap {
+        flex-direction: column;
+        .symbol-cont {
           display: flex;
           align-items: center;
-          margin-right: 10px;
+          img {
+            width: 32px;
+            height: 32px;
+            overflow: hidden;
+          }
+          .img-wrap {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+          }
+          .symbol1 {
+            z-index: 2;
+          }
+          .symbol2 {
+            margin-left: -10px;
+          }
         }
-        .symbol1 {
-          z-index: 2;
-        }
-        .symbol2 {
-          margin-left: -10px;
+        .amount-cont {
+          margin-top: 5px;
         }
       }
       .value {

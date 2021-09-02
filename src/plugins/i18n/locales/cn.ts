@@ -48,6 +48,7 @@ const cn = {
     assets6: "L2转至L1",
     assets7: "资产管理",
     assets8: "使用资产名称或ID进行查询",
+    assets9: "使用资产名称或合约地址进行查询"
   },
   transfer: {
     transfer1: "充值到L2",

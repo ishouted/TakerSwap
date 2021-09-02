@@ -601,7 +601,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .add-liquidity {
-  padding: 40px;
+  padding: 30px;
   .head {
     position: relative;
     margin-bottom: 40px;

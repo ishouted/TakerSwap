@@ -136,12 +136,29 @@ export default defineComponent({
     filterAssets() {
       // console.log(123465,this.father);
       const chain = _networkInfo[this.father.network];
+      const mainAsset = chain?.mainAsset;
       if (this.father.disableTx || !chain) return;
-      this.assetsList = this.father.crossInOutSymbol.filter(v => {
-        return v.heterogeneousList?.filter(item => {
-          return item.heterogeneousChainId === chain.chainId;
+      this.assetsList = this.father.crossInOutSymbol
+        .filter(v => {
+          return v.heterogeneousList?.filter(item => {
+            return item.heterogeneousChainId === chain.chainId;
+          });
+        })
+        .map(item => {
+          const tempAddress = item.heterogeneousList?.find(
+            v => v.heterogeneousChainId === chain.chainId
+          ).contractAddress;
+          return {
+            ...item,
+            contractAddress: tempAddress
+          };
         });
-      });
+      const tempIndex = this.assetsList.findIndex(
+        item => item.symbol === mainAsset
+      );
+      const tempAsset = this.assetsList[tempIndex];
+      this.assetsList.splice(tempIndex, 1);
+      this.assetsList.unshift(tempAsset);
     },
     async selectAsset(asset) {
       console.log(asset, 789654, this.father);

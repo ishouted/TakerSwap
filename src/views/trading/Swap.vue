@@ -1266,7 +1266,7 @@ export default defineComponent({
   }
   .swap-area {
     .confirm-wrap {
-      margin: 25px 0 40px;
+      margin: 25px 0 30px;
     }
   }
   .swap-setting-info {
@@ -1274,7 +1274,7 @@ export default defineComponent({
     border-bottom: 1px solid #e3eeff;
     padding: 18px 0;
     .info-item {
-      margin-bottom: 18px;
+      margin-bottom: 12px;
       &:last-child {
         margin-bottom: 0;
       }
@@ -1294,7 +1294,7 @@ export default defineComponent({
   }
   .swap-route {
     .name {
-      padding: 18px 0;
+      padding: 12px 0;
       color: #7e87c2;
     }
     .route-network {
