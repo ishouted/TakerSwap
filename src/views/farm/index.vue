@@ -6,7 +6,7 @@
         :class="{ isActive: current === 1 }"
         @click="current = 1"
       >
-        Uniswap Farm
+        L1 Farm
       </div>
       <div
         class="fr tab-item"

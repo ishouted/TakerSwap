@@ -24,7 +24,7 @@ const lang = localStorage.getItem("lang") || navigatorLang;
 localStorage.setItem("lang", lang);
 
 const i18n = createI18n({
-  locale: zhLocale.name, // 默认
+  locale: lang, // 默认
   fallbackLocale: fallLang, // 没有默认语言时重置为fallLang
   messages
 });
@@ -34,7 +34,6 @@ const i18n = createI18n({
 // console.log(ElementLocale, 66)
 // console.log(i18n.global.t, 656)
 // Ei18n(i18n.global.t);
-export { i18n };
 export function useI18n(app: App) {
   app.use(i18n);
 }

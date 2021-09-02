@@ -154,7 +154,7 @@
 <script>
 import FarmSymbol from "@/views/farm/FarmSymbol.vue";
 import LpDialog from "@/components/LpDialog";
-import { listen, unListen } from "@/api/websocket";
+import { listen } from "@/api/websocket";
 import config from "@/config";
 import { genId, divisionDecimals, timesDecimals } from "@/api/util";
 import { getAssetBalance } from "@/model";

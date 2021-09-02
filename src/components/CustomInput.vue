@@ -155,12 +155,21 @@ export default {
       if (!str) {
         this.list = this.allAssetsList.filter(v => v);
       } else {
-        this.list = this.allAssetsList.filter(v => {
-          return (
-            v.assetKey.indexOf(str) > -1 ||
-            v.symbol.toUpperCase().indexOf(str.toUpperCase()) > -1
-          );
-        });
+        if (this.showAmount) {
+          this.list = this.allAssetsList.filter(v => {
+            return (
+              v.assetKey.indexOf(str) > -1 ||
+              v.symbol.toUpperCase().indexOf(str.toUpperCase()) > -1
+            );
+          });
+        } else {
+          this.list = this.allAssetsList.filter(v => {
+            return (
+              v.contractAddress.indexOf(str) > -1 ||
+              v.symbol.toUpperCase().indexOf(str.toUpperCase()) > -1
+            );
+          });
+        }
       }
     },
     changeSelect(asset) {

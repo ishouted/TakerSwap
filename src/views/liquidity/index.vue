@@ -74,6 +74,14 @@
             </div>
             <div class="no-data" v-if="!liquidityList.length">No Data</div>
           </div>
+          <div class="pagination-cont" v-if="totalSize > 10">
+            <el-pagination
+              layout="prev, pager, next"
+              :total="totalSize"
+              @next-click="nextPage"
+              @prev-click="prevPage"
+            ></el-pagination>
+          </div>
         </div>
       </div>
       <add-liquidity
@@ -122,7 +130,8 @@ export default defineComponent({
       liquidityList: [],
       myLoading: false,
       loading: false,
-      defaultAsset: null
+      defaultAsset: null,
+      totalSize: 0
     });
     let timer;
     onMounted(async () => {
@@ -136,16 +145,18 @@ export default defineComponent({
     onBeforeUnmount(() => {
       clearInterval(timer);
     });
-    async function getUserLiquidity() {
+    async function getUserLiquidity(pageIndex = 1) {
       console.log(talonAddress.value, 99);
       if (talonAddress.value) {
         state.myLoading = true;
         const res = await userLiquidityPage({
-          userAddress: talonAddress.value
+          userAddress: talonAddress.value,
+          pageIndex
         });
         if (res) {
           console.log(res, "resresres");
           const list = [];
+          state.totalSize = res.total;
           res.list.map(v => {
             const info = v.lpTokenAmount;
             const amountSlice = divisionAndFix(
@@ -200,12 +211,20 @@ export default defineComponent({
     function handleLoadig(loading) {
       state.loading = loading;
     }
+    function nextPage(pageNo) {
+      getUserLiquidity(pageNo);
+    }
+    function prevPage(pageNo) {
+      getUserLiquidity(pageNo);
+    }
     return {
       talonAddress,
       ...toRefs(state),
       toggleDetail,
       handleLoadig,
-      getUserLiquidity
+      getUserLiquidity,
+      nextPage,
+      prevPage
     };
   }
 });
@@ -292,5 +311,11 @@ export default defineComponent({
       font-size: 14px;
     }
   }
+}
+.pagination-cont {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
