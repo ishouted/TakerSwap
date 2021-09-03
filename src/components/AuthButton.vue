@@ -1,7 +1,7 @@
 <template>
   <div class="auth-button">
     <el-button type="primary" v-if="!address" @click="showConnectDialog(true)">
-      {{ $t("header.header3") }} {{ address }}
+      {{ $t("header.header3") }}
     </el-button>
     <el-button v-else type="primary" @click="derivedAddress">
       {{ $t("login.login2") }}
@@ -17,7 +17,7 @@ import useEthereum, { getProvider } from "@/hooks/useEthereum";
 import { useI18n } from "vue-i18n";
 import config from "@/config";
 import { watch } from "vue";
-import { getCurrentAccount } from "../api/util";
+import { getCurrentAccount } from "@/api/util";
 
 const ethers = require("ethers");
 
@@ -42,7 +42,6 @@ export default {
         }
       },
       {
-        immediate: true,
         deep: true
       }
     );
