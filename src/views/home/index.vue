@@ -1,56 +1,100 @@
 <template>
   <div class="w1300 home">
-    <div class="overview-total lh_1">
-      {{ $t("home.home1") }}{{ rewardInfo.locked }}
-    </div>
-    <div class="info-top pd_40">
-      <div class="title">{{ $t("home.home2") }}</div>
-      <div class="flex-center info-wrap">
-        <div class="info-item">
-          <p class="label">{{ $t("home.home3") }}</p>
-          <p class="value">${{ overviewData.priceUSD }}</p>
-        </div>
-        <div class="info-item">
-          <p class="label">{{ $t("home.home4") }}</p>
-          <p class="value">{{ overviewData.circulation }}</p>
-        </div>
-        <div class="info-item">
-          <p class="label">{{ $t("home.home5") }}</p>
-          <p class="value">{{ overviewData.destroyed }}</p>
-        </div>
-        <div class="info-item">
-          <p class="label">{{ $t("home.home6") }}</p>
-          <p class="value">{{ overviewData.totalAmount }}</p>
+    <div class="pc-cont">
+      <div class="overview-total lh_1">
+        {{ $t("home.home1") }}{{ rewardInfo.locked }}
+      </div>
+      <div class="info-top pd_40">
+        <div class="title">{{ $t("home.home2") }}</div>
+        <div class="flex-center info-wrap">
+          <div class="info-item">
+            <p class="label">{{ $t("home.home3") }}</p>
+            <p class="value">${{ overviewData.priceUSD }}</p>
+          </div>
+          <div class="info-item">
+            <p class="label">{{ $t("home.home4") }}</p>
+            <p class="value">{{ overviewData.circulation }}</p>
+          </div>
+          <div class="info-item">
+            <p class="label">{{ $t("home.home5") }}</p>
+            <p class="value">{{ overviewData.destroyed }}</p>
+          </div>
+          <div class="info-item">
+            <p class="label">{{ $t("home.home6") }}</p>
+            <p class="value">{{ overviewData.totalAmount }}</p>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="info-middle">
-      <div class="left">
-        <div class="left-top pd_40">
-          <div>
-            <div class="title">
-              {{ $t("home.home7") }}
+      <div class="info-middle">
+        <div class="left">
+          <div class="left-top pd_40">
+            <div>
+              <div class="title">
+                {{ $t("home.home7") }}
+              </div>
+              <p>${{ rewardInfo.received }}</p>
             </div>
-            <p>${{ rewardInfo.received }}</p>
+            <div class="flex1-tr">
+              <i class="iconfont icon-yilingjiangli"></i>
+            </div>
           </div>
-          <div class="flex1-tr">
-            <i class="iconfont icon-yilingjiangli"></i>
+          <div class="left-bottom pd_40">
+            <div>
+              <div class="title">
+                {{ $t("home.home8") }}
+              </div>
+              <p>${{ rewardInfo.unclaimed }}</p>
+            </div>
+            <div class="flex1-tr">
+              <span class="icon-wrap">
+                <i class="iconfont icon-dailingjiangli"></i>
+              </span>
+            </div>
+          </div>
+          <div class="right_block pd_40">
+            <div class="title">
+              Farm
+              <span class="more" @click="toUrl">
+                {{ $t("home.home9") }}
+                <i class="el-icon-arrow-right"></i>
+              </span>
+            </div>
+            <div class="farm-list">
+              <div
+                class="farm-item"
+                v-for="item in farmList"
+                :key="item.farmHash"
+              >
+                <div class="coin_name">
+                  {{ item.name }}
+                </div>
+                <!--              <farm-symbol-->
+                <!--                class="farm-symbol"-->
+                <!--                :imgList="item.logoList"-->
+                <!--                :name="item.name"-->
+                <!--              ></farm-symbol>-->
+                <div class="farm-info">
+                  <div>
+                    <div class="label">APR</div>
+                    <p class="value">{{ item.apr }}%</p>
+                  </div>
+                  <div>
+                    <div class="label">{{ $t("home.home10") }}</div>
+                    <p class="value">{{ item.syrupTokenSymbol }}</p>
+                  </div>
+                </div>
+                <div
+                  class="handle click"
+                  @click="addLP(item)"
+                  v-if="talonAddress"
+                >
+                  {{ $t("home.home11") }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="left-bottom pd_40">
-          <div>
-            <div class="title">
-              {{ $t("home.home8") }}
-            </div>
-            <p>${{ rewardInfo.unclaimed }}</p>
-          </div>
-          <div class="flex1-tr">
-            <span class="icon-wrap">
-              <i class="iconfont icon-dailingjiangli"></i>
-            </span>
-          </div>
-        </div>
-        <div class="right_block pd_40">
+        <div class="right pd_40">
           <div class="title">
             Farm
             <span class="more" @click="toUrl">
@@ -64,14 +108,11 @@
               v-for="item in farmList"
               :key="item.farmHash"
             >
-              <div class="coin_name">
-                {{ item.name }}
-              </div>
-              <!--              <farm-symbol-->
-              <!--                class="farm-symbol"-->
-              <!--                :imgList="item.logoList"-->
-              <!--                :name="item.name"-->
-              <!--              ></farm-symbol>-->
+              <farm-symbol
+                class="farm-symbol"
+                :imgList="item.logoList"
+                :name="item.name"
+              ></farm-symbol>
               <div class="farm-info">
                 <div>
                   <div class="label">APR</div>
@@ -93,50 +134,94 @@
           </div>
         </div>
       </div>
-      <div class="right pd_40">
-        <div class="title">
-          Farm
-          <span class="more" @click="toUrl">
-            {{ $t("home.home9") }}
-            <i class="el-icon-arrow-right"></i>
-          </span>
+      <div class="info-bottom pd_40 flex-center">
+        <div class="info-item">
+          <p class="label">{{ $t("home.home12") }}</p>
+          <p class="value">${{ txInfo.amount }}</p>
         </div>
-        <div class="farm-list">
-          <div class="farm-item" v-for="item in farmList" :key="item.farmHash">
-            <farm-symbol
-              class="farm-symbol"
-              :imgList="item.logoList"
-              :name="item.name"
-            ></farm-symbol>
-            <div class="farm-info">
-              <div>
-                <div class="label">APR</div>
-                <p class="value">{{ item.apr }}%</p>
-              </div>
-              <div>
-                <div class="label">{{ $t("home.home10") }}</div>
-                <p class="value">{{ item.syrupTokenSymbol }}</p>
-              </div>
-            </div>
-            <div class="handle click" @click="addLP(item)" v-if="talonAddress">
-              {{ $t("home.home11") }}
-            </div>
-          </div>
+        <div class="info-item">
+          <p class="label">{{ $t("home.home13") }}</p>
+          <p class="value">{{ txInfo.count }}</p>
+        </div>
+        <div class="info-item">
+          <p class="label">{{ $t("home.home14") }}</p>
+          <p class="value">${{ txInfo.fee }}</p>
         </div>
       </div>
     </div>
-    <div class="info-bottom pd_40 flex-center">
-      <div class="info-item">
-        <p class="label">{{ $t("home.home12") }}</p>
-        <p class="value">${{ txInfo.amount }}</p>
+    <div class="mobile-cont">
+      <div class="mobile-total">
+        <div class="text-3a size-15 font-bold">{{ $t("home.home2") }}</div>
+        <div class="d-flex align-items-center space-between size-14 mt-16">
+          <span class="text-7e">{{ $t("home.home3") }}</span>
+          <span>${{ overviewData.priceUSD }}</span>
+        </div>
+        <div class="d-flex align-items-center space-between size-14 mt-16">
+          <span class="text-7e">{{ $t("home.home4") }}</span>
+          <span>{{ overviewData.circulation }}</span>
+        </div>
+        <div class="d-flex align-items-center space-between size-14 mt-16">
+          <span class="text-7e">{{ $t("home.home5") }}</span>
+          <span>{{ overviewData.destroyed }}</span>
+        </div>
+        <div class="d-flex align-items-center space-between size-14 mt-16">
+          <span class="text-7e">{{ $t("home.home6") }}</span>
+          <span>{{ overviewData.totalAmount }}</span>
+        </div>
       </div>
-      <div class="info-item">
-        <p class="label">{{ $t("home.home13") }}</p>
-        <p class="value">{{ txInfo.count }}</p>
+      <div class="mobile-total d-flex space-between align-items-center mt-15">
+        <div class="font-bold">
+          <div class="size-15">{{ $t("home.home7") }}</div>
+          <div class="size-19 mt-15">${{ rewardInfo.received }}</div>
+        </div>
+        <div class="img-cont">
+          <i class="iconfont icon-yilingjiangli"></i>
+        </div>
       </div>
-      <div class="info-item">
-        <p class="label">{{ $t("home.home14") }}</p>
-        <p class="value">${{ txInfo.fee }}</p>
+      <div class="mobile-total d-flex space-between align-items-center mt-15">
+        <div class="font-bold">
+          <div class="size-15">{{ $t("home.home8") }}</div>
+          <div class="size-19 mt-15">${{ rewardInfo.unclaimed }}</div>
+        </div>
+        <div class="img-cont rotate-30 mt-15">
+          <i class="iconfont icon-dailingjiangli"></i>
+        </div>
+      </div>
+      <div class="mobile-total mt-15">
+        <div class="d-flex space-between">
+          <span class="text-3a size-15 font-bold">Farm</span>
+          <span class="text-4a size-14" @click="toUrl">
+            {{ $t("home.home9") }}
+          </span>
+        </div>
+        <div class="d-flex text-7e mt-15">
+          <span class="flex-1">LP</span>
+          <span class="flex-1">{{ $t("home.home10") }}</span>
+          <span class="text-right w-90">APR</span>
+        </div>
+        <div
+          class="d-flex text-3a mt-16"
+          v-for="item in farmList"
+          :key="item.farmHash"
+        >
+          <span class="flex-1">{{ item.name }}</span>
+          <span class="flex-1">{{ item.syrupTokenSymbol }}</span>
+          <span class="text-right w-90">{{ item.apr }}%</span>
+        </div>
+      </div>
+      <div class="mobile-total mt-15">
+        <div class="d-flex align-items-center space-between size-14">
+          <span class="text-7e">{{ $t("home.home12") }}</span>
+          <span>{{ txInfo.amount }}</span>
+        </div>
+        <div class="d-flex align-items-center space-between size-14 mt-16">
+          <span class="text-7e">{{ $t("home.home13") }}</span>
+          <span>{{ txInfo.count }}</span>
+        </div>
+        <div class="d-flex align-items-center space-between size-14 mt-16">
+          <span class="text-7e">{{ $t("home.home14") }}</span>
+          <span>{{ txInfo.fee }}</span>
+        </div>
       </div>
     </div>
     <lp-dialog
@@ -560,6 +645,24 @@ export default {
     }
   }
 }
+.mobile-cont {
+  display: none;
+  .mobile-total {
+    padding: 20px 15px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    .img-cont {
+      width: 60px;
+      height: 63px;
+      line-height: 63px;
+      margin-right: 27px;
+      i {
+        color: #d7dcfc;
+        font-size: 45px;
+      }
+    }
+  }
+}
 @media screen and (max-width: 1200px) {
   .home .info-middle .right {
     height: 500px;
@@ -654,5 +757,49 @@ export default {
       }
     }
   }
+}
+@media screen and (max-width: 800px) {
+  .mobile-cont {
+    display: block;
+  }
+  .pc-cont {
+    display: none;
+  }
+}
+.w-90 {
+  width: 90px;
+}
+.text-3a {
+  color: #3a3c44;
+}
+.size-14 {
+  font-size: 14px;
+}
+.size-15 {
+  font-size: 15px;
+}
+.size-19 {
+  font-size: 19px;
+}
+.font-bold {
+  font-weight: bold;
+}
+.text-7e {
+  color: #7e87c2;
+}
+.mt-15 {
+  margin-top: 15px;
+}
+.mt-16 {
+  margin-top: 16px;
+}
+.rotate-30 {
+  transform: rotate(30deg);
+}
+.text-4a {
+  color: #4a5ef2;
+}
+.text-right {
+  text-align: right;
 }
 </style>

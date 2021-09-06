@@ -1,79 +1,156 @@
 <template>
   <div class="farm-details">
-    <div class="getLp">
-      <p class="click">
-        {{ $t("farm.farm7") }}{{ tokenInfo.name }}
-        <i class=""></i>
-      </p>
-      <p class="click">
-        {{ $t("farm.farm8") }}
-        <i class=""></i>
-      </p>
-    </div>
-    <div class="biaoge">
-      <div class="gain">
-        <div class="left">
-          <div class="info-title">
-            {{ tokenInfo.syrupTokenSymbol }}{{ $t("farm.farm2") }}
+    <div class="pc-cont">
+      <div class="getLp">
+        <p class="click">
+          {{ $t("farm.farm7") }}{{ tokenInfo.name }}
+          <i class=""></i>
+        </p>
+        <p class="click">
+          {{ $t("farm.farm8") }}
+          <i class=""></i>
+        </p>
+      </div>
+      <div class="biaoge">
+        <div class="gain">
+          <div class="left">
+            <div class="info-title">
+              {{ tokenInfo.syrupTokenSymbol }}{{ $t("farm.farm2") }}
+            </div>
+            <p>{{ tokenInfo.pendingReward }}</p>
+            <span>≈${{ tokenInfo.pendingRewardUSD }}</span>
           </div>
-          <p>{{ tokenInfo.pendingReward }}</p>
-          <span>≈${{ tokenInfo.pendingRewardUSD }}</span>
+          <div class="right">
+            <el-button
+              class="btns"
+              type="primary"
+              size="small"
+              @click="gether"
+              :disabled="!!!Number(tokenInfo.pendingReward) || !talonAddress"
+            >
+              {{ $t("farm.farm21") }}
+            </el-button>
+          </div>
         </div>
-        <div class="right">
-          <el-button
-            class="btns"
-            type="primary"
-            size="small"
+        <div class="alter">
+          <div class="left">
+            <div class="info-title">{{ $t("farm.farm9") }}LP</div>
+            <p>{{ tokenInfo.stakeAmount }}</p>
+            <span>≈${{ tokenInfo.stakeUSD }}</span>
+          </div>
+          <div class="right">
+            <template v-if="needAuth">
+              <el-button
+                class="btns auth-btn"
+                type="primary"
+                size="small"
+                @click="authToken"
+              >
+                {{ $t("transfer.transfer13") }}
+              </el-button>
+            </template>
+            <template v-else>
+              <el-button
+                class="btns"
+                type="primary"
+                size="small"
+                icon="el-icon-minus"
+                :disabled="
+                  !!!Number(tokenInfo.stakeAmount) ||
+                  !talonAddress ||
+                  !tokenInfo.isLocked
+                "
+                @click="handleLP('minus')"
+              ></el-button>
+              <el-button
+                class="btns"
+                type="primary"
+                size="small"
+                icon="el-icon-plus"
+                :disabled="
+                  !!!Number(tokenInfo.syrupTokenBalance) || !talonAddress
+                "
+                @click="handleLP('add')"
+              ></el-button>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-cont">
+      <div class="option-cont">
+        <div class="text-90">
+          {{ $t("farm.farm23") }}{{ tokenInfo.syrupTokenSymbol }}
+        </div>
+        <div class="d-flex align-items-center space-between">
+          <div class="count-cont">{{ tokenInfo.pendingReward }}</div>
+          <div
+            class="btn"
             @click="gether"
-            :disabled="!!!Number(tokenInfo.pendingReward) || !talonAddress"
+            :class="{
+              btn_disabled: !!!Number(tokenInfo.pendingReward) || !talonAddress
+            }"
           >
             {{ $t("farm.farm21") }}
-          </el-button>
+          </div>
         </div>
       </div>
-      <div class="alter">
-        <div class="left">
-          <div class="info-title">{{ $t("farm.farm9") }}LP</div>
-          <p>{{ tokenInfo.stakeAmount }}</p>
-          <span>≈${{ tokenInfo.stakeUSD }}</span>
-        </div>
-        <div class="right">
-          <template v-if="needAuth">
-            <el-button
-              class="btns auth-btn"
-              type="primary"
-              size="small"
-              @click="authToken"
-            >
-              {{ $t("transfer.transfer13") }}
-            </el-button>
-          </template>
-          <template v-else>
-            <el-button
-              class="btns"
-              type="primary"
-              size="small"
-              icon="el-icon-minus"
-              :disabled="
-                !!!Number(tokenInfo.stakeAmount) ||
-                !talonAddress ||
-                !tokenInfo.isLocked
-              "
-              @click="handleLP('minus')"
-            ></el-button>
-            <el-button
-              class="btns"
-              type="primary"
-              size="small"
-              icon="el-icon-plus"
-              :disabled="
-                !!!Number(tokenInfo.syrupTokenBalance) || !talonAddress
-              "
-              @click="handleLP('add')"
-            ></el-button>
-          </template>
+      <div class="option-cont mt-15">
+        <div class="text-90">{{ $t("farm.farm9") }} LP</div>
+        <div class="d-flex align-items-center space-between mt-15">
+          <div class="count-cont">{{ tokenInfo.stakeAmount }}</div>
+          <div class="btn-group">
+            <template v-if="needAuth">
+              <el-button
+                class="btns auth-btn"
+                type="primary"
+                size="small"
+                @click="authToken"
+              >
+                {{ $t("transfer.transfer13") }}
+              </el-button>
+            </template>
+            <template v-else>
+              <el-button
+                class="btns"
+                type="primary"
+                size="small"
+                icon="el-icon-minus"
+                :disabled="
+                  !!!Number(tokenInfo.stakeAmount) ||
+                  !talonAddress ||
+                  !tokenInfo.isLocked
+                "
+                @click="handleLP('minus')"
+              ></el-button>
+              <el-button
+                class="btns"
+                type="primary"
+                size="small"
+                icon="el-icon-plus"
+                :disabled="
+                  !!!Number(tokenInfo.syrupTokenBalance) || !talonAddress
+                "
+                @click="handleLP('add')"
+              ></el-button>
+            </template>
+          </div>
         </div>
       </div>
+      <div class="d-flex align-items-center space-between mt-15 size-14">
+        <span class="text-7e">{{ $t("farm.farm4") }}</span>
+        <span>{{ tokenInfo.tatalStakeTokenUSD }}</span>
+      </div>
+      <div class="d-flex align-items-center space-between mt-15 size-14">
+        <span class="text-7e">{{ $t("farm.farm5") }}</span>
+        <span>
+          {{ tokenInfo.syrupTokenBalance }} {{ tokenInfo.syrupTokenSymbol }}
+        </span>
+      </div>
+      <div class="text-4a mt-15">
+        {{ $t("farm.farm7") }}{{ tokenInfo.name }}
+      </div>
+      <div class="text-4a mt-15">{{ $t("farm.farm8") }}</div>
     </div>
     <lp-dialog
       v-model:showLPDialog="dialogAddOrMinus"
@@ -260,7 +337,7 @@ export default defineComponent({
             address
           );
         } else {
-          balance.value= await transfer.getEthBalance(address);
+          balance.value = await transfer.getEthBalance(address);
         }
       }
     }
@@ -393,75 +470,102 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.farm-details {
-  /* height: 148px; */
-  padding: 20px 60px 20px 40px;
-  background: #fafcff;
-  border-bottom: 1px solid #e4efff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .getLp {
-    min-width: 200px;
-    p {
-      font-size: 16px;
-      font-weight: 500;
-      color: #4a5ef2;
-      line-height: 24px;
-      margin-top: 8px;
-      cursor: not-allowed;
-      &:first-child {
-        margin: 0;
-      }
+.mobile-cont {
+  display: none;
+  width: 100%;
+  .option-cont {
+    padding: 20px 20px 18px 18px;
+    border: 1px solid #aab2c9;
+    border-radius: 10px;
+    .count-cont {
+      color: #333333;
+      font-weight: bold;
+      font-size: 20px;
+      width: 120px;
+    }
+    .btn {
+      height: 44px;
+      width: 80px;
+      background-color: #4a5ef2;
+      line-height: 44px;
+      text-align: center;
+      font-size: 15px;
+      color: #ffffff;
+      border-radius: 10px;
     }
   }
-  .biaoge {
-    flex: 1;
+}
+.farm-details {
+  /* height: 148px; */
+  .pc-cont {
+    padding: 20px 60px 20px 40px;
+    background: #fafcff;
+    border-bottom: 1px solid #e4efff;
     display: flex;
-    .gain,
-    .alter {
-      flex: 1;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-left: 60px;
-      height: 108px;
-      padding: 20px 40px;
-      background: #fff;
-      border: 1px solid #e4efff;
-      border-radius: 10px;
-      .left {
-        width: 170px;
-        .info-title {
-          font-size: 14px;
-          margin-bottom: 5px;
+    align-items: center;
+    justify-content: space-between;
+    .getLp {
+      min-width: 200px;
+      p {
+        font-size: 16px;
+        font-weight: 500;
+        color: #4a5ef2;
+        line-height: 24px;
+        margin-top: 8px;
+        cursor: not-allowed;
+        &:first-child {
+          margin: 0;
         }
-        p {
-          font-size: 20px;
-          font-weight: bold;
-        }
-        span {
-          font-size: 14px;
-          font-weight: bold;
-          color: #858fb1;
-        }
-      }
-      .btns {
-        width: 100px;
-        height: 38px;
-        background: #4a5ef2;
-        border-radius: 6px;
       }
     }
-    .alter {
-      .btns {
-        width: 70px;
-        margin-left: 20px;
-        &.auth-btn {
-          width: 100px;
+    .biaoge {
+      flex: 1;
+      display: flex;
+      .gain,
+      .alter {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 60px;
+        height: 108px;
+        padding: 20px 40px;
+        background: #fff;
+        border: 1px solid #e4efff;
+        border-radius: 10px;
+        .left {
+          width: 170px;
+          .info-title {
+            font-size: 14px;
+            margin-bottom: 5px;
+          }
+          p {
+            font-size: 20px;
+            font-weight: bold;
+          }
+          span {
+            font-size: 14px;
+            font-weight: bold;
+            color: #858fb1;
+          }
         }
-        i {
-          font-size: 20px;
+        .btns {
+          width: 100px;
+          height: 38px;
+          background: #4a5ef2;
+          border-radius: 6px;
+        }
+      }
+      .alter {
+        .btns {
+          width: 70px;
+          margin-left: 20px;
+          &.auth-btn {
+            width: 100px;
+          }
+          i {
+            font-size: 20px;
+          }
         }
       }
     }
@@ -470,7 +574,14 @@ export default defineComponent({
     z-index: 1888 !important;
   }
 }
+.btn_disabled {
+  background-color: #a0cfff !important;
+  cursor: not-allowed;
+}
 @media screen and (max-width: 1200px) {
+  .farm-details {
+    padding: 20px 15px;
+  }
   .gain {
     margin-left: 0;
     margin-top: 20px;
@@ -517,5 +628,17 @@ export default defineComponent({
   .farm-item .more {
     margin-top: 15px;
   }
+}
+@media screen and (max-width: 800px) {
+  .pc-cont {
+    display: none !important;
+  }
+  .mobile-cont {
+    display: block;
+  }
+}
+.text-90 {
+  color: #9095a6;
+  font-size: 14px;
 }
 </style>

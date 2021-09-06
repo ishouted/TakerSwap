@@ -4,7 +4,7 @@
     v-loading="loading"
     element-loading-background="rgba(255, 255, 255, 0.8)"
   >
-    <el-empty description="No Data" v-if="!list.length"></el-empty>
+    <el-empty description="No Data" v-if="!list.length" />
     <template v-if="true">
       <div class="lis" v-for="(item, index) of list" :key="index">
         <div class="title">
@@ -91,6 +91,56 @@
       <span class="link" @click="createFarm">{{ $t("farm.farm11") }}</span>
     </div>
   </div>
+  <div class="mobile-cont">
+    <el-empty description="No Data" v-if="!list.length"></el-empty>
+    <div v-for="(item, index) in list" v-else :key="item.farmHash">
+      <div class="farm-item_cont">
+        <div class="farm-item_list">
+          <div class="symbol-cont">
+            <div class="symbol-icon-cont">
+              <span v-if="item.name.split('-')[0]">
+                <img
+                  :src="getIconSrc(item.name.split('-')[0])"
+                  @error="replaceImg"
+                  alt=""
+                />
+              </span>
+              <span v-if="item.name.split('-')[1]">
+                <img
+                  :src="getIconSrc(item.name.split('-')[1])"
+                  @error="replaceImg"
+                  alt=""
+                />
+              </span>
+            </div>
+            <span>{{ item.name }}</span>
+          </div>
+          <div class="farm-info">
+            <div class="farm-info_item">
+              <div class="text-7e">{{ $t("farm.farm2") }}</div>
+              <div class="mt-8 size-15">{{ item.pendingReward }}</div>
+            </div>
+            <div class="farm-info_item">
+              <div class="text-7e">APR</div>
+              <div class="mt-8 size-15">{{ item.apr }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="farm-option text-4a size-14" @click="showId(item.farmHash)">
+          {{ $t("farm.farm6") }}
+        </div>
+      </div>
+      <collapse-transition>
+        <DetailsBar
+          :tokenInfo="item"
+          :isTalon="isTalon"
+          :talonAddress="talonAddress"
+          v-show="item.showDetail"
+          @loading="handleLoading"
+        ></DetailsBar>
+      </collapse-transition>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -100,6 +150,8 @@ import CollapseTransition from "@/components/CollapseTransition.vue";
 import FarmSymbol from "./FarmSymbol.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { getIconSrc } from "@/api/util";
+import defaultIcon from "@/assets/Talon.svg";
 
 export default defineComponent({
   name: "FarmItem",
@@ -138,12 +190,18 @@ export default defineComponent({
       emit("handleLoading", status);
     }
 
+    function replaceImg(e) {
+      e.target.src = defaultIcon;
+    }
+
     return {
       ...toRefs(state),
       talonAddress,
       showId,
       handleLoading,
-      createFarm
+      createFarm,
+      replaceImg,
+      getIconSrc
     };
   },
   components: {
@@ -157,7 +215,57 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.mobile-cont {
+  display: none;
+  border-radius: 10px;
+  background-color: #ffffff;
+  overflow: hidden;
+  padding-bottom: 20px;
+  .farm-item_cont {
+    display: flex;
+    padding: 20px 15px 25px 15px;
+    border-bottom: 1px solid #e9ebf3;
+    justify-content: space-between;
+    align-items: center;
+    .farm-item_list {
+      .symbol-cont {
+        display: flex;
+        font-size: 15px;
+        font-weight: bold;
+        .symbol-icon-cont {
+          display: flex;
+          width: 45px;
+          span {
+            height: 22.5px;
+            width: 22.5px;
+            border-radius: 50%;
+            z-index: 1;
+            &:nth-child(2) {
+              transform: translateX(-9px);
+              z-index: 0;
+            }
+            img {
+              height: 100%;
+              width: 100%;
+            }
+          }
+        }
+      }
+      .farm-info {
+        display: flex;
+        margin-top: 20px;
+        .farm-info_item {
+          width: 104px;
+        }
+      }
+    }
+  }
+  .farm-option {
+    cursor: pointer;
+  }
+}
 .farm-item {
+  display: block;
   background: #ffffff;
   border-radius: 20px;
   padding: 20px 0 80px;
@@ -250,14 +358,30 @@ export default defineComponent({
   }
 }
 @media screen and (max-width: 800px) {
-  .lis {
+  .farm-item {
     display: none !important;
   }
-  .mobile-item {
+  .mobile-cont {
     display: block;
   }
   .farm-item {
     padding: 15px;
   }
+}
+.text-7e {
+  color: #7e87c2;
+}
+.text-4a {
+  color: #4a5ef2;
+}
+.mt-8 {
+  margin-top: 7.5px;
+}
+.size-15 {
+  font-size: 15px;
+  font-weight: bold;
+}
+.size-14 {
+  font-size: 14px;
 }
 </style>

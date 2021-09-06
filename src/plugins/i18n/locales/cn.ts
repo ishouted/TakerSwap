@@ -137,6 +137,7 @@ const cn = {
     farm20: "添加",
     farm21: "收取",
     farm22: "开始时间",
+    farm23: "已赚取"
   },
   createFarm: {
     createFarm1: "请选择质押的Token资产",

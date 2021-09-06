@@ -150,31 +150,101 @@
         @addAssets="filterAssets"
       ></assets-manage>
     </div>
+    <div class="mobile-cont pb-28" v-if="!showTransfer">
+      <div class="pt-25 top flex-center">
+        <div class="top-title">{{ $t("assets.assets1") }}</div>
+        <el-divider direction="vertical"></el-divider>
+        <div class="l1-net flex-center">
+          <template v-if="disableTx">
+            <span class="wrong-net">{{ $t("public.public14") }}</span>
+          </template>
+          <template v-else>
+            <symbol-icon :icon="network"></symbol-icon>
+            <el-tooltip
+              effect="dark"
+              :content="$t('assets.assets2') + network"
+              placement="top"
+            >
+              <span class="click font_20">{{ network }}</span>
+            </el-tooltip>
+          </template>
+        </div>
+      </div>
+      <div class="p-24 address-wrap flex-center">
+        <div class="address">
+          {{ $t("assets.assets3") }}
+          <span class="text-7e size-14">
+            {{ superLong(talonAddress, 9) }}
+          </span>
+          <i class="iconfont icon-fuzhi" @click="$copy(talonAddress)"></i>
+        </div>
+        <i class="iconfont icon-tianjia" @click="showAssetManage = true"></i>
+      </div>
+      <el-empty description="No Data" v-loading="loading" v-if="!tableData.length" />
+      <div v-for="(item, index) in tableData" v-else :key="index">
+        <div class="p-24 asset-cont" @click="assetClick(item)">
+          <div class="asset-item">
+            <span class="asset-img">
+              <img :src="getImageSrc(item.symbol)" @error="replaceImg" alt="" />
+            </span>
+            <span class="font-bold">{{ item.symbol }}</span>
+          </div>
+          <div class="asset-amount">
+            <div class="font-bold size-16 align-right">{{ item.number }}</div>
+            <div class="size-13 text-7e align-right">≈{{ item.valuation }}</div>
+          </div>
+        </div>
+        <CollapseTransition>
+          <div class="option-btn" v-if="item.showDetail">
+            <div class="btn-cont">
+              <div
+                class="btn"
+                @click="transfer(item, 'crossIn')"
+                v-if="isShowCrossHandle(item)"
+                :class="{ btn_disable: disableTx }"
+              >
+                {{ $t("assets.assets4") }}
+              </div>
+              <div
+                class="btn"
+                @click="transfer(item, 'general')"
+                v-if="isShowCrossHandle(item)"
+                :class="{ btn_disable: disableTx }"
+              >
+                {{ $t("assets.assets5") }}
+              </div>
+              <div
+                class="btn"
+                @click="transfer(item, 'withdrawal')"
+                v-if="isShowCrossHandle(item)"
+                :class="{ btn_disable: disableTx }"
+              >
+                {{ $t("assets.assets6") }}
+              </div>
+            </div>
+          </div>
+        </CollapseTransition>
+      </div>
+    </div>
     <transfer
-      v-else
+      v-if="showTransfer"
       v-model:currentTab="currentTab"
       v-model:show="showTransfer"
-    ></transfer>
+    />
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import {
-  chainToSymbol,
-  getIconSrc,
-  getTalonAddress,
-  divisionAndFix,
-  Plus,
-  Times,
-  _networkInfo
-} from "@/api/util";
+import { chainToSymbol, superLong, getIconSrc, _networkInfo } from "@/api/util";
 import SymbolIcon from "@/components/SymbolIcon.vue";
 import AssetsManage from "./AssetsManage.vue";
 import Transfer from "./transfer/index.vue";
 import { getAssetList } from "@/model";
 import config from "@/config";
-import { listen } from "@/api/promiseSocket";
+import defaultIcon from "../../assets/Talon.svg";
+import CollapseTransition from "@/components/CollapseTransition.vue";
+
 const url = config.WS_URL;
 
 export default defineComponent({
@@ -183,7 +253,8 @@ export default defineComponent({
   components: {
     SymbolIcon,
     AssetsManage,
-    Transfer
+    Transfer,
+    CollapseTransition
   },
   provide() {
     return {
@@ -231,11 +302,27 @@ export default defineComponent({
       showTransfer: false,
       currentTab: "first",
       tableData: [],
-      transferAsset: {}
+      transferAsset: {},
+      show: false
     };
   },
 
   methods: {
+    getImageSrc(icon) {
+      return "https://nuls-cf.oss-us-west-1.aliyuncs.com/icon/" + icon + ".png";
+    },
+    replaceImg(e) {
+      e.target.src = defaultIcon;
+    },
+    assetClick(item) {
+      for (let asset of this.tableData) {
+        if (item.assetKey === asset.assetKey) {
+          item.showDetail = !item.showDetail;
+        } else {
+          asset.showDetail = false;
+        }
+      }
+    },
     async getList() {
       this.loading = true;
       const res = await getAssetList(this.talonAddress);
@@ -311,12 +398,111 @@ export default defineComponent({
         });
       });
       return supportedChain;
+    },
+    superLong(str, len = 9) {
+      return superLong(str, len);
     }
   }
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.mobile-cont {
+  display: none;
+  //padding: 24px 15px 28px 15px;
+  background-color: #ffffff;
+  overflow: hidden;
+  border-radius: 10px;
+  .top {
+    .top-title {
+      font-size: 17px;
+    }
+    .el-divider {
+      margin: 0 16px;
+      background-color: #333333;
+      width: 2px;
+      height: 25px;
+    }
+    .l1-net {
+      img {
+        margin-right: 10px;
+      }
+    }
+  }
+  .address-wrap {
+    justify-content: space-between;
+    font-size: 15px;
+    color: #333;
+    margin: 20px 0;
+    i {
+      color: #4a5ef2;
+      font-size: 15px;
+      cursor: pointer;
+      margin-left: 20px;
+    }
+  }
+  .asset-cont {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 15px 20px 15px;
+    border-bottom: 1px solid #e9ebf3;
+    .asset-item {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      .asset-img {
+        height: 22.5px;
+        width: 22.5px;
+        overflow: hidden;
+        margin-right: 6px;
+        img {
+          height: 100%;
+          width: 100%;
+        }
+      }
+    }
+  }
+  .option-btn {
+    padding: 20px 15px;
+    background-color: #f8f8fc;
+    .btn-cont {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .btn {
+        cursor: pointer;
+        height: 39px;
+        width: 95px;
+        font-size: 15px;
+        background-color: #4a5ef2;
+        color: #ffffff;
+        line-height: 39px;
+        text-align: center;
+        border-radius: 10px;
+      }
+    }
+  }
+}
+.font-bold {
+  font-weight: bolder;
+}
+.p-24 {
+  padding: 0 15px 0 15px;
+}
+.pt-25 {
+  padding: 25px 15px 0 15px;
+}
+.pb-28 {
+  padding-bottom: 28px;
+}
+.align-right {
+  text-align: right;
+}
+.btn_disable {
+  background-color: #a0cfff !important;
+  cursor: not-allowed;
+}
 .assets {
   max-height: 721px;
   background: #ffffff;
@@ -392,6 +578,14 @@ export default defineComponent({
       flex-direction: column;
       justify-content: space-between;
     }
+  }
+}
+@media screen and (max-width: 800px) {
+  .mobile-cont {
+    display: block;
+  }
+  .assets {
+    display: none;
   }
 }
 @media screen and (max-width: 1200px) {

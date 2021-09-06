@@ -1,4 +1,10 @@
 <template>
+  <div class="tab-bar">
+    <span @click="current = 1" :class="{ active: current === 1 }">L1 Farm</span>
+    <span @click="current = 2" :class="{ active: current === 2 }">
+      Curium Farm
+    </span>
+  </div>
   <div class="w1300 farm">
     <div class="top clear">
       <div
@@ -38,13 +44,13 @@
       </div>
     </div>
     <farm-item
-      v-show="current === 1"
+      v-if="current === 1"
       :list="uniList"
       :loading="uniLoading"
       @handleLoading="handleLoading"
     ></farm-item>
     <farm-item
-      v-show="current === 2"
+      v-if="current === 2"
       :list="talonList"
       :loading="talonLoading"
       @handleLoading="handleLoading"
@@ -857,6 +863,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.tab-bar {
+  display: none;
+  margin-left: 30px;
+  align-items: center;
+  font-size: 16px;
+  border-bottom: 1px solid #ffffff;
+  color: #b0b5eb;
+  span {
+    cursor: pointer;
+    box-sizing: border-box;
+    height: 30px;
+    margin-right: 15px;
+  }
+  .active {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+  }
+}
 .farm {
   min-height: 750px;
   .top {
@@ -986,7 +1010,11 @@ export default defineComponent({
   }
 }
 @media screen and (max-width: 800px) {
+  .tab-bar {
+    display: flex;
+  }
   .farm .top {
+    display: none;
     width: 300px;
     .tab-item {
       width: 150px;

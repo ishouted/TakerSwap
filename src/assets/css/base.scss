@@ -266,6 +266,42 @@ a.line {
   color: red;
 }
 
+.d-flex {
+  display: flex;
+}
+
+.space-between{
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
+.text-7e {
+  color: #7e87c2;
+}
+
+.text-4a {
+  color: #4A5EF2;
+}
+
+.size-13 {
+  font-size: 13px;
+}
+
+.size-14 {
+  font-size: 14px;
+}
+
+.size-16 {
+  font-size: 16px;
+}
+
 
 // 纵向滚动条和横向滚动条宽度
 ::-webkit-scrollbar {
