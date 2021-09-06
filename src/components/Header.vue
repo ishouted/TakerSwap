@@ -2,7 +2,7 @@
   <div class="w1300 header">
     <div class="left">
       <div class="logo" @click="toUrl('home')">
-        <img class="fl" src="./../assets/TakerSwap.png" />
+        <img class="fl" src="./../assets/TakerSwap.svg" alt="" />
         <!-- <span class="fl">Talon</span> -->
       </div>
       <el-menu
