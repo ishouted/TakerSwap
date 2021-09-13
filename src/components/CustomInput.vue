@@ -13,7 +13,7 @@
         placeholder="0.0"
       >
         <template #append v-if="talonAddress">
-          <span @click="max">Max</span>
+          <span @click="max">MAX</span>
         </template>
       </el-input>
       <div class="select-wrap flex-center" @click="showDialog = true">
@@ -53,17 +53,22 @@
           }"
           @click="changeSelect(item)"
         >
-          <div class="flex-center flex-1">
+          <div class="flex-center flex-1" style="width: 100%">
             <symbol-icon :icon="item.symbol"></symbol-icon>
             <div class="asset-base-info">
               <div>
                 {{ item.symbol }}
               </div>
               <span v-if="showAmount">ID: {{ item.assetKey }}</span>
-              <span v-else>{{ item.contractAddress }}</span>
+              <template v-else>
+                <span class="pc-span">{{ item.contractAddress }}</span>
+                <span class="mobile-span">
+                  {{ superLong(item.contractAddress, 15) }}
+                </span>
+              </template>
             </div>
-            <div class="asset-price" v-if="talonAddress">
-              <span v-if="showAmount">
+            <div class="asset-price ellipsis" v-if="talonAddress">
+              <span class="ellipsis" v-if="showAmount">
                 {{ item.listAvailable }}
               </span>
               <!--<span>≈{{ item.usdPrice }}</span>-->
@@ -77,6 +82,7 @@
 
 <script>
 import SymbolIcon from "@/components/SymbolIcon.vue";
+import { superLong } from "@/api/util";
 export default {
   props: {
     label: {
@@ -147,13 +153,18 @@ export default {
   methods: {
     changeInput(val) {
       // this.amount = val;
-      let decimals = this.chooseAsset.decimals || 0;
+      let decimals = this.chooseAsset?.decimals || 0;
       let patrn = "";
       if (!decimals) {
         patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d])?$");
       } else {
         patrn = new RegExp(
-          "^([1-9][\\d]{0,20}|0)(\\.[\\d]{0," + decimals + "})?$"
+          "^([1-9][\\d]*|0)(\\.[\\d]{0," +
+            decimals +
+            "})?$|(^\\.[\\d]{0," +
+            decimals +
+            "}$)"
+          // "^([1-9][\\d]{0,20}|0)(\\.[\\d]{0," + decimals + "})?$"
         );
       }
       if (patrn.exec(val) || val === "") {
@@ -192,6 +203,9 @@ export default {
     },
     customerFocus() {
       this.$emit("customerFocus");
+    },
+    superLong(str, len = 6) {
+      return superLong(str, len);
     }
   }
 };
@@ -226,6 +240,7 @@ export default {
       flex: 1;
       .el-input__inner {
         font-size: 20px;
+        padding-right: 0;
       }
     }
   }
@@ -305,16 +320,102 @@ export default {
             font-size: 14px;
             color: #7e87c2;
           }
+          .mobile-span {
+            display: none;
+          }
         }
         .asset-price {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           text-align: right;
+          max-width: 70%;
           span:nth-child(1) {
             text-align: right;
             font-size: 20px;
             font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 1200px) {
+    :deep(.select-assets-dialog) {
+      .list-wrap {
+        li {
+          .asset-base-info {
+            .pc-span {
+              display: none;
+            }
+            .mobile-span {
+              display: block;
+            }
+          }
+        }
+      }
+    }
+  }
+  @media screen and (max-width: 500px) {
+    padding: 10px 15px;
+    .el-input {
+      margin-right: 10px;
+    }
+    .inner {
+      :deep(.el-input) {
+        .el-input__inner {
+          font-size: 16px;
+        }
+      }
+    }
+    .select-wrap {
+      img {
+        width: 25px;
+        height: 25px;
+      }
+    }
+    :deep(.el-input) {
+      .el-input-group__append,
+      .el-input-group__prepend {
+        padding-left: 10px;
+        span {
+          padding: 2px 4px;
+        }
+      }
+    }
+    :deep(.select-assets-dialog) {
+      .el-input {
+        .el-input__inner {
+          line-height: 36px;
+          height: 36px;
+        }
+        margin-bottom: 10px;
+      }
+      .list-wrap {
+        li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 48px;
+          cursor: pointer;
+          img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+          }
+          .asset-base-info {
+            flex: 1;
+            div {
+              font-size: 14px;
+            }
+            span {
+              font-size: 12px;
+            }
+          }
+          .asset-price {
+            max-width: 60%;
+            span:nth-child(1) {
+              font-size: 16px;
+            }
           }
         }
       }
@@ -325,11 +426,5 @@ export default {
 .disable_asset {
   opacity: 0.6;
   cursor: not-allowed !important;
-}
-
-@media screen and (max-width: 1200px) {
-  ::v-deep .el-overlay {
-    padding: 20px;
-  }
 }
 </style>

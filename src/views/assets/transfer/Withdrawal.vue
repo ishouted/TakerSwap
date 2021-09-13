@@ -5,19 +5,11 @@
     element-loading-background="rgba(255, 255, 255, 0.8)"
   >
     <div class="title">
-      {{
-        $t("transfer.transfer7") +
-        " " +
-        father.network +
-        $t("transfer.transfer8")
-      }}
+      {{ "To " + $t("transfer.transfer21") }}
       <span class="click" @click="openUrl(father.address, father.network)">
         {{ superLong(father.address) }}
         <i class="iconfont icon-tiaozhuanlianjie"></i>
       </span>
-    </div>
-    <div class="wrong-net" v-if="father.disableTx">
-      {{ $t("public.public14") }}
     </div>
     <div class="transfer-content">
       <custom-input
@@ -285,6 +277,14 @@ export default defineComponent({
   }
   .wrong-net {
     margin-top: 10px;
+  }
+  @media screen and (max-width: 500px) {
+    .title {
+      font-size: 16px;
+    }
+    .transfer-content {
+      margin: 35px 0 50px;
+    }
   }
 }
 </style>

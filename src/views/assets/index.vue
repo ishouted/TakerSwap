@@ -1,175 +1,151 @@
 <template>
-  <div class="w1300">
-    <div class="assets" v-if="!showTransfer">
-      <div class="top flex-center">
-        <div class="top-title">{{ $t("assets.assets1") }}</div>
-        <el-divider direction="vertical"></el-divider>
-        <div class="l1-net flex-center">
-          <template v-if="disableTx">
-            <span class="wrong-net">{{ $t("public.public14") }}</span>
-          </template>
-          <template v-else>
-            <symbol-icon :icon="network"></symbol-icon>
-            <el-tooltip
-              effect="dark"
-              :content="$t('assets.assets2') + network"
-              placement="top"
-            >
-              <span class="click font_20">{{ network }}</span>
-            </el-tooltip>
-          </template>
-        </div>
-      </div>
-      <div class="address-wrap flex-center">
-        <div class="address">
-          {{ $t("assets.assets3") }}
-          {{ talonAddress }}
-          <i class="iconfont icon-fuzhi" @click="$copy(talonAddress)"></i>
-        </div>
-        <i class="iconfont icon-tianjia" @click="showAssetManage = true"></i>
-      </div>
-      <div class="assets-list" v-loading="loading">
-        <template v-if="tableData && tableData.length !== 0">
-          <div
-            class="asset-item"
-            v-for="(item, index) in tableData"
-            :key="index"
+  <div class="w1300 assets-wrap">
+    <div
+      class="hack-table-resize"
+      v-if="!showTransfer"
+      style="position: relative"
+    >
+      <div style="position: absolute; width: 100%">
+        <div class="assets">
+          <div class="address-wrap flex-center">
+            <div class="address">
+              {{ $t("assets.assets3") }}
+              {{ talonAddress }}
+              <i class="iconfont icon-fuzhi" @click="$copy(talonAddress)"></i>
+            </div>
+            <i
+              class="iconfont icon-tianjia"
+              @click="showAssetManage = true"
+            ></i>
+          </div>
+          <div class="assets-list" v-loading="loading">
+            <template v-if="tableData && tableData.length !== 0">
+              <div
+                class="asset-item"
+                v-for="(item, index) in tableData"
+                :key="index"
+              >
+                <span class="assets_symbol">{{ item.symbol }}</span>
+                <div class="asset-info">
+                  <span>
+                    {{ $t("public.public2") }}：{{ item.number }}≈${{
+                      item.valuation
+                    }}
+                  </span>
+                  <span>{{ $t("public.public3") }}：{{ item.available }}</span>
+                  <span>{{ $t("public.public4") }}：{{ item.locking }}</span>
+                </div>
+                <div class="option_btn">
+                  <el-dropdown trigger="click">
+                    <span class="el-dropdown-link">
+                      {{ $t("public.public5") }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </span>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item @click="transfer(item, 'crossIn')">
+                          {{ $t("assets.assets4") }}
+                        </el-dropdown-item>
+                        <el-dropdown-item @click="transfer(item, 'general')">
+                          {{ $t("assets.assets5") }}
+                        </el-dropdown-item>
+                        <el-dropdown-item @click="transfer(item, 'withdrawal')">
+                          {{ $t("assets.assets6") }}
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                </div>
+              </div>
+            </template>
+            <el-empty description="No Data" v-if="!tableData.length"></el-empty>
+          </div>
+          <el-table
+            :data="tableData"
+            height="480"
+            class="show_table"
+            v-loading="loading"
+            element-loading-background="rgba(255, 255, 255, 0.8)"
           >
-            <span class="assets_symbol">{{ item.symbol }}</span>
-            <div class="asset-info">
-              <span>
-                {{ $t("public.public2") }}：{{ item.number }}≈${{
-                  item.valuation
-                }}
-              </span>
-              <span>{{ $t("public.public3") }}：{{ item.available }}</span>
-              <span>{{ $t("public.public4") }}：{{ item.locking }}</span>
-            </div>
-            <div class="option_btn">
-              <el-dropdown trigger="click">
-                <span class="el-dropdown-link">
-                  {{ $t("public.public5") }}
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item @click="transfer(item, 'crossIn')">
-                      {{ $t("assets.assets4") }}
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="transfer(item, 'general')">
-                      {{ $t("assets.assets5") }}
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="transfer(item, 'withdrawal')">
-                      {{ $t("assets.assets6") }}
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </div>
-          </div>
-        </template>
-        <el-empty description="No Data" v-if="!tableData.length"></el-empty>
-      </div>
-      <el-table
-        :data="tableData"
-        height="480"
-        class="show_table"
-        v-loading="loading"
-        element-loading-background="rgba(255, 255, 255, 0.8)"
-      >
-        <el-table-column width="50px"></el-table-column>
-        <el-table-column :label="$t('public.public1')" width="240">
-          <template v-slot="scope">
-            <div class="flex-center">
-              <symbol-icon :icon="scope.row.symbol"></symbol-icon>
-              <span>{{ scope.row.symbol }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="available"
-          :label="$t('public.public2')"
-          width="180"
-        ></el-table-column>
-        <el-table-column
-          prop="locking"
-          :label="$t('public.public3')"
-          width="180"
-        ></el-table-column>
-        <el-table-column :label="$t('public.public4')">
-          <template v-slot="scope">
-            {{ scope.row.number }}
-            <span class="ydy">≈${{ scope.row.valuation }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column :label="$t('public.public5')" align="center">
-          <template v-slot="scope">
-            <el-button
-              @click="transfer(scope.row, 'crossIn')"
-              type="text"
-              v-if="isShowCrossHandle(scope.row)"
-              :disabled="disableTx"
+            <el-table-column width="20px"></el-table-column>
+            <el-table-column :label="$t('public.public1')">
+              <template v-slot="scope">
+                <div class="flex-center">
+                  <symbol-icon :icon="scope.row.symbol"></symbol-icon>
+                  <span>{{ scope.row.symbol }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('public.public2')"
             >
-              {{ $t("assets.assets4") }}
-            </el-button>
-            <el-button @click="transfer(scope.row, 'general')" type="text">
-              {{ $t("assets.assets5") }}
-            </el-button>
-            <el-button
-              @click="transfer(scope.row, 'withdrawal')"
-              type="text"
-              :disabled="disableTx"
-              v-if="isShowCrossHandle(scope.row)"
+              <template v-slot="scope">
+                {{ $thousands(scope.row.available) }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="locking"
+              :label="$t('public.public3')"
             >
-              {{ $t("assets.assets6") }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-dialog
-        :title="$t('assets.assets7')"
-        custom-class="assets-manage"
-        :show-close="false"
-        v-model="showAssetsDialog"
-      >
-        <div class="content">
-          <div class="top">
-            <span>{{ superLong(address, 9) }}</span>
-            <span><i class="el-icon-copy-document"></i></span>
-            <span><i class="el-icon-copy-document"></i></span>
-          </div>
-          <div class="bottom tc">
-            <el-button type="primary">{{ $t("public.public7") }}</el-button>
-          </div>
+              <template v-slot="scope">
+                {{ $thousands(scope.row.locking) }}
+              </template>
+            </el-table-column>
+            <el-table-column :label="$t('public.public4')">
+              <template v-slot="scope">
+                {{ $thousands(scope.row.number) }}
+                <p class="ydy">≈${{ $thousands(scope.row.valuation) }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$t('public.public5')"
+              align="center"
+              width="240px"
+            >
+              <template v-slot="scope">
+                <el-button
+                  @click="transfer(scope.row, 'crossIn')"
+                  type="text"
+                  v-if="isShowCrossHandle(scope.row)"
+                  :disabled="disableTx"
+                >
+                  {{ $t("assets.assets4") }}
+                </el-button>
+                <el-button @click="transfer(scope.row, 'general')" type="text">
+                  {{ $t("assets.assets5") }}
+                </el-button>
+                <el-button
+                  @click="transfer(scope.row, 'withdrawal')"
+                  type="text"
+                  :disabled="disableTx"
+                  v-if="isShowCrossHandle(scope.row)"
+                >
+                  {{ $t("assets.assets6") }}
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-dialog
+            :title="$t('assets.assets7')"
+            custom-class="assets-manage"
+            :show-close="false"
+            v-model="showAssetsDialog"
+          >
+            <div class="content">
+              <div class="top">
+                <span>{{ superLong(address, 9) }}</span>
+                <span><i class="el-icon-copy-document"></i></span>
+                <span><i class="el-icon-copy-document"></i></span>
+              </div>
+              <div class="bottom tc">
+                <el-button type="primary">{{ $t("public.public7") }}</el-button>
+              </div>
+            </div>
+          </el-dialog>
         </div>
-      </el-dialog>
-      <assets-manage
-        v-model:showAssetManage="showAssetManage"
-        :assetList="allAssetsList"
-        :selectAssets="selectAssets"
-        @addAssets="filterAssets"
-      ></assets-manage>
+      </div>
     </div>
     <div class="mobile-cont pb-28" v-if="!showTransfer">
-      <div class="pt-25 top flex-center">
-        <div class="top-title">{{ $t("assets.assets1") }}</div>
-        <el-divider direction="vertical"></el-divider>
-        <div class="l1-net flex-center">
-          <template v-if="disableTx">
-            <span class="wrong-net">{{ $t("public.public14") }}</span>
-          </template>
-          <template v-else>
-            <symbol-icon :icon="network"></symbol-icon>
-            <el-tooltip
-              effect="dark"
-              :content="$t('assets.assets2') + network"
-              placement="top"
-            >
-              <span class="click font_20">{{ network }}</span>
-            </el-tooltip>
-          </template>
-        </div>
-      </div>
       <div class="p-24 address-wrap flex-center">
         <div class="address">
           {{ $t("assets.assets3") }}
@@ -180,18 +156,36 @@
         </div>
         <i class="iconfont icon-tianjia" @click="showAssetManage = true"></i>
       </div>
-      <el-empty description="No Data" v-loading="loading" v-if="!tableData.length" />
+      <el-empty
+        description="No Data"
+        v-loading="loading"
+        v-if="!tableData.length"
+      />
       <div v-for="(item, index) in tableData" v-else :key="index">
         <div class="p-24 asset-cont" @click="assetClick(item)">
           <div class="asset-item">
             <span class="asset-img">
               <img :src="getImageSrc(item.symbol)" @error="replaceImg" alt="" />
             </span>
-            <span class="font-bold">{{ item.symbol }}</span>
+            <span class="font-bold" style="font-size: 15px">
+              {{ item.symbol }}
+            </span>
           </div>
-          <div class="asset-amount">
-            <div class="font-bold size-16 align-right">{{ item.number }}</div>
-            <div class="size-13 text-7e align-right">≈{{ item.valuation }}</div>
+          <div class="asset-amount flex-center">
+            <div class="left">
+              <div class="font-bold align-right" style="font-size: 15px">
+                {{ $thousands(item.number) }}
+              </div>
+              <div class="size-13 text-7e align-right">
+                ≈{{ $thousands(item.valuation) }}
+              </div>
+            </div>
+            <i
+              :class="[
+                'el-icon-caret-right',
+                item.showDetail ? 'rotate-icon' : ''
+              ]"
+            ></i>
           </div>
         </div>
         <CollapseTransition>
@@ -208,8 +202,6 @@
               <div
                 class="btn"
                 @click="transfer(item, 'general')"
-                v-if="isShowCrossHandle(item)"
-                :class="{ btn_disable: disableTx }"
               >
                 {{ $t("assets.assets5") }}
               </div>
@@ -226,6 +218,12 @@
         </CollapseTransition>
       </div>
     </div>
+    <assets-manage
+      v-model:showAssetManage="showAssetManage"
+      :assetList="allAssetsList"
+      :selectAssets="selectAssets"
+      @addAssets="filterAssets"
+    ></assets-manage>
     <transfer
       v-if="showTransfer"
       v-model:currentTab="currentTab"
@@ -407,69 +405,70 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.assets-wrap {
+  padding: 0 20px;
+}
 .mobile-cont {
   display: none;
   //padding: 24px 15px 28px 15px;
   background-color: #ffffff;
   overflow: hidden;
   border-radius: 10px;
-  .top {
-    .top-title {
-      font-size: 17px;
-    }
-    .el-divider {
-      margin: 0 16px;
-      background-color: #333333;
-      width: 2px;
-      height: 25px;
-    }
-    .l1-net {
-      img {
-        margin-right: 10px;
-      }
-    }
-  }
+
   .address-wrap {
     justify-content: space-between;
-    font-size: 15px;
+    font-size: 18px;
     color: #333;
-    margin: 20px 0;
+    margin: 20px 0 10px;
     i {
       color: #4a5ef2;
-      font-size: 15px;
+      font-size: 20px;
       cursor: pointer;
-      margin-left: 20px;
+      margin-left: 10px;
     }
   }
   .asset-cont {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 15px 20px 15px;
+    padding: 15px;
     border-bottom: 1px solid #e9ebf3;
     .asset-item {
       display: flex;
-      flex: 1;
       align-items: center;
+      max-width: 40%;
       .asset-img {
         height: 22.5px;
         width: 22.5px;
         overflow: hidden;
         margin-right: 6px;
+        flex-shrink: 0;
         img {
           height: 100%;
           width: 100%;
         }
       }
     }
+    .asset-amount {
+      flex: 1;
+      justify-content: flex-end;
+    }
+    .el-icon-caret-right {
+      font-size: 16px;
+      margin-left: 5px;
+      transition: transform 0.1s ease;
+    }
+    .rotate-icon {
+      transform: rotate(-90deg);
+    }
   }
   .option-btn {
-    padding: 20px 15px;
+    padding: 20px 0;
     background-color: #f8f8fc;
     .btn-cont {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       .btn {
         cursor: pointer;
         height: 39px;
@@ -480,6 +479,7 @@ export default defineComponent({
         line-height: 39px;
         text-align: center;
         border-radius: 10px;
+        margin: 0 5px;
       }
     }
   }
@@ -507,32 +507,16 @@ export default defineComponent({
   max-height: 721px;
   background: #ffffff;
   box-shadow: 0px 2px 0px 0px #e9eaf4;
-  border-radius: 50px;
+  border-radius: 30px;
   padding: 35px 40px;
   .font_20 {
     font-size: 20px;
-  }
-  .top {
-    .top-title {
-      font-size: 30px;
-    }
-    .el-divider {
-      margin: 0 16px;
-      background-color: #7e87c2;
-      width: 3px;
-      height: 25px;
-    }
-    .l1-net {
-      img {
-        margin-right: 10px;
-      }
-    }
   }
   .address-wrap {
     justify-content: space-between;
     font-size: 24px;
     color: #333;
-    margin: 20px 0;
+    margin: 10px 0 30px;
     i {
       color: #4a5ef2;
       font-size: 36px;
@@ -540,7 +524,7 @@ export default defineComponent({
       margin-left: 20px;
     }
   }
-  .el-table {
+  :deep(.el-table) {
     th .cell {
       font-size: 16px;
     }
@@ -589,12 +573,12 @@ export default defineComponent({
   }
 }
 @media screen and (max-width: 1200px) {
-  .show_table {
-    display: none;
-  }
-  .assets-list {
-    display: block;
-  }
+  //.show_table {
+  //  display: none;
+  //}
+  //.assets-list {
+  //  display: block;
+  //}
   .assets {
     padding: 20px;
     border-radius: 20px !important;
@@ -604,12 +588,6 @@ export default defineComponent({
   }
   .assets .font_20 {
     font-size: 16px;
-  }
-  .assets .address-wrap {
-    font-size: 16px !important;
-    i {
-      font-size: 20px;
-    }
   }
   .transfer-page .bottom {
     padding: 10px;

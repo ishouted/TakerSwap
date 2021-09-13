@@ -48,11 +48,6 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requireAuth: true }
   },
   {
-    path: "/test",
-    name: "test",
-    component: () => import("@/views/test/index.vue")
-  },
-  {
     path: "/login",
     name: "login",
     component: () => import("@/views/login/index.vue")

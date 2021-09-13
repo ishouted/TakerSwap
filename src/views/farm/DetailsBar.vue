@@ -137,20 +137,20 @@
           </div>
         </div>
       </div>
-      <div class="d-flex align-items-center space-between mt-15 size-14">
+      <div class="d-flex align-items-center space-between mt-8 size-14">
         <span class="text-7e">{{ $t("farm.farm4") }}</span>
         <span>{{ tokenInfo.tatalStakeTokenUSD }}</span>
       </div>
-      <div class="d-flex align-items-center space-between mt-15 size-14">
+      <div class="d-flex align-items-center space-between mt-8 size-14">
         <span class="text-7e">{{ $t("farm.farm5") }}</span>
         <span>
           {{ tokenInfo.syrupTokenBalance }} {{ tokenInfo.syrupTokenSymbol }}
         </span>
       </div>
-      <div class="text-4a mt-15">
+      <div class="text-4a mt-8">
         {{ $t("farm.farm7") }}{{ tokenInfo.name }}
       </div>
-      <div class="text-4a mt-15">{{ $t("farm.farm8") }}</div>
+      <div class="text-4a mt-8">{{ $t("farm.farm8") }}</div>
     </div>
     <lp-dialog
       v-model:showLPDialog="dialogAddOrMinus"
@@ -494,11 +494,14 @@ export default defineComponent({
       border-radius: 10px;
     }
   }
+  .mt-8 {
+    margin-top: 8px;
+  }
 }
 .farm-details {
   /* height: 148px; */
   .pc-cont {
-    padding: 20px 60px 20px 40px;
+    padding: 20px 40px 20px 30px;
     background: #fafcff;
     border-bottom: 1px solid #e4efff;
     display: flex;
@@ -529,12 +532,12 @@ export default defineComponent({
         align-items: center;
         margin-left: 60px;
         height: 108px;
-        padding: 20px 40px;
+        padding: 20px;
         background: #fff;
         border: 1px solid #e4efff;
         border-radius: 10px;
         .left {
-          width: 170px;
+          max-width: 170px;
           .info-title {
             font-size: 14px;
             margin-bottom: 5px;

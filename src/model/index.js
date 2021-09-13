@@ -56,7 +56,9 @@ export async function getAssetList(address = store.state.destroyAddress) {
     item.valuation =
       (isNaN(Times(item.number || 0, item.usdPrice).toFixed(2)) && 0) ||
       Times(item.number || 0, item.usdPrice).toFixed(2);
-    item.available = toNumberStr(
+    item.available = divisionAndFix(item.balanceStr, decimal, decimal);
+    item.listAvailable = divisionAndFix(item.balanceStr, decimal, 6);
+    /*item.available = toNumberStr(
       parseFloat(
         tofix(
           divisionDecimals(item.balanceStr, decimal).toString(),
@@ -71,7 +73,7 @@ export async function getAssetList(address = store.state.destroyAddress) {
         tofix(divisionDecimals(item.balanceStr, decimal).toString(), 6, -1)
       ),
       6
-    );
+    );*/
   });
   // 返回按字母排序
   const sortDataBySymbol = [...res]
@@ -164,16 +166,16 @@ export async function getAssetBalance(chainId, assetId, address) {
 }
 
 /**
- * swap 寻找最佳交易路径
+ * swap 查询交易对所有可兑换路径
  * data: {
  *  tokenInStr: "5-1", from资产chainId-assetId
  *  tokenInAmount: "100000000", from数量*精度
  *  tokenOutStr
  * }
  */
-export async function getBestTradeExactIn(data) {
+export async function getWholeTradeExactIn(data) {
   const maxPairSize = data.maxPairSize || 3;
-  const channel = "getBestTradeExactIn";
+  const channel = "getWholeTradeExactIn";
   const params = {
     method: channel,
     params: { ...data, maxPairSize }

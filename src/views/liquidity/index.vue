@@ -68,7 +68,8 @@
                   v-show="item.showDetail"
                   :talonAddress="talonAddress"
                   :info="item"
-                  @loading="handleLoadig"
+                  @loading="handleLoading"
+                  @updateList="getData"
                 ></detail-bar>
               </collapse-transition>
             </div>
@@ -90,7 +91,7 @@
         :defaultAsset="defaultAsset"
         :assetsList="assetsList"
         :talonAddress="talonAddress"
-        @updateList="getUserLiquidity"
+        @updateList="getData"
       ></add-liquidity>
     </div>
   </div>
@@ -131,31 +132,34 @@ export default defineComponent({
       myLoading: false,
       loading: false,
       defaultAsset: null,
+      pageIndex: 1,
       totalSize: 0
     });
     let timer;
     onMounted(async () => {
-      await getUserLiquidity();
-      state.assetsList = await getAssetList(talonAddress.value);
+      await getData();
+      // await getUserLiquidity();
+      // state.assetsList = await getAssetList(talonAddress.value);
       state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
       timer = setInterval(async () => {
-        state.assetsList = await getAssetList(talonAddress.value);
+        await getData();
       }, 10000);
     });
+    async function getData() {
+      await getUserLiquidity();
+      state.assetsList = await getAssetList(talonAddress.value);
+    }
     onBeforeUnmount(() => {
       clearInterval(timer);
     });
-    async function getUserLiquidity(pageIndex = 1) {
-      console.log(talonAddress.value, 99);
+    async function getUserLiquidity() {
       if (talonAddress.value) {
         state.myLoading = true;
         const res = await userLiquidityPage({
           userAddress: talonAddress.value,
-          pageIndex
+          pageIndex: state.pageIndex
         });
         if (res) {
-          console.log(res, "resresres");
-          const list = [];
           state.totalSize = res.total;
           res.list.map(v => {
             const info = v.lpTokenAmount;
@@ -170,27 +174,10 @@ export default defineComponent({
               info.token.decimals,
               info.token.decimals
             );
-            v.showDetail = false;
-
-            /* list.push({
-              fromToken: {
-                symbol: v.token0.symbol,
-                chainId: v.token0.assetChainId,
-                assetId: v.token0.assetId,
-                decimal: v.token0.decimals
-              },
-              fromSymbol: v.token0.symbol,
-              toSymbol: v.token1.symbol,
-              symbol: info.token.symbol,
-              // fromKey: v.token0.
-              amount: divisionAndFix(
-                info.amount,
-                info.token.decimals,
-                info.token.decimals
-              ),
-              amountSlice: amountSlice == 0 ? "0.00" : amountSlice,
-              showDetail: false
-            }); */
+            const exist = state.liquidityList.find(
+              item => v.pairAddress === item.pairAddress
+            );
+            v.showDetail = exist ? exist.showDetail : false;
           });
           state.liquidityList = res.list.filter(item => item.amount !== "0");
         }
@@ -208,21 +195,23 @@ export default defineComponent({
       }
     }
 
-    function handleLoadig(loading) {
+    function handleLoading(loading) {
       state.loading = loading;
     }
     function nextPage(pageNo) {
-      getUserLiquidity(pageNo);
+      state.pageIndex = pageNo;
+      getUserLiquidity();
     }
     function prevPage(pageNo) {
-      getUserLiquidity(pageNo);
+      state.pageIndex = pageNo;
+      getUserLiquidity();
     }
     return {
       talonAddress,
       ...toRefs(state),
       toggleDetail,
-      handleLoadig,
-      getUserLiquidity,
+      handleLoading,
+      getData,
       nextPage,
       prevPage
     };
@@ -267,7 +256,7 @@ export default defineComponent({
       .symbol {
         //flex: 5;
         display: flex;
-        align-items: center;
+        //align-items: center;
         flex-direction: column;
         .symbol-cont {
           display: flex;
@@ -309,6 +298,14 @@ export default defineComponent({
       text-align: center;
       color: #909399;
       font-size: 14px;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    h3 {
+      font-size: 22px;
+    }
+    .top-part, .your-liquidity {
+      padding: 20px;
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="w1300 trading-page">
     <overview
-      v-if="showOverview"
+      v-if="showOverview && !isMobile"
       :swapSymbol="swapSymbol"
       :swapRate="swapRate"
       :list="orderList"
@@ -15,6 +15,20 @@
       @updateRate="updateRate"
       @updateOrderList="updateOrderList"
     ></swap>
+    <el-dialog
+      custom-class="mobile-overview-dialog"
+      top="10vh"
+      v-model="showMobileOverview"
+      :show-close="false"
+      @closed="showOverview = false"
+    >
+      <overview
+        :swapSymbol="swapSymbol"
+        :swapRate="swapRate"
+        :list="orderList"
+        :loading="orderLoading"
+      ></overview>
+    </el-dialog>
   </div>
 </template>
 
@@ -26,7 +40,8 @@ import {
   reactive,
   toRefs,
   onBeforeUnmount,
-  watch
+  watch,
+  ref
 } from "vue";
 import Overview from "./Overview.vue";
 import Swap from "./Swap.vue";
@@ -47,7 +62,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const state = reactive({
-      showOverview: localStorage.getItem("showOverview") === "true",
+      showOverview: false,
       assetsList: [],
       swapRate: "",
       swapSymbol: [],
@@ -144,12 +159,32 @@ export default defineComponent({
       }
     );
 
+    const isMobile = ref(false);
+    function checkIsMobile() {
+      isMobile.value = document.documentElement.clientWidth < 1000;
+    }
+    onMounted(() => {
+      checkIsMobile();
+      if (isMobile.value) {
+        // context.emit("update:collapseMenu", true);
+      }
+      window.addEventListener("resize", checkIsMobile);
+    });
+    onBeforeUnmount(() => {
+      window.removeEventListener("resize", checkIsMobile);
+    });
+
+    const showMobileOverview = computed(() => {
+      return isMobile.value && state.showOverview;
+    });
     return {
       ...toRefs(state),
       toggleExpand,
       selectAsset,
       updateRate,
-      updateOrderList
+      updateOrderList,
+      isMobile,
+      showMobileOverview
     };
   }
 });
@@ -159,5 +194,25 @@ export default defineComponent({
 .trading-page {
   display: flex;
   justify-content: center;
+  padding: 0 20px;
+  .mobile-overview-dialog {
+    max-width: 680px !important;
+    .el-dialog__header, .el-dialog__body {
+      padding-left: 16px!important;
+      padding-right: 16px!important;
+    }
+    .el-dialog__header {
+      padding-top: 16px!important;
+      padding-bottom: 0;
+    }
+    .el-dialog__body {
+      padding-top: 10px!important;
+    }
+    .overview {
+      width: 100%;
+      height: 600px;
+      padding: 0 10px 10px;
+    }
+  }
 }
 </style>

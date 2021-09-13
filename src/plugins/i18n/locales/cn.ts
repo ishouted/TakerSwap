@@ -2,7 +2,10 @@ const cn = {
   header: {
     header1: "交易",
     header2: "流动性",
-    header3: "连接钱包"
+    header3: "连接钱包",
+    header4: "首页",
+    header5: "创建Farm",
+    header6: "文档"
   },
   public: {
     public1: "资产",
@@ -25,7 +28,7 @@ const cn = {
   },
   home: {
     home1: "总质押: ",
-    home2: "Curium实时信息",
+    home2: "Taker实时信息",
     home3: "当前价格",
     home4: "总流通量",
     home5: "已销毁",
@@ -42,7 +45,7 @@ const cn = {
   assets: {
     assets1: "Layer2资产",
     assets2: "当前连接L1网络为: ",
-    assets3: "L2地址: ",
+    assets3: "L2 ID: ",
     assets4: "L1转入L2",
     assets5: "L2转账",
     assets6: "L2转至L1",
@@ -71,6 +74,7 @@ const cn = {
     transfer18: "手续费不足",
     transfer19: "转账金额",
     transfer20: "提现金额",
+    transfer21: "以太坊"
   },
   trading: {
     trading1: "订单历史",
@@ -89,7 +93,8 @@ const cn = {
     trading14: "分钟",
     trading15: "最多卖出",
     trading16: "请填写0-100的数字",
-    trading17: "交易流动性不足"
+    trading17: "交易流动性不足",
+    trading18: "已确认"
   },
   liquidity: {
     liquidity1: "流动性",
@@ -109,9 +114,9 @@ const cn = {
     liquidity15: "你将收到"
   },
   login: {
-    login1: "请先生成Curium地址",
-    login2: "立即生成Curium地址",
-    login3: "生成Curium地址失败: ",
+    login1: "请先生成Taker地址",
+    login2: "立即生成Taker地址",
+    login3: "生成Taker地址失败: ",
     login4: "连接钱包"
   },
   farm: {
@@ -151,6 +156,7 @@ const cn = {
     createFarm9: "请输入数字并且小数点后最多位数为",
     createFarm10: "当前账户可用余额不足",
     createFarm11: "请输入数字",
+    createFarm12: "高级"
   },
   farmRankType: {
     apr: "按照收益排名",

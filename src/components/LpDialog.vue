@@ -50,18 +50,6 @@
           {{ $t("public.public9") }}
         </el-button>
       </div>
-      <div class="dialog-footer_mobile">
-        <el-button @click="closeAddOrMinus">
-          {{ $t("public.public8") }}
-        </el-button>
-        <el-button
-          type="primary"
-          @click="confirmAddOrMinus"
-          :disabled="disableTx"
-        >
-          {{ $t("public.public9") }}
-        </el-button>
-      </div>
     </div>
   </el-dialog>
 </template>
@@ -198,7 +186,7 @@ export default defineComponent({
           }
         }
         .lp {
-          min-width: 100px;
+          margin-left: 30px;
           font-size: 14px;
           font-weight: 600;
           text-align: right;
@@ -228,12 +216,7 @@ export default defineComponent({
       margin-left: 20px;
     }
   }
-  .dialog-footer_mobile {
-    display: none;
-  }
-}
-@media screen and (max-width: 1200px) {
-  .el-dialog {
+  @media screen and (max-width: 1200px) {
     //margin: 15vh auto;
     width: 100% !important;
     max-width: 470px !important;
@@ -243,20 +226,22 @@ export default defineComponent({
       max-width: 417px !important;
     }
   }
-}
-@media screen and (max-width: 470px) {
-  .dialog-footer {
-    display: none !important;
-  }
-  .dialog-footer_mobile {
-    margin-top: 20px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: space-around;
-    .el-button_mobile {
-      max-width: 85px;
-      width: 100%;
+  @media screen and (max-width: 470px) {
+    .el-dialog__body {
+      .titles {
+        font-size: 22px;
+      }
+    }
+    .dialog-footer {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0 0;
+      .el-button {
+        width: 120px;
+        height: 40px;
+      }
     }
   }
 }
+
 </style>

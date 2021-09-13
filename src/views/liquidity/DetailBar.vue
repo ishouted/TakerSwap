@@ -192,6 +192,9 @@ export default defineComponent({
         const res = await handleHex(tx.hex);
         if (res && res.hash) {
           quitNumber.value = "";
+          setTimeout(() => {
+            context.emit("updateList");
+          }, 200);
           ElMessage.success({
             message: t("transfer.transfer14"),
             type: "success"
@@ -269,6 +272,26 @@ export default defineComponent({
   :deep(.el-input) {
     border: 1px solid #e4efff;
   }
+  @media screen and (max-width: 500px) {
+    padding: 16px;
+    :deep(.el-input) {
+      line-height: 36px;
+      .el-input__inner {
+        height: 36px;
+        line-height: 36px;
+      }
+    }
+
+    .rate {
+      margin: 10px 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      span {
+        width: 22%;
+        margin-right: 4%;
+      }
+    }
+  }
 }
 .active_click {
   background-color: #4a5ef2 !important;
@@ -290,6 +313,13 @@ export default defineComponent({
       justify-content: space-between;
       &:nth-child(2) {
         margin-bottom: 15px;
+      }
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .detail-info {
+      div {
+        margin-top: 8px;
       }
     }
   }

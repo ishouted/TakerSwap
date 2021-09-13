@@ -28,7 +28,7 @@
             </li>
           </ul>
           <div class="link view" @click="showId(item.farmHash)">
-            {{ $t("farm.farm6") }}
+<!--            {{ $t("farm.farm6") }}-->
             <i
               :class="{ 'el-icon-arrow-right': true, expand: item.showDetail }"
             ></i>
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div class="link view" @click="showId(item.farmHash)">
-            {{ $t("farm.farm6") }}
+<!--            {{ $t("farm.farm6") }}-->
             <i
               :class="{ 'el-icon-arrow-right': true, expand: item.showDetail }"
             ></i>
@@ -87,9 +87,9 @@
         </collapse-transition>
       </div>
     </div>
-    <div class="more" v-if="isTalon && talonAddress">
+<!--    <div class="more" v-if="isTalon && talonAddress">
       <span class="link" @click="createFarm">{{ $t("farm.farm11") }}</span>
-    </div>
+    </div>-->
   </div>
   <div class="mobile-cont">
     <el-empty description="No Data" v-if="!list.length"></el-empty>
@@ -223,7 +223,7 @@ export default defineComponent({
   padding-bottom: 20px;
   .farm-item_cont {
     display: flex;
-    padding: 20px 15px 25px 15px;
+    padding: 20px 15px 20px 15px;
     border-bottom: 1px solid #e9ebf3;
     justify-content: space-between;
     align-items: center;
@@ -236,10 +236,11 @@ export default defineComponent({
           display: flex;
           width: 45px;
           span {
-            height: 22.5px;
-            width: 22.5px;
+            height: 25px;
+            width: 25px;
             border-radius: 50%;
             z-index: 1;
+            overflow: hidden;
             &:nth-child(2) {
               transform: translateX(-9px);
               z-index: 0;
@@ -253,9 +254,9 @@ export default defineComponent({
       }
       .farm-info {
         display: flex;
-        margin-top: 20px;
+        margin-top: 10px;
         .farm-info_item {
-          width: 104px;
+          width: 124px;
         }
       }
     }
@@ -268,7 +269,7 @@ export default defineComponent({
   display: block;
   background: #ffffff;
   border-radius: 20px;
-  padding: 20px 0 80px;
+  padding: 20px 0 20px;
   min-height: 200px;
   position: relative;
   overflow: hidden;
@@ -279,7 +280,7 @@ export default defineComponent({
       border-bottom: 1px solid #e4efff;
       display: flex;
       align-items: center;
-      padding: 0 40px;
+      padding: 0 30px;
       .symbol {
         min-width: 200px;
         .names {
@@ -309,6 +310,7 @@ export default defineComponent({
       }
       .view {
         font-size: 15px;
+        padding-left: 10px;
       }
     }
   }

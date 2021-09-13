@@ -17,6 +17,10 @@
       font-size: 24px;
       color: $FColor;
     }
+    .el-dialog__close {
+      font-size: 16px;
+      color: $FColor;
+    }
   }
   
   .el-button {
@@ -92,7 +96,59 @@
     }
     transition: transform 0.1s ease;
   }
+  @media screen and (max-width: 1200px) {
+    .el-table{
+      th {
+        padding: 6px 0;
+        &:first-child {
+          border-radius: 10px 0 0 10px;
+        }
+        &:last-child {
+          border-radius: 0 10px 10px 0;
+        }
+        .cell {
+          color: #fff;
+          line-height: 35px;
+        }
+      }
+    }
+    .el-dialog {
+      width: 100% !important;
+      max-width: 470px !important;
+      min-width: 280px !important;
+    }
+  }
+  @media screen and (max-width: 500px) {
+    .el-overlay {
+      padding: 20px;
+    }
+    .el-overlay .el-dialog {
+      .el-dialog__header, .el-dialog__body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .el-dialog__header {
+        padding-top: 16px;
+        padding-bottom: 0;
+      }
+      .el-dialog__body {
+        padding-top: 16px;
+      }
+      .el-dialog__title {
+        font-size: 20px;
+      }
+    }
+
+  }
+
 }
+@media screen and (max-width: 500px) {
+  .el-message {
+    width: 90% !important;
+    min-width: auto!important;
+  }
+}
+
 
 
 

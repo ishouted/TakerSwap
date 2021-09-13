@@ -122,5 +122,30 @@ export default defineComponent({
     background-color: #fff;
     border-radius: 20px;
   }
+  @media screen and (max-width: 500px) {
+    .top {
+      height: 120px;
+      padding: 20px 20px 10px;
+      .back {
+        margin-bottom: 15px;
+        .iconfont {
+          font-size: 20px;
+        }
+      }
+      .el-tabs {
+        .el-tabs__item {
+          font-size: 16px!important;
+          padding: 0 18px 0 0;
+          .iconfont {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+    .bottom {
+      padding: 30px 20px;
+      min-height: auto;
+    }
+  }
 }
 </style>

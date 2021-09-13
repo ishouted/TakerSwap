@@ -26,9 +26,7 @@ export const providerList = [
 
 export function getProvider(type?: string) {
   if (type) return window[type];
-  const providerType = isMobile
-    ? MetaMaskProvider
-    : localStorage.getItem("providerType");
+  const providerType = localStorage.getItem("providerType");
   return providerType ? window[providerType] : null;
 }
 
@@ -86,6 +84,7 @@ export default function useEthereum() {
     const provider = getProvider(providerType);
     await provider?.request({ method: "eth_requestAccounts" });
     state.address = provider?.selectedAddress;
+    state.chainId = provider?.chainId;
     localStorage.setItem("providerType", providerType);
     listenAccountChange();
     listenNetworkChange();

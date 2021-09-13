@@ -9,19 +9,19 @@
         <div class="flex-center info-wrap">
           <div class="info-item">
             <p class="label">{{ $t("home.home3") }}</p>
-            <p class="value">${{ overviewData.priceUSD }}</p>
+            <p class="value">${{ $thousands(overviewData.priceUSD) }}</p>
           </div>
           <div class="info-item">
             <p class="label">{{ $t("home.home4") }}</p>
-            <p class="value">{{ overviewData.circulation }}</p>
+            <p class="value">{{ $thousands(overviewData.circulation) }}</p>
           </div>
           <div class="info-item">
             <p class="label">{{ $t("home.home5") }}</p>
-            <p class="value">{{ overviewData.destroyed }}</p>
+            <p class="value">{{ $thousands(overviewData.destroyed) }}</p>
           </div>
           <div class="info-item">
             <p class="label">{{ $t("home.home6") }}</p>
-            <p class="value">{{ overviewData.totalAmount }}</p>
+            <p class="value">{{ $thousands(overviewData.totalAmount) }}</p>
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@
               <div class="title">
                 {{ $t("home.home7") }}
               </div>
-              <p>${{ rewardInfo.received }}</p>
+              <p>${{ $thousands(rewardInfo.received) }}</p>
             </div>
             <div class="flex1-tr">
               <i class="iconfont icon-yilingjiangli"></i>
@@ -43,7 +43,7 @@
               <div class="title">
                 {{ $t("home.home8") }}
               </div>
-              <p>${{ rewardInfo.unclaimed }}</p>
+              <p>${{ $thousands(rewardInfo.unclaimed) }}</p>
             </div>
             <div class="flex1-tr">
               <span class="icon-wrap">
@@ -68,11 +68,6 @@
                 <div class="coin_name">
                   {{ item.name }}
                 </div>
-                <!--              <farm-symbol-->
-                <!--                class="farm-symbol"-->
-                <!--                :imgList="item.logoList"-->
-                <!--                :name="item.name"-->
-                <!--              ></farm-symbol>-->
                 <div class="farm-info">
                   <div>
                     <div class="label">APR</div>
@@ -137,15 +132,15 @@
       <div class="info-bottom pd_40 flex-center">
         <div class="info-item">
           <p class="label">{{ $t("home.home12") }}</p>
-          <p class="value">${{ txInfo.amount }}</p>
+          <p class="value">${{ $thousands(txInfo.amount) }}</p>
         </div>
         <div class="info-item">
           <p class="label">{{ $t("home.home13") }}</p>
-          <p class="value">{{ txInfo.count }}</p>
+          <p class="value">{{ $thousands(txInfo.count) }}</p>
         </div>
         <div class="info-item">
           <p class="label">{{ $t("home.home14") }}</p>
-          <p class="value">${{ txInfo.fee }}</p>
+          <p class="value">${{ $thousands(txInfo.fee) }}</p>
         </div>
       </div>
     </div>
@@ -154,25 +149,27 @@
         <div class="text-3a size-15 font-bold">{{ $t("home.home2") }}</div>
         <div class="d-flex align-items-center space-between size-14 mt-16">
           <span class="text-7e">{{ $t("home.home3") }}</span>
-          <span>${{ overviewData.priceUSD }}</span>
+          <span>${{ $thousands(overviewData.priceUSD) }}</span>
         </div>
         <div class="d-flex align-items-center space-between size-14 mt-16">
           <span class="text-7e">{{ $t("home.home4") }}</span>
-          <span>{{ overviewData.circulation }}</span>
+          <span>{{ $thousands(overviewData.circulation) }}</span>
         </div>
         <div class="d-flex align-items-center space-between size-14 mt-16">
           <span class="text-7e">{{ $t("home.home5") }}</span>
-          <span>{{ overviewData.destroyed }}</span>
+          <span>{{ $thousands(overviewData.destroyed) }}</span>
         </div>
         <div class="d-flex align-items-center space-between size-14 mt-16">
           <span class="text-7e">{{ $t("home.home6") }}</span>
-          <span>{{ overviewData.totalAmount }}</span>
+          <span>{{ $thousands(overviewData.totalAmount) }}</span>
         </div>
       </div>
       <div class="mobile-total d-flex space-between align-items-center mt-15">
         <div class="font-bold">
           <div class="size-15">{{ $t("home.home7") }}</div>
-          <div class="size-19 mt-15">${{ rewardInfo.received }}</div>
+          <div class="size-19 mt-15">
+            ${{ $thousands(rewardInfo.received) }}
+          </div>
         </div>
         <div class="img-cont">
           <i class="iconfont icon-yilingjiangli"></i>
@@ -181,7 +178,9 @@
       <div class="mobile-total d-flex space-between align-items-center mt-15">
         <div class="font-bold">
           <div class="size-15">{{ $t("home.home8") }}</div>
-          <div class="size-19 mt-15">${{ rewardInfo.unclaimed }}</div>
+          <div class="size-19 mt-15">
+            ${{ $thousands(rewardInfo.unclaimed) }}
+          </div>
         </div>
         <div class="img-cont rotate-30 mt-15">
           <i class="iconfont icon-dailingjiangli"></i>
@@ -212,15 +211,15 @@
       <div class="mobile-total mt-15">
         <div class="d-flex align-items-center space-between size-14">
           <span class="text-7e">{{ $t("home.home12") }}</span>
-          <span>{{ txInfo.amount }}</span>
+          <span>{{ $thousands(txInfo.amount) }}</span>
         </div>
         <div class="d-flex align-items-center space-between size-14 mt-16">
           <span class="text-7e">{{ $t("home.home13") }}</span>
-          <span>{{ txInfo.count }}</span>
+          <span>{{ $thousands(txInfo.count) }}</span>
         </div>
         <div class="d-flex align-items-center space-between size-14 mt-16">
           <span class="text-7e">{{ $t("home.home14") }}</span>
-          <span>{{ txInfo.fee }}</span>
+          <span>{{ $thousands(txInfo.fee) }}</span>
         </div>
       </div>
     </div>
@@ -274,12 +273,14 @@ export default {
     }
   },
   mounted() {
-    this.loading = this.$loading({
+    /*this.loading = this.$loading({
       // lock: true,
       // text: "Loading",
       // spinner: "el-icon-loading",
+      target: ".home",
+      body: false,
       background: "rgba(0, 0, 0, 0.7)"
-    });
+    });*/
     this.getOverview();
     this.getRewardInfo();
     this.getFarmInfo();
@@ -307,7 +308,7 @@ export default {
             destroyed: divisionDecimals(data.destroyed, decimal),
             totalAmount: divisionDecimals(data.totalAmount, decimal)
           };
-          this.loading.close();
+          // this.loading.close();
         }
       });
     },
@@ -455,8 +456,8 @@ export default {
 
 <style lang="scss">
 .home {
-  padding-bottom: 60px;
-  margin-top: -15px;
+  //padding-bottom: 60px;
+  //margin-top: -15px;
   .lh_1 {
     line-height: 1;
   }
@@ -587,6 +588,9 @@ export default {
       margin-top: 10px;
     }
   }
+  .mt-16 {
+    margin-top: 12px;
+  }
 }
 .info-wrap {
   align-items: normal;
@@ -655,10 +659,10 @@ export default {
       width: 60px;
       height: 63px;
       line-height: 63px;
-      margin-right: 27px;
+      margin-right: 10px;
       i {
         color: #d7dcfc;
-        font-size: 45px;
+        font-size: 60px;
       }
     }
   }

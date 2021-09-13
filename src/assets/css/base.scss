@@ -1,7 +1,6 @@
 @import "./style.scss";
 @import "./element.scss";
-@import "http://at.alicdn.com/t/font_2650976_rwjfn31feor.css";
-@import "http://at.alicdn.com/t/font_2562897_v6iesvrbu18.css";
+@import "http://at.alicdn.com/t/font_2562897_7xn0sbphevx.css";
 
 
 body,
@@ -218,6 +217,10 @@ a.line {
   text-decoration: underline;
 }
 
+.flex {
+  display: flex;
+}
+
 .flex-center {
   display: flex;
   align-items: center;
@@ -231,6 +234,10 @@ a.line {
   max-width: 1300px;
   //min-width: 375px;
   margin: 0 auto;
+  padding: 0 20px;
+  @media screen and (max-width: 1200px){
+    padding: 0 16px;
+  }
 }
 
 .flex-between {
@@ -325,4 +332,16 @@ a.line {
 
 :hover::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb {
   background: #d8d8d8
+}
+
+.mobile {
+  display: none;
+}
+@media screen and (max-width: 500px){
+  .pc {
+    display: none;
+  }
+  .mobile {
+    display: initial;
+  }
 }

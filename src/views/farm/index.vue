@@ -2,7 +2,7 @@
   <div class="tab-bar">
     <span @click="current = 1" :class="{ active: current === 1 }">L1 Farm</span>
     <span @click="current = 2" :class="{ active: current === 2 }">
-      Curium Farm
+      Taker Farm
     </span>
   </div>
   <div class="w1300 farm">
@@ -19,7 +19,7 @@
         :class="{ isActive: current === 2 }"
         @click="current = 2"
       >
-        Curium Farm
+        Taker Farm
       </div>
     </div>
     <div class="search">
@@ -883,6 +883,7 @@ export default defineComponent({
 }
 .farm {
   min-height: 750px;
+  //padding: 0 20px;
   .top {
     width: 360px;
     height: 48px;
@@ -987,6 +988,9 @@ export default defineComponent({
       bottom: 20px;
     }
   }
+  @media screen and (max-width: 500px) {
+    //padding: 0 16px;
+  }
 }
 .farm-select.el-select__popper.el-popper[role="tooltip"] {
   background: #5f71f5 !important;
@@ -1012,6 +1016,7 @@ export default defineComponent({
 @media screen and (max-width: 800px) {
   .tab-bar {
     display: flex;
+    margin-left: 20px;
   }
   .farm .top {
     display: none;

@@ -3,12 +3,12 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import { useElementPlus } from "@/plugins/element-plus";
-import "element-plus/lib/theme-chalk/index.css";
+import "element-plus/dist/index.css";
 import { useI18n } from "@/plugins/i18n";
 // import "amfe-flexible/index.js";
 // import "normalize.css"; // 初始化css
 // import { ElMessage } from "element-plus";
-import { copys } from "./api/util";
+import { copys, toThousands } from "./api/util";
 import "./config";
 
 setTimeout(() => {
@@ -26,6 +26,9 @@ setTimeout(() => {
             message: this.$t("public.public13"),
             type: "success"
           });
+        },
+        $thousands(str: string | number) {
+          return toThousands(str);
         }
       }
     })

@@ -1,28 +1,20 @@
 <template>
-  <div class="w1300 header">
+  <div class="header">
     <div class="left">
-      <div class="logo" @click="toUrl('home')">
-        <img class="fl" src="./../assets/TakerSwap.svg" alt="" />
-        <!-- <span class="fl">Talon</span> -->
+      <div>
+        <i
+          :class="[
+            'iconfont',
+            'click',
+            'toggle-menu',
+            isCollapse ? 'icon-dieqi' : 'icon-zhankai'
+          ]"
+          @click="isCollapse = !isCollapse"
+        ></i>
       </div>
-      <el-menu
-        class="menu"
-        mode="horizontal"
-        @select="handleSelect"
-        :default-active="activeIndex"
-        text-color="#fff"
-        active-text-color="#fff"
-      >
-        <el-menu-item index="trading">{{ $t("header.header1") }}</el-menu-item>
-        <el-menu-item index="liquidity">
-          {{ $t("header.header2") }}
-        </el-menu-item>
-        <el-menu-item index="farm">Farm</el-menu-item>
-        <!-- <el-menu-item index="info">Info</el-menu-item> -->
-        <!-- <el-menu-item index="test">Test</el-menu-item> -->
-      </el-menu>
-      <div class="mobile-menu" @click="showMenu = !showMenu">
-        <i class="iconfont icon-zhankai"></i>
+      <div class="logo" @click="toUrl('home')">
+        <img class="pc-mobile" src="./../assets/TakerSwap.svg" alt="" />
+        <img class="mobile-logo" src="./../assets/s-logo.png" alt="" />
       </div>
     </div>
     <div class="account-wrap">
@@ -38,11 +30,18 @@
         >
           {{ $t("header.header3") }}
         </div>
-        <div v-else @click="manageAccount = true">
-          L1:{{ superLong(address, 4) }}
+        <div
+          class="wrong-chain"
+          v-else-if="wrongChain"
+          style="color: red; font-size: 14px"
+        >
+          Network Error
+        </div>
+        <div v-else @click="manageAccount = true" class="address-warp">
+          <img src="../assets/img/eth-logo.png" alt="" />
+          {{ superLong(address, 4) }}
         </div>
       </div>
-      <div class="language" @click="switchLang">{{ lang }}</div>
     </div>
     <div class="custom-overlay">
       <el-dialog
@@ -74,16 +73,18 @@
       >
         <div class="content">
           <div class="top">
-            <span>{{ superLong(address, 9) }}</span>
-            <span @click="$copy(address)">
-              <i class="iconfont icon-fuzhi"></i>
-            </span>
-            <span @click="openUrl">
-              <i
-                class="iconfont icon-tiaozhuanlianjie"
-                style="font-size: 29px"
-              ></i>
-            </span>
+            <p>
+              <span class="pc">{{ superLong(address, 9) }}</span>
+              <span class="mobile">{{ superLong(address, 7) }}</span>
+            </p>
+            <p>
+              <span @click="$copy(address)">
+                <i class="iconfont icon-fuzhi"></i>
+              </span>
+              <span @click="openUrl">
+                <i class="iconfont icon-tiaozhuanlianjie"></i>
+              </span>
+            </p>
           </div>
           <div class="bottom tc">
             <el-button type="primary" @click="disconnectProvider">
@@ -93,27 +94,6 @@
         </div>
       </el-dialog>
     </div>
-    <el-drawer
-      v-model="showMenu"
-      custom-class="drawer-class"
-      modal-class="modal_class"
-      direction="ltr"
-      :with-header="false"
-    >
-      <el-menu
-        class="menu"
-        @select="handleSelect"
-        :default-active="activeIndex"
-        active-text-color="#3171f5"
-      >
-        <el-menu-item index="trading">{{ $t("header.header1") }}</el-menu-item>
-        <el-menu-item index="liquidity">
-          {{ $t("header.header2") }}
-        </el-menu-item>
-        <el-menu-item index="farm">Farm</el-menu-item>
-      </el-menu>
-      <div class="switch_language" @click="switchLang">{{ lang }}</div>
-    </el-drawer>
   </div>
 </template>
 
@@ -121,13 +101,15 @@
 import { defineComponent, ref, watch, computed } from "vue";
 import { superLong, getCurrentAccount, _networkInfo } from "@/api/util";
 import useEthereum, { providerList } from "@/hooks/useEthereum";
-import useLang from "@/hooks/useLang";
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 export default defineComponent({
   name: "Header",
-  setup() {
+  props: {
+    collapseMenu: Boolean
+  },
+  setup(props, context) {
     const store = useStore();
     const router = useRouter();
     const route = useRoute();
@@ -166,8 +148,15 @@ export default defineComponent({
         immediate: true
       }
     );
+    const isCollapse = computed({
+      get() {
+        return props.collapseMenu;
+      },
+      set(val: boolean) {
+        context.emit("update:collapseMenu", val);
+      }
+    });
     // console.log(address, 456);
-    const showMenu = ref(false);
     const manageAccount = ref(false);
     const showConnect = computed(() => store.state.showConnect);
     function showConnectDialog(state: boolean) {
@@ -198,12 +187,15 @@ export default defineComponent({
         name: "assets"
       });
     }
-    const { lang, switchLang } = useLang();
     function openUrl() {
       const network = store.getters.chain;
       const { origin } = _networkInfo[network];
       window.open(origin + "/address/" + address.value);
     }
+
+    const wrongChain = computed(() => {
+      return store.getters.wrongChain;
+    });
     return {
       address,
       showConnect,
@@ -214,11 +206,10 @@ export default defineComponent({
       manageAccount,
       activeIndex,
       toAsset,
-      lang,
-      switchLang,
       openUrl,
-      showMenu,
-      talonAddress
+      talonAddress,
+      isCollapse,
+      wrongChain
     };
   },
   data() {
@@ -231,7 +222,6 @@ export default defineComponent({
   methods: {
     handleSelect(key: string) {
       this.toUrl(key);
-      this.showMenu = false;
     },
 
     superLong(str: string, len = 9) {
@@ -251,8 +241,15 @@ export default defineComponent({
 
 <style lang="scss">
 .header {
-  height: 142px;
-  padding-bottom: 30px;
+  position: fixed;
+  z-index: 20;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 80px;
+  padding: 0 16px 0 8px;
+  background: #4a5ff2;
+  border: 2px solid #3345c7;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -260,6 +257,11 @@ export default defineComponent({
     flex: 1;
     display: flex;
     align-items: center;
+    .toggle-menu {
+      font-size: 20px;
+      color: #fff;
+      margin: 0 20px;
+    }
     .menu {
       display: block;
       flex: 1;
@@ -284,17 +286,15 @@ export default defineComponent({
     }
   }
   .logo {
-    width: 120px;
-    //margin-bottom: 10px;
+    width: 160px;
     cursor: pointer;
     img {
-      width: 100px;
+      width: 100%;
     }
-    span {
-      color: #ffffff;
-      padding: 3px 0 0 5px;
-      font-weight: bold;
-      font-size: 16px;
+    .pc-mobile {
+    }
+    .mobile-logo {
+      display: none;
     }
   }
   .account-wrap {
@@ -324,13 +324,15 @@ export default defineComponent({
     &:hover {
       opacity: 0.7;
     }
-  }
-  .language {
-    margin-left: 20px;
-    color: #fff;
-    cursor: pointer;
-    &:hover {
-      opacity: 0.7;
+    .address-warp {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px 0 5px;
+      img {
+        width: 30px;
+        height: 30px;
+      }
     }
   }
   .connect-dialog {
@@ -377,7 +379,7 @@ export default defineComponent({
         }
         i {
           color: #4a5ef2;
-          font-size: 34px;
+          font-size: 32px;
           cursor: pointer;
           margin-left: 20px;
         }
@@ -393,43 +395,44 @@ export default defineComponent({
       }
     }
   }
-}
-
-.modal_class {
-  top: 80px !important;
-}
-.mobile-menu {
-  display: none;
-  height: 20px;
-  width: 20px;
-  color: white;
-}
-.switch_language {
-  color: #3a3c44;
-  position: absolute;
-  bottom: 100px;
-  left: 20px;
-}
-.el-popup-parent--hidden {
-  padding: 0 !important;
-}
-@media screen and (max-width: 1200px) {
-  .custom-overlay {
-    .el-overlay {
-      padding: 20px !important;
-      .el-dialog {
-        margin: 15vh auto;
-        width: 100% !important;
-        max-width: 470px !important;
-        min-width: 280px !important;
-        .el-dialog__body {
-          padding-left: 20px !important;
-          padding-right: 20px !important;
+  @media screen and (max-width: 500px) {
+    .logo {
+      width: 32px;
+      border-radius: 50%;
+      .pc-mobile {
+        display: none;
+      }
+      .mobile-logo {
+        display: block;
+      }
+    }
+    .account {
+      margin-left: 15px;
+    }
+    .account-manage {
+      .content .top span {
+        font-size: 22px;
+        i {
+          font-size: 24px;
+        }
+      }
+      .content {
+        .bottom {
+          padding: 30px 0 0;
+          .el-button {
+            height: 36px;
+          }
         }
       }
     }
   }
-  .header .account-manage {
+}
+
+.el-popup-parent--hidden {
+  padding: 0 !important;
+}
+@media screen and (max-width: 1200px) {
+  /*.header .account-manage {
     max-width: 470px !important;
     min-width: 300px;
     .content .top span {
@@ -438,37 +441,21 @@ export default defineComponent({
         font-size: 28px;
       }
     }
-  }
-  .w1300 {
-    //max-width: 1920px;
+  }*/
+  /*.w1300 {
     height: auto;
     margin: 0;
     width: 100%;
     padding: 20px 20px 30px 20px;
-  }
+  }*/
 }
+
 @media screen and (max-width: 610px) {
   .header .account-wrap .asset-icon i {
     font-size: 20px;
   }
-  .mobile-menu {
-    display: block;
-    margin-right: 20px;
-  }
   .header .left .menu {
     display: none;
-  }
-  .language {
-    display: none;
-  }
-}
-@media screen and (max-width: 375px) {
-  .header .account {
-    width: 90px;
-    height: 30px;
-    line-height: 30px;
-    margin-left: 20px;
-    font-size: 12px;
   }
 }
 </style>

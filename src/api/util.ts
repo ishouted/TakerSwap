@@ -365,6 +365,7 @@ export function parseChainInfo(key: string) {
 
 //转千分位
 export function toThousands(num: string | number) {
+  if (!num) return num;
   const N = num.toString().split(".");
   const int = N[0];
   const float = N[1] ? "." + N[1] : "";

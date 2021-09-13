@@ -314,6 +314,24 @@ export default defineComponent({
         }
       }
     );
+    watch(
+      () => props.assetsList,
+      val => {
+        if (val) {
+          if (state.fromAsset) {
+            state.fromAsset = val.find(asset => asset.assetKey === state.fromAsset.assetKey
+            );
+          }
+          if (state.toAsset) {
+            state.toAsset = val.find(asset => asset.assetKey === state.toAsset.assetKey
+            );
+          }
+        }
+      },
+      {
+        deep: true
+      }
+    );
 
     // 计算需添加的数量 type- 计算from/to的数量
     function getLiquidAmount(amount, type) {
@@ -674,10 +692,41 @@ export default defineComponent({
   .confirm-wrap {
     margin: 40px 0 20px;
   }
-}
-@media screen and (max-width: 1200px) {
-  .add-liquidity {
+  @media screen and (max-width: 1200px) {
     padding: 15px;
+  }
+  @media screen and (max-width: 500px) {
+    .head {
+      margin-bottom: 30px;
+      h3 {
+        font-size: 20px;
+      }
+      .back {
+        font-size: 24px;
+      }
+    }
+    .liquidity-info {
+      margin-top: 20px;
+      .name {
+        font-size: 15px;
+      }
+      .content {
+        padding: 8px;
+        .flex1 {
+          padding: 0 5px;
+          div {
+            font-size: 16px;
+          }
+          p {
+            font-size: 14px;
+            color: #7e87c2;
+          }
+        }
+      }
+    }
+    .confirm-wrap {
+      margin: 30px 0 20px;
+    }
   }
 }
 </style>
