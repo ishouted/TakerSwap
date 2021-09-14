@@ -1,5 +1,5 @@
-import { reactive, toRefs, computed, watch } from "vue";
-import { listen } from "@/api/promiseSocket";
+import { reactive, toRefs, computed, watch, onBeforeUnmount } from "vue";
+import { listen, unListen } from "@/api/promiseSocket";
 import * as subSocket from "@/api/websocket";
 import config from "@/config";
 import {
@@ -64,7 +64,7 @@ interface Data {
   uniList: any[];
 }
 
-export default function useData() {
+export default function useData(isPool: boolean) {
   const store = useStore();
   const state = reactive<Data>({
     talonList: [],
@@ -74,6 +74,10 @@ export default function useData() {
   let totalTalonList: any = [];
   let filterType = "1"; // 排序类型 1.按照收益排名 2.按照流动性排名
   let onlySeeMortgage = false; // 只看已质押
+  onBeforeUnmount(() => {
+    unListen(url, "farmList");
+    unListen(url, "farmListSub");
+  });
   async function getFarmData() {
     const times = +new Date();
     const channel = "farmList";
@@ -288,7 +292,7 @@ export default function useData() {
     }
     // console.log(tokenList, "===tokenList===");
     totalUniList = [...tokenList];
-    state.uniList = filter(tokenList, filterType, onlySeeMortgage);
+    state.uniList = filter(tokenList, filterType, onlySeeMortgage, true);
     // state.uniList = tokenList;
   }
 
@@ -296,7 +300,7 @@ export default function useData() {
     filterType = type;
     onlySeeMortgage = mortgage;
     if (totalUniList.length) {
-      const uniList = filter([...totalUniList], type, mortgage);
+      const uniList = filter([...totalUniList], type, mortgage, true);
       state.uniList = uniList;
     }
     if (totalTalonList.length) {
@@ -306,8 +310,15 @@ export default function useData() {
     }
   }
 
-  function filter(list: any, type: string, mortgage: boolean) {
+  function filter(list: any, type: string, mortgage: boolean, isUni?: boolean) {
     let newList = [...list];
+    if (!isUni) {
+      if (isPool) {
+        newList = [...newList].filter(v => !v.swapPairAddress);
+      } else {
+        newList = [...newList].filter(v => v.swapPairAddress);
+      }
+    }
     if (mortgage) {
       newList = [...newList].filter(v => Number(v.stakeAmount));
     }

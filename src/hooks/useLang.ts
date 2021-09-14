@@ -5,7 +5,7 @@ import store from "@/store";
 export default function useLang() {
   const { locale } = useI18n();
   const lang = computed(() => {
-    return locale.value === "en" ? "简体中文" : "EN";
+    return locale.value === "en" ? "CN" : "EN";
   });
   store.commit("switchLang", locale.value);
   function switchLang() {

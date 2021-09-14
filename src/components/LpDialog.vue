@@ -91,10 +91,18 @@ export default defineComponent({
           let decimals = props.decimal || 0;
           let patrn = "";
           if (!decimals) {
-            patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d])?$");
+            patrn = new RegExp("^([1-9][\\d]*|0)(\\.[\\d]*)?$|(^\\.[\\d]*$)");
+            // patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d])?$");
           } else {
+            // patrn = new RegExp(
+            //   "^([1-9][\\d]{0,20}|0)(\\.[\\d]{0," + decimals + "})?$"
+            // );
             patrn = new RegExp(
-              "^([1-9][\\d]{0,20}|0)(\\.[\\d]{0," + decimals + "})?$"
+              "^([1-9][\\d]*|0)(\\.[\\d]{0," +
+                decimals +
+                "})?$|(^\\.[\\d]{0," +
+                decimals +
+                "}$)"
             );
           }
           if (!patrn.exec(val)) {
@@ -204,7 +212,7 @@ export default defineComponent({
 
   .dialog-footer {
     display: block;
-    padding: 40px 0 30px 0;
+    padding: 40px 0 10px 0;
     .el-button {
       width: 185px;
       height: 48px;

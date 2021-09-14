@@ -1,12 +1,12 @@
 <template>
-  <div class="tab-bar">
+  <div class="tab-bar" v-if="!isPool">
     <span @click="current = 1" :class="{ active: current === 1 }">L1 Farm</span>
     <span @click="current = 2" :class="{ active: current === 2 }">
       Taker Farm
     </span>
   </div>
   <div class="w1300 farm">
-    <div class="top clear">
+    <div class="top clear" v-if="!isPool">
       <div
         class="fl tab-item"
         :class="{ isActive: current === 1 }"
@@ -54,6 +54,7 @@
       :list="talonList"
       :loading="talonLoading"
       @handleLoading="handleLoading"
+      :isPool="isPool"
       isTalon
     ></farm-item>
   </div>
@@ -74,10 +75,17 @@ import useFarmData from "@/hooks/farm/useData";
 
 export default defineComponent({
   name: "Farm",
-  setup() {
+  props: {
+    isPool: Boolean
+  },
+  setup(props) {
+    console.log(props, 111)
     const uniLoading = ref(true);
     const talonLoading = ref(true);
     const current = ref(1); // uniFarm -1 / talonFarm -2
+    if (props.isPool) {
+      current.value = 2;
+    }
     const state = reactive({
       sortValue: "1", // 下拉框值
       mortgageValue: false // 只看已质押
@@ -89,8 +97,7 @@ export default defineComponent({
       uniList,
       getUniData,
       filterList
-    } = useFarmData();
-    console.log(talonList, "talonListtalonListtalonListtalonList");
+    } = useFarmData(props.isPool);
     watch(
       () => [state.sortValue, state.mortgageValue],
       ([type, status]) => {
@@ -108,6 +115,7 @@ export default defineComponent({
 
     let timer: any;
     onMounted(async () => {
+      if (props.isPool) return;
       await getUniData();
       uniLoading.value = false;
       timer = setInterval(async () => {
@@ -882,7 +890,7 @@ export default defineComponent({
   }
 }
 .farm {
-  min-height: 750px;
+  //min-height: 750px;
   //padding: 0 20px;
   .top {
     width: 360px;
@@ -1023,6 +1031,15 @@ export default defineComponent({
     width: 300px;
     .tab-item {
       width: 150px;
+    }
+  }
+  .farm .search {
+    .sort {
+      .el-input__inner {
+        height: 36px;
+        line-height: 36px;
+        border-radius: 8px;
+      }
     }
   }
 }

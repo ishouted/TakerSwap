@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { getProvider } from "@/hooks/useEthereum";
 import { getCurrentAccount } from "@/api/util";
 import Farm from "@/views/farm/index.vue";
+import Pool from "@/views/pool/index.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -23,7 +24,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requireAuth: true }
   },
   {
-    path: "/liquidity",
+    path: "/liquidity/:fromAsset?/:toAsset?",
     name: "liquidity",
     component: () => import("@/views/liquidity/index.vue"),
     meta: { requireAuth: true }
@@ -33,6 +34,13 @@ const routes: Array<RouteRecordRaw> = [
     name: "farm",
     // component: () => import("@/views/farm/index.vue"),
     component: Farm,
+    meta: { requireAuth: true }
+  },
+  {
+    path: "/pool",
+    name: "pool",
+    // component: () => import("@/views/farm/index.vue"),
+    component: Pool,
     meta: { requireAuth: true }
   },
   {

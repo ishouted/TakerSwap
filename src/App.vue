@@ -58,7 +58,7 @@ export default {
 #app {
   width: 100%;
   min-height: 100%;
-  padding-bottom: 60px;
+  padding-bottom: 30px;
   word-break: break-all;
 }
 .inner_content {

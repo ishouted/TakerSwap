@@ -193,13 +193,13 @@
             {{ $t("home.home9") }}
           </span>
         </div>
-        <div class="d-flex text-7e mt-15">
+        <div class="d-flex text-7e mt-15 size-14">
           <span class="flex-1">LP</span>
           <span class="flex-1">{{ $t("home.home10") }}</span>
           <span class="text-right w-90">APR</span>
         </div>
         <div
-          class="d-flex text-3a mt-16"
+          class="d-flex text-3a mt-16 size-14"
           v-for="item in farmList"
           :key="item.farmHash"
         >
@@ -698,6 +698,9 @@ export default {
 }
 
 @media screen and (max-width: 600px) {
+  .home {
+    margin-top: -20px;
+  }
   .home .overview-total {
     font-size: 20px !important;
   }

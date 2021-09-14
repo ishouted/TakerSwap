@@ -19,7 +19,7 @@
     </div>
     <div class="account-wrap">
       <div class="asset-icon" v-if="talonAddress">
-        <img src="../assets/img/wallet.png" alt="" @click="toAsset" />
+        <img src="../assets/img/wallet.svg" alt="" @click="toAsset" />
       </div>
       <div class="account">
         <!--<i class="el-icon-s-finance"></i>-->
@@ -246,7 +246,7 @@ export default defineComponent({
   width: 100%;
   top: 0;
   left: 0;
-  height: 80px;
+  height: 64px;
   padding: 0 16px 0 8px;
   background: #4a5ff2;
   border: 2px solid #3345c7;
@@ -261,28 +261,6 @@ export default defineComponent({
       font-size: 20px;
       color: #fff;
       margin: 0 20px;
-    }
-    .menu {
-      display: block;
-      flex: 1;
-      background-color: #3a4be1;
-      border-bottom: 0;
-      .el-menu-item {
-        color: #ffffff;
-        height: 36px;
-        line-height: 36px;
-        padding: 0;
-        margin: 0 20px;
-        &:hover,
-        &:active,
-        &:visited,
-        &:focus {
-          background: transparent;
-        }
-        &:hover {
-          opacity: 0.65;
-        }
-      }
     }
   }
   .logo {
@@ -396,8 +374,14 @@ export default defineComponent({
     }
   }
   @media screen and (max-width: 500px) {
+    .left {
+      .toggle-menu {
+        font-size: 18px;
+        margin: 0 15px 0 10px;
+      }
+    }
     .logo {
-      width: 32px;
+      width: 28px;
       border-radius: 50%;
       .pc-mobile {
         display: none;
@@ -453,9 +437,6 @@ export default defineComponent({
 @media screen and (max-width: 610px) {
   .header .account-wrap .asset-icon i {
     font-size: 20px;
-  }
-  .header .left .menu {
-    display: none;
   }
 }
 </style>

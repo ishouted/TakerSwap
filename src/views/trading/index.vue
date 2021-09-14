@@ -73,7 +73,6 @@ export default defineComponent({
     });
     function toggleExpand() {
       state.showOverview = !state.showOverview;
-      localStorage.setItem("showOverview", state.showOverview);
     }
 
     const talonAddress = computed(() => store.getters.talonAddress);

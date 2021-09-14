@@ -234,7 +234,10 @@ export default defineComponent({
       () => props.defaultAsset,
       val => {
         if (val) {
-          state.fromAsset = val;
+          console.log(val, 666)
+          state.fromAsset = val.from;
+          state.toAsset = val.to || {};
+          storeSwapPairInfo();
         }
       },
       {

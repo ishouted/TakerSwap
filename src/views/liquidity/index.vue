@@ -17,12 +17,7 @@
             </el-button>
           </div>
         </div>
-        <div
-          class="your-liquidity"
-          v-if="talonAddress"
-          v-loading="myLoading"
-          element-loading-background="rgba(255, 255, 255, 0.8)"
-        >
+        <div class="your-liquidity" v-if="talonAddress">
           <h3>{{ $t("liquidity.liquidity4") }}</h3>
           <div class="liquidity-list">
             <div v-for="(item, index) in liquidityList" :key="index">
@@ -81,6 +76,7 @@
               :total="totalSize"
               @next-click="nextPage"
               @prev-click="prevPage"
+              @current-change="nextPage"
             ></el-pagination>
           </div>
         </div>
@@ -110,6 +106,7 @@ import AddLiquidity from "./AddLiquidity.vue";
 import CollapseTransition from "@/components/CollapseTransition.vue";
 import DetailBar from "./DetailBar.vue";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import { getAssetList, userLiquidityPage } from "@/model";
 import { divisionAndFix } from "@/api/util";
 import SymbolIcon from "@/components/SymbolIcon.vue";
@@ -123,13 +120,14 @@ export default defineComponent({
   },
   props: {},
   setup: () => {
+    const route = useRoute();
+    console.log(route.params, 9999);
     const store = useStore();
     const talonAddress = computed(() => store.getters.talonAddress);
     const state = reactive({
       addLiquidity: false,
       assetsList: [],
       liquidityList: [],
-      myLoading: false,
       loading: false,
       defaultAsset: null,
       pageIndex: 1,
@@ -140,7 +138,28 @@ export default defineComponent({
       await getData();
       // await getUserLiquidity();
       // state.assetsList = await getAssetList(talonAddress.value);
-      state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
+      if (state.assetsList.length) {
+        const defaultAsset = {};
+        const { fromAsset, toAsset } = route.params;
+        const default_nvt = state.assetsList.find(
+          item => item.symbol === "NVT"
+        );
+        if (fromAsset || toAsset) {
+          const from = state.assetsList.find(
+            item => item.assetKey === fromAsset
+          );
+          const to = state.assetsList.find(item => item.assetKey === toAsset);
+          if (from || to) {
+            state.addLiquidity = true;
+          }
+          defaultAsset.from = from || default_nvt;
+          state.defaultAsset = { from, to };
+        } else {
+          state.defaultAsset = {
+            from: default_nvt
+          };
+        }
+      }
       timer = setInterval(async () => {
         await getData();
       }, 10000);
@@ -154,7 +173,6 @@ export default defineComponent({
     });
     async function getUserLiquidity() {
       if (talonAddress.value) {
-        state.myLoading = true;
         const res = await userLiquidityPage({
           userAddress: talonAddress.value,
           pageIndex: state.pageIndex
@@ -181,7 +199,6 @@ export default defineComponent({
           });
           state.liquidityList = res.list.filter(item => item.amount !== "0");
         }
-        state.myLoading = false;
       }
     }
 
@@ -199,6 +216,7 @@ export default defineComponent({
       state.loading = loading;
     }
     function nextPage(pageNo) {
+      console.log(pageNo, 4444)
       state.pageIndex = pageNo;
       getUserLiquidity();
     }
@@ -239,10 +257,10 @@ export default defineComponent({
     }
   }
   .your-liquidity {
-    padding: 40px;
+    padding: 35px 40px 40px;
     border-top: 1px solid #e4efff;
     .liquidity-list {
-      //margin-top: -10px;
+      margin-top: 10px;
       .list-item {
         height: 74px;
         padding: 20px 0;
@@ -304,7 +322,8 @@ export default defineComponent({
     h3 {
       font-size: 22px;
     }
-    .top-part, .your-liquidity {
+    .top-part,
+    .your-liquidity {
       padding: 20px;
     }
   }

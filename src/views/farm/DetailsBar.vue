@@ -2,14 +2,14 @@
   <div class="farm-details">
     <div class="pc-cont">
       <div class="getLp">
-        <p class="click">
+        <p class="click" @click="toAddLiquidity" v-if="isTalon && !isPool">
           {{ $t("farm.farm7") }}{{ tokenInfo.name }}
           <i class=""></i>
         </p>
-        <p class="click">
+        <!--        <p class="click">
           {{ $t("farm.farm8") }}
           <i class=""></i>
-        </p>
+        </p>-->
       </div>
       <div class="biaoge">
         <div class="gain">
@@ -147,10 +147,14 @@
           {{ tokenInfo.syrupTokenBalance }} {{ tokenInfo.syrupTokenSymbol }}
         </span>
       </div>
-      <div class="text-4a mt-8">
+      <div
+        class="text-4a mt-8"
+        @click="toAddLiquidity"
+        v-if="isTalon && !isPool"
+      >
         {{ $t("farm.farm7") }}{{ tokenInfo.name }}
       </div>
-      <div class="text-4a mt-8">{{ $t("farm.farm8") }}</div>
+      <!--      <div class="text-4a mt-8">{{ $t("farm.farm8") }}</div>-->
     </div>
     <lp-dialog
       v-model:showLPDialog="dialogAddOrMinus"
@@ -171,6 +175,7 @@ import nerve from "nerve-sdk-js";
 import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { ETransfer, NTransfer } from "@/api/api";
 import { timesDecimals, divisionDecimals } from "@/api/util";
 import { contractAddress, txAbi } from "@/hooks/farm/contractConfig";
@@ -193,10 +198,21 @@ export default defineComponent({
       default: false
     },
     isTalon: Boolean,
-    talonAddress: String
+    talonAddress: String,
+    isPool: Boolean
+  },
+  watch: {
+    isPool: {
+      immediate: true,
+      handler(val) {
+        console.log(val, 9666666666666)
+
+      }
+    }
   },
   emits: ["loading"],
   setup(props, { emit }) {
+    const router = useRouter();
     const store = useStore();
     const { t } = useI18n();
     const dialogAddOrMinus = ref(false);
@@ -209,6 +225,7 @@ export default defineComponent({
     });
     const balance = ref(0);
     onMounted(async () => {
+      // console.log(props.tokenInfo, 9696);
       getERC20Allowance();
     });
     async function getERC20Allowance() {
@@ -454,6 +471,19 @@ export default defineComponent({
         });
       }
     }
+
+    function toAddLiquidity() {
+      const {
+        lpPairAssetAAssetId,
+        lpPairAssetAChainId,
+        lpPairAssetBAssetId,
+        lpPairAssetBChainId
+      } = props.tokenInfo;
+
+      router.push(
+        `/liquidity/${lpPairAssetAChainId}-${lpPairAssetAAssetId}/${lpPairAssetBChainId}-${lpPairAssetBAssetId}`
+      );
+    }
     return {
       needAuth,
       authToken,
@@ -463,7 +493,8 @@ export default defineComponent({
       balance,
       gether,
       handleLP,
-      confirmAddOrMinus
+      confirmAddOrMinus,
+      toAddLiquidity
     };
   }
 });
@@ -484,10 +515,10 @@ export default defineComponent({
       width: 120px;
     }
     .btn {
-      height: 44px;
+      height: 36px;
       width: 80px;
       background-color: #4a5ef2;
-      line-height: 44px;
+      line-height: 36px;
       text-align: center;
       font-size: 15px;
       color: #ffffff;
@@ -515,7 +546,7 @@ export default defineComponent({
         color: #4a5ef2;
         line-height: 24px;
         margin-top: 8px;
-        cursor: not-allowed;
+        //cursor: not-allowed;
         &:first-child {
           margin: 0;
         }

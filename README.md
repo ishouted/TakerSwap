@@ -1,15 +1,14 @@
-# Curium Swap
+# Taker Swap
 
-## Project setup
+### Project setup
 ```
-npm install
-or yarn
+yarn
 ```
-npm run dev
-or yarn run dev
+### Compiles and hot-reloads for development
+```angular2html
+yarn serve-beta
 ```
 ### Compiles and minifies for production
-```
-npm run build
-or yarn run build
+```angular2html
+yarn build
 ```

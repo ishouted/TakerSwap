@@ -38,6 +38,7 @@
           <DetailsBar
             :tokenInfo="item"
             :isTalon="isTalon"
+            :isPool="isPool"
             :talonAddress="talonAddress"
             v-show="item.showDetail"
             @loading="handleLoading"
@@ -45,48 +46,6 @@
         </collapse-transition>
       </div>
     </template>
-    <div class="mobile-item">
-      <div v-for="(item, index) in list" :key="index">
-        <div class="farm-item_mobile">
-          <span class="mr-2">{{ item.name }}</span>
-          <div class="farm-info">
-            <div class="mb_10">
-              <span class="info-title">{{ $t("farm.farm2") }}:</span>
-              <span>{{ item.pendingReward }} {{ item.syrupTokenSymbol }}</span>
-            </div>
-            <div class="mb_10">
-              <span class="info-title">{{ $t("farm.farm3") }}:</span>
-              <span>{{ item.apr }}%</span>
-            </div>
-            <div class="mb_10">
-              <span class="info-title">{{ $t("farm.farm4") }}:</span>
-              <span>${{ item.tatalStakeTokenUSD }}</span>
-            </div>
-            <div class="mb_10">
-              <span class="info-title">{{ $t("farm.farm5") }}:</span>
-              <span>
-                {{ item.syrupTokenBalance }} {{ item.syrupTokenSymbol }}
-              </span>
-            </div>
-          </div>
-          <div class="link view" @click="showId(item.farmHash)">
-<!--            {{ $t("farm.farm6") }}-->
-            <i
-              :class="{ 'el-icon-arrow-right': true, expand: item.showDetail }"
-            ></i>
-          </div>
-        </div>
-        <collapse-transition>
-          <DetailsBar
-            :tokenInfo="item"
-            :isTalon="isTalon"
-            :talonAddress="talonAddress"
-            v-show="item.showDetail"
-            @loading="handleLoading"
-          ></DetailsBar>
-        </collapse-transition>
-      </div>
-    </div>
 <!--    <div class="more" v-if="isTalon && talonAddress">
       <span class="link" @click="createFarm">{{ $t("farm.farm11") }}</span>
     </div>-->
@@ -122,7 +81,7 @@
             </div>
             <div class="farm-info_item">
               <div class="text-7e">APR</div>
-              <div class="mt-8 size-15">{{ item.apr }}</div>
+              <div class="mt-8 size-15">{{ item.apr }}%</div>
             </div>
           </div>
         </div>
@@ -134,6 +93,7 @@
         <DetailsBar
           :tokenInfo="item"
           :isTalon="isTalon"
+          :isPool="isPool"
           :talonAddress="talonAddress"
           v-show="item.showDetail"
           @loading="handleLoading"
@@ -158,7 +118,8 @@ export default defineComponent({
   props: {
     loading: Boolean,
     list: Array,
-    isTalon: Boolean
+    isTalon: Boolean,
+    isPool: Boolean
   },
   emits: ["handleLoading"],
   setup(props, { emit }) {
@@ -223,7 +184,7 @@ export default defineComponent({
   padding-bottom: 20px;
   .farm-item_cont {
     display: flex;
-    padding: 20px 15px 20px 15px;
+    padding: 15px 15px 15px 15px;
     border-bottom: 1px solid #e9ebf3;
     justify-content: space-between;
     align-items: center;
@@ -254,9 +215,12 @@ export default defineComponent({
       }
       .farm-info {
         display: flex;
-        margin-top: 10px;
+        margin-top: 8px;
         .farm-info_item {
           width: 124px;
+        }
+        .mt-8 {
+          margin-top: 0px;
         }
       }
     }
@@ -322,36 +286,6 @@ export default defineComponent({
     width: 100%;
     text-align: center;
     bottom: 20px;
-  }
-}
-.mobile-item {
-  display: none;
-  padding: 10px;
-  font-size: 14px;
-  .farm-item_mobile {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .farm-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      .info-title {
-        //width: 50px;
-        margin-bottom: 10px;
-        text-align: right;
-      }
-    }
-    .mr-2 {
-      margin-right: 20px;
-      width: 50px;
-      font-weight: bold;
-    }
-    .mb_10 {
-      margin-bottom: 10px;
-    }
   }
 }
 @media screen and (max-width: 1200px) {

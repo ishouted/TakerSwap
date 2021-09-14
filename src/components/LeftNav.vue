@@ -37,18 +37,18 @@
           <span class="title">{{ $t("header.header2") }}</span>
         </template>
       </el-menu-item>
+      <el-menu-item index="pool">
+        <i class="iconfont icon-Pool"></i>
+        <template #title>
+          <span class="title">Pool</span>
+        </template>
+      </el-menu-item>
       <el-menu-item index="farm">
         <i class="iconfont icon-Farm"></i>
         <template #title>
           <span class="title">Farm</span>
         </template>
       </el-menu-item>
-<!--      <el-menu-item index="pool">
-        <i class="iconfont icon-Pool"></i>
-        <template #title>
-          <span class="title">Pool</span>
-        </template>
-      </el-menu-item>-->
       <el-menu-item index="createFarm">
         <i class="iconfont icon-a-CreateFarm"></i>
         <template #title>
@@ -71,13 +71,17 @@
             <img src="../assets/s-logo.png" alt="" />
             ${{ usdValue }}
           </div>
-          <div class="right flex-center">
+        </div>
+        <div class="icon-wrap">
+          <div class="icon">
             <i class="iconfont icon-Telegram"></i>
             <i class="iconfont icon-Twitter"></i>
           </div>
-        </div>
-        <div class="language click">
-          <span @click="switchLang">{{ lang }}</span>
+
+          <div class="lang" @click="switchLang">
+            <img src="../assets/img/lang.svg" alt="" />
+            <span>{{ lang }}</span>
+          </div>
         </div>
       </template>
       <div v-else>
@@ -248,7 +252,35 @@ export default {
       width: 100%;
       overflow: hidden;
     }
+    .icon-wrap {
+      padding-top: 15px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .iconfont {
+        font-size: 24px;
+        margin-right: 15px;
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+      img {
+        width: 24px;
+        margin-right: 5px;
+      }
+      .lang {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
     .left {
+      overflow: hidden;
+      word-break: keep-all;
       img {
         width: 25px;
         height: 25px;

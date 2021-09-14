@@ -13,7 +13,9 @@
         ></i>
       </div>
       <div class="right flex-center">
-        <span @click="refresh"><i class="iconfont icon-shuaxin"></i></span>
+        <span @click="refresh" :class="{ refreshing: !canRefresh }" :style="{'cursor': canRefresh ? 'pointer' : 'not-allowed'}">
+          <i class="iconfont icon-shuaxin"></i>
+        </span>
         <span><i class="iconfont icon-fenxiang"></i></span>
         <span @click="toggleSettingDialog">
           <i class="iconfont icon-shezhi"></i>
@@ -313,10 +315,12 @@ export default defineComponent({
         state.fromAsset.assetKey &&
         state.toAsset.assetKey
       ) {
+        // canRefresh.value = false;
         // 缓存交易对信息
         await storeSwapPairInfo();
         // 反向缓存交易对信息
         await storeSwapPairInfo(false, true);
+        // canRefresh.value = true;
         context.emit("selectAsset", state.fromAsset, state.toAsset);
       } else {
         context.emit("updateRate", "");
@@ -355,7 +359,7 @@ export default defineComponent({
           });
           const pairsInfo = {};
           if (res.length) {
-            for (let i = 0; i < res.length - 1; i++) {
+            for (let i = 0; i < res.length; i++) {
               const token0 = res[i].token0;
               const token1 = res[i].token1;
               pairsInfo[
@@ -373,10 +377,12 @@ export default defineComponent({
                 res[i].reserve1
               );
             }
-            if (state.customerType && state.fromAmount && state.toAmount) {
+            if (state.customerType && state.fromAmount && state.toAmount && !isTemp) {
               refreshRate();
             }
-            getSwapAmount(1, "to", true);
+            if (!isTemp) {
+              getSwapAmount(1, "to", true);
+            }
           }
           storedSwapPairInfo[key] = pairsInfo;
         }
@@ -395,7 +401,6 @@ export default defineComponent({
         const tempFromAsset = { ...state.fromAsset };
         state.fromAsset = tempToAsset;
         state.toAsset = tempFromAsset;
-        context.emit("selectAsset", state.fromAsset, state.toAsset);
       } else {
         const tempToAsset = { ...state.toAsset };
         const tempFromAsset = { ...state.fromAsset };
@@ -406,8 +411,9 @@ export default defineComponent({
         } else if (state.customerType === "to") {
           state.fromAmount = state.toAmount;
         }
-        context.emit("selectAsset", state.fromAsset, state.toAsset);
       }
+      getSwapAmount(1, "to", true);
+      context.emit("selectAsset", state.fromAsset, state.toAsset);
     }
 
     // 监听fromAmount变化
@@ -429,6 +435,7 @@ export default defineComponent({
           }
 
           if (!state.disableWatchFromAmount) {
+            customerFocus("from");
             const [res, priceImpact] = getSwapAmount(val, "to"); // 通过from计算to
             state.priceImpact = priceImpact || 0;
             state.insufficient = res === 0;
@@ -447,9 +454,9 @@ export default defineComponent({
           if (!state.fromAmountError) {
             state.toAmount = "";
           }
+          customerFocus("from");
           getSwapRate(true);
         }
-        customerFocus("from");
       }
     );
     watch(
@@ -459,6 +466,7 @@ export default defineComponent({
           if (!state.fromAsset || !state.toAsset) return false;
 
           if (!state.disableWatchToAmount) {
+            customerFocus("to");
             const [res, priceImpact] = getSwapAmount(val, "from"); // 通过to计算from
             // console.log(res, priceImpact, 666);
             state.priceImpact = priceImpact || 0;
@@ -474,11 +482,11 @@ export default defineComponent({
             }
           }
         } else {
+          customerFocus("to");
           state.priceImpact = "";
           state.fromAmount = "";
           getSwapRate(true);
         }
-        customerFocus("to");
       },
       {
         deep: true
@@ -512,8 +520,18 @@ export default defineComponent({
         deep: true
       }
     );
-    function refresh() {
-      storeSwapPairInfo();
+    const canRefresh = ref(true);
+    async function refresh() {
+      try {
+        canRefresh.value = false;
+        await storeSwapPairInfo(true);
+        await storeSwapPairInfo(true, true);
+      } catch (e) {
+        //
+      }
+      setTimeout(() => {
+        canRefresh.value = true;
+      }, 1000);
     }
     async function refreshRate() {
       if (!state.fromAmount && !state.toAmount) return;
@@ -543,8 +561,8 @@ export default defineComponent({
     }
     let timer; // 10s刷新一次交易对信息&兑换比例
     onMounted(() => {
-      timer = setInterval(() => {
-        storeSwapPairInfo(true);
+      timer = setInterval(async() => {
+        await refresh();
       }, 10000);
     });
     onBeforeUnmount(() => {
@@ -570,7 +588,7 @@ export default defineComponent({
         const toDecimal =
           type === "from" ? state.fromAsset.decimals : state.toAsset.decimals;
         amount = timesDecimals(amount, fromDecimal);
-        console.log(pairsInfo, 66, amount, fromDecimal);
+        // console.log(pairsInfo, 66, amount, fromDecimal);
         const pairs = Object.values(pairsInfo);
         if (pairs.length) {
           const pairs = Object.values(pairsInfo);
@@ -589,10 +607,11 @@ export default defineComponent({
             type === "to"
               ? bestTradeExactIn(amount, pairs)
               : bestTradeExactOut(amount, pairs);
-          console.log(bestExact, "---bestExact---", pairs, 999);
+          // console.log(bestExact, "---bestExact---", pairs, 999);
           if (bestExact) {
-            const fromAmount = bestExact.tokenAmountIn.amount.toString();
-            const toAmount = bestExact.tokenAmountOut.amount.toString();
+            const inAmount = bestExact.tokenAmountIn.amount.toString();
+            const outAmount = bestExact.tokenAmountOut.amount.toString();
+            // console.log(inAmount, outAmount, "===---===", amount, type, state.customerType);
             const tokenPathArray = bestExact.path;
             const routesSymbol = [];
             bestExact.path.map(v => {
@@ -614,13 +633,15 @@ export default defineComponent({
                 pairsArray.push(pairsInfo[reverseKey]);
               }
             }
+            const fromAmount = type === "to" ? inAmount : outAmount;
+            const toAmount = type === "to" ? outAmount : inAmount;
             const priceImpact = nerve.swap.getPriceImpact(
               [fromAmount, toAmount],
               tokenPathArray,
               pairsArray
             );
             return [
-              divisionAndFix(toAmount, toDecimal, toDecimal),
+              divisionAndFix(outAmount, toDecimal, toDecimal),
               priceImpact
             ];
           } else {
@@ -907,7 +928,8 @@ export default defineComponent({
       maxSale,
       protectPercentInput,
       talonAddress,
-      handleLoading
+      handleLoading,
+      canRefresh
     };
   }
 });
@@ -933,9 +955,15 @@ export default defineComponent({
       span {
         margin-left: 15px;
         cursor: pointer;
+        &:first-child {
+          margin-left: 0;
+        }
         i {
           font-size: 22px;
         }
+      }
+      .refreshing {
+        animation: beRotate 1s linear infinite;
       }
     }
   }
@@ -1155,5 +1183,23 @@ export default defineComponent({
   background-color: red !important;
   color: #ffffff;
   border: none;
+}
+
+@keyframes beRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

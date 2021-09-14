@@ -156,7 +156,7 @@ export default {
       let decimals = this.chooseAsset?.decimals || 0;
       let patrn = "";
       if (!decimals) {
-        patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d])?$");
+        patrn = new RegExp("^([1-9][\\d]*|0)(\\.[\\d]*)?$|(^\\.[\\d]*$)");
       } else {
         patrn = new RegExp(
           "^([1-9][\\d]*|0)(\\.[\\d]{0," +
