@@ -557,7 +557,7 @@ export default {
           margin-top: 0;
         }
         .farm-symbol {
-          width: 285px;
+          width: 235px;
         }
         .farm-info {
           flex: 1;

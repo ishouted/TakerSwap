@@ -41,7 +41,7 @@ export default defineComponent({
   .img-wrap {
     width: 65px;
     height: 100%;
-    margin-right: 20px;
+    margin-right: 10px;
     img {
       width: 40px;
       height: 40px;

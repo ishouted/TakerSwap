@@ -293,7 +293,7 @@ export default defineComponent({
     font-size: 20px !important;
   }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 120px) {
   .farm-item {
     display: none !important;
   }

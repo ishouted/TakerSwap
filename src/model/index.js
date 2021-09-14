@@ -226,7 +226,7 @@ export async function getSwapPairInfo(data) {
  */
 export async function userTradeHistoryPage(data) {
   const pageIndex = data.pageIndex || 1;
-  const pageSize = data.pageSize || 10;
+  const pageSize = data.pageSize || 5;
   const channel = "userTradeHistoryPage";
   const params = {
     method: channel,
@@ -280,7 +280,7 @@ export async function calMinAmountOnSwapAddLiquidity(data) {
  */
 export async function userLiquidityPage(data) {
   const pageIndex = data.pageIndex || 1;
-  const pageSize = data.pageSize || 10;
+  const pageSize = data.pageSize || 5;
   const channel = "userLiquidityPage";
   const params = {
     method: channel,

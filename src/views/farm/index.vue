@@ -120,7 +120,7 @@ export default defineComponent({
       uniLoading.value = false;
       timer = setInterval(async () => {
         await getUniData();
-      }, 10000);
+      }, 5000);
     });
     onUnmounted(() => clearInterval(timer));
 
@@ -1021,10 +1021,11 @@ export default defineComponent({
     border: 0 !important;
   }
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1200px) {
   .tab-bar {
     display: flex;
     margin-left: 20px;
+    margin-top: -30px;
   }
   .farm .top {
     display: none;
@@ -1041,6 +1042,11 @@ export default defineComponent({
         border-radius: 8px;
       }
     }
+  }
+}
+@media screen and (max-width: 500px) {
+  .tab-bar {
+    margin-top: 0;
   }
 }
 </style>

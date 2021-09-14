@@ -21,7 +21,6 @@
               :value="item.assetKey"
               v-for="item in assetList"
               :key="item.assetKey"
-              :disabled="item.assetKey === model.tokenB"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -37,7 +36,6 @@
               :value="item.assetKey"
               v-for="item in assetList"
               :key="item.assetKey"
-              :disabled="item.assetKey === model.tokenA"
             ></el-option>
           </el-select>
         </el-form-item>

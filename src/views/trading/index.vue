@@ -6,6 +6,8 @@
       :swapRate="swapRate"
       :list="orderList"
       :loading="orderLoading"
+      v-model:pager="pager"
+      @changeList="changeList"
     ></overview>
     <swap
       :assetsList="assetsList"
@@ -13,7 +15,6 @@
       @toggleExpand="toggleExpand"
       @selectAsset="selectAsset"
       @updateRate="updateRate"
-      @updateOrderList="updateOrderList"
     ></swap>
     <el-dialog
       custom-class="mobile-overview-dialog"
@@ -27,6 +28,8 @@
         :swapRate="swapRate"
         :list="orderList"
         :loading="orderLoading"
+        v-model:pager="pager"
+        @changeList="changeList"
       ></overview>
     </el-dialog>
   </div>
@@ -69,7 +72,6 @@ export default defineComponent({
       orderList: [],
       orderLoading: false,
       defaultAsset: null, // 默认选择的资产
-      orderTotal: 0
     });
     function toggleExpand() {
       state.showOverview = !state.showOverview;
@@ -82,15 +84,27 @@ export default defineComponent({
       state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
       timer = setInterval(async () => {
         state.assetsList = await getAssetList(talonAddress.value);
-      }, 10000);
+        if (selectedAsset) {
+          selectAsset(selectedAsset.from, selectedAsset.to);
+        }
+      }, 5000);
     });
     onBeforeUnmount(() => {
       clearInterval(timer);
-      clearInterval(timer1);
     });
 
+    const pager = reactive({
+      index: 1,
+      size: 5,
+      total: 0
+    });
+    let selectedAsset = null;
     async function selectAsset(fromAsset, toAsset) {
       if (!talonAddress.value || !fromAsset || !toAsset) return;
+      selectedAsset = {
+        from: fromAsset,
+        to: toAsset
+      };
       state.swapSymbol = [fromAsset.symbol, toAsset.symbol];
       const fromToken = nerve.swap.token(fromAsset.chainId, fromAsset.assetId);
       const toToken = nerve.swap.token(toAsset.chainId, toAsset.assetId);
@@ -101,13 +115,15 @@ export default defineComponent({
       );
       const data = {
         pairAddress,
-        userAddress: talonAddress.value
+        userAddress: talonAddress.value,
+        pageIndex: pager.index,
+        pageSize: pager.size
       };
       // state.orderLoading = true;
       const res = await userTradeHistoryPage(data);
       // state.orderLoading = false;
       if (res) {
-        state.orderTotal = res.total || 0;
+        pager.total = res.total || 0;
         const list = [];
         res.list.map(v => {
           const fromToken = v.paidTokenAmount.token;
@@ -127,36 +143,13 @@ export default defineComponent({
         console.log(list, 44444);
       }
     }
-    // eslint-disable-next-line no-redeclare
-    let timer1;
-    async function updateOrderList(fromAsset, toAsset) {
-      if (timer1) clearInterval(timer1);
-      timer1 = null;
-      await selectAsset(fromAsset, toAsset);
-      timer1 = setInterval(async () => {
-        await selectAsset(fromAsset, toAsset);
-      }, 5000);
-      state.assetsList = await getAssetList(talonAddress.value);
-      // state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
+    function changeList() {
+      selectAsset(selectedAsset.from, selectedAsset.to);
     }
 
     function updateRate(rate) {
       state.swapRate = rate;
     }
-
-    watch(
-      () => state.orderTotal,
-      (newVal, oldVal) => {
-        console.log(newVal, oldVal);
-        if (newVal !== oldVal) {
-          if (timer1) clearInterval(timer1);
-          timer1 = null;
-        }
-      },
-      {
-        deep: true
-      }
-    );
 
     const isMobile = ref(false);
     function checkIsMobile() {
@@ -181,9 +174,10 @@ export default defineComponent({
       toggleExpand,
       selectAsset,
       updateRate,
-      updateOrderList,
       isMobile,
-      showMobileOverview
+      showMobileOverview,
+      pager,
+      changeList
     };
   }
 });
@@ -209,7 +203,7 @@ export default defineComponent({
     }
     .overview {
       width: 100%;
-      height: 600px;
+      max-height: 640px;
       padding: 0 10px 10px;
     }
   }

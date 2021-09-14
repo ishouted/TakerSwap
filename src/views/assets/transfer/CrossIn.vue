@@ -159,7 +159,7 @@ export default defineComponent({
       await this.checkAsset(asset);
       this.timer = setInterval(() => {
         this.checkAsset(asset);
-      }, 10000);
+      }, 5000);
     },
     // 检查资产是否支持从该异构链转入
     async checkAsset(asset) {

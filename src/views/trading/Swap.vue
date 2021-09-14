@@ -546,6 +546,7 @@ export default defineComponent({
       // console.log(res, "fff");
       state.insufficient = res === 0;
       if (res) {
+        state.disableWatchFromAmount = true;
         state.disableWatchToAmount = true; // 避免进入无限循环计算
         if (state.customerType === "from") {
           state.toAmount = res;
@@ -554,6 +555,7 @@ export default defineComponent({
         }
         getSwapRate();
         await nextTick();
+        state.disableWatchFromAmount = false;
         state.disableWatchToAmount = false;
       } else {
         getSwapRate(true);
@@ -563,7 +565,7 @@ export default defineComponent({
     onMounted(() => {
       timer = setInterval(async() => {
         await refresh();
-      }, 10000);
+      }, 5000);
     });
     onBeforeUnmount(() => {
       clearInterval(timer);
@@ -866,7 +868,7 @@ export default defineComponent({
         );
         const res = await handleHex(tx.hex);
         if (res && res.hash) {
-          context.emit("updateOrderList", state.fromAsset, state.toAsset);
+          context.emit("selectAsset", state.fromAsset, state.toAsset);
           ElMessage.success({
             message: t("transfer.transfer14"),
             type: "success"

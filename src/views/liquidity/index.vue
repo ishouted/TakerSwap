@@ -38,18 +38,7 @@
                   </div>
                   <div class="amount-cont">{{ item.amount }}</div>
                 </div>
-                <!--                <div class="value">-->
-                <!--                  <el-tooltip-->
-                <!--                    class="item"-->
-                <!--                    effect="dark"-->
-                <!--                    :content="item.amount"-->
-                <!--                    placement="top"-->
-                <!--                  >-->
-                <!--                    <span class="click">{{ item.amountSlice }}</span>-->
-                <!--                  </el-tooltip>-->
-                <!--                </div>-->
                 <div class="view-detail" @click="toggleDetail(item)">
-                  <!--{{ $t("liquidity.liquidity5") }}-->
                   <i
                     :class="{
                       'el-icon-arrow-right': true,
@@ -70,15 +59,10 @@
             </div>
             <div class="no-data" v-if="!liquidityList.length">No Data</div>
           </div>
-          <div class="pagination-cont" v-if="totalSize > 10">
-            <el-pagination
-              layout="prev, pager, next"
-              :total="totalSize"
-              @next-click="nextPage"
-              @prev-click="prevPage"
-              @current-change="nextPage"
-            ></el-pagination>
-          </div>
+          <pagination
+            v-model:pager="pager"
+            @change="getUserLiquidity"
+          ></pagination>
         </div>
       </div>
       <add-liquidity
@@ -110,13 +94,15 @@ import { useRoute } from "vue-router";
 import { getAssetList, userLiquidityPage } from "@/model";
 import { divisionAndFix } from "@/api/util";
 import SymbolIcon from "@/components/SymbolIcon.vue";
+import Pagination from "@/components/Pagination";
 export default defineComponent({
   name: "liquidity",
   components: {
     AddLiquidity,
     CollapseTransition,
     DetailBar,
-    SymbolIcon
+    SymbolIcon,
+    Pagination
   },
   props: {},
   setup: () => {
@@ -129,9 +115,7 @@ export default defineComponent({
       assetsList: [],
       liquidityList: [],
       loading: false,
-      defaultAsset: null,
-      pageIndex: 1,
-      totalSize: 0
+      defaultAsset: null
     });
     let timer;
     onMounted(async () => {
@@ -151,18 +135,19 @@ export default defineComponent({
           const to = state.assetsList.find(item => item.assetKey === toAsset);
           if (from || to) {
             state.addLiquidity = true;
+            defaultAsset.from = from || default_nvt;
+            state.defaultAsset = { from, to };
           }
-          defaultAsset.from = from || default_nvt;
-          state.defaultAsset = { from, to };
         } else {
           state.defaultAsset = {
             from: default_nvt
           };
         }
       }
+      console.log(state.defaultAsset, 99999)
       timer = setInterval(async () => {
         await getData();
-      }, 10000);
+      }, 5000);
     });
     async function getData() {
       await getUserLiquidity();
@@ -171,14 +156,20 @@ export default defineComponent({
     onBeforeUnmount(() => {
       clearInterval(timer);
     });
+    const pager = reactive({
+      index: 1,
+      size: 5,
+      total: 0
+    });
     async function getUserLiquidity() {
       if (talonAddress.value) {
         const res = await userLiquidityPage({
           userAddress: talonAddress.value,
-          pageIndex: state.pageIndex
+          pageIndex: pager.index,
+          pageSize: pager.size
         });
         if (res) {
-          state.totalSize = res.total;
+          pager.total = res.total || 0;
           res.list.map(v => {
             const info = v.lpTokenAmount;
             const amountSlice = divisionAndFix(
@@ -215,23 +206,14 @@ export default defineComponent({
     function handleLoading(loading) {
       state.loading = loading;
     }
-    function nextPage(pageNo) {
-      console.log(pageNo, 4444)
-      state.pageIndex = pageNo;
-      getUserLiquidity();
-    }
-    function prevPage(pageNo) {
-      state.pageIndex = pageNo;
-      getUserLiquidity();
-    }
     return {
       talonAddress,
       ...toRefs(state),
       toggleDetail,
       handleLoading,
       getData,
-      nextPage,
-      prevPage
+      pager,
+      getUserLiquidity
     };
   }
 });
@@ -257,7 +239,7 @@ export default defineComponent({
     }
   }
   .your-liquidity {
-    padding: 35px 40px 40px;
+    padding: 35px 40px 30px;
     border-top: 1px solid #e4efff;
     .liquidity-list {
       margin-top: 10px;

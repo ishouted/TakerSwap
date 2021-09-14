@@ -12,7 +12,7 @@
       <div class="title">{{ $t("trading.trading1") }}</div>
       <el-table
         :data="list"
-        height="435"
+        max-height="435"
         v-loading="loading"
         element-loading-background="rgba(255, 255, 255, 0.8)"
       >
@@ -63,13 +63,15 @@
           </li>
         </ul>
       </div>
+      <pagination v-model:pager="newPager" @change="changeList"></pagination>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import SymbolIcon from "@/components/SymbolIcon.vue";
+import Pagination from "@/components/Pagination";
 export default defineComponent({
   props: {
     swapSymbol: {
@@ -78,13 +80,29 @@ export default defineComponent({
     },
     swapRate: [String, Number],
     list: Array,
-    loading: Boolean
+    loading: Boolean,
+    pager: Object
   },
   components: {
-    SymbolIcon
+    SymbolIcon,
+    Pagination
   },
-  setup() {
-    return {};
+  setup(props, { emit }) {
+    const newPager = computed({
+      get() {
+        return props.pager;
+      },
+      set(val) {
+        emit("update:pager", val);
+      }
+    });
+    function changeList() {
+      emit("changeList");
+    }
+    return {
+      newPager,
+      changeList
+    };
   }
 });
 </script>
@@ -143,7 +161,7 @@ export default defineComponent({
   @media screen and (max-width: 1200px) {
     padding: 20px;
     .head {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       .bottom {
         font-size: 32px;
       }
@@ -194,12 +212,12 @@ export default defineComponent({
     .mobile-list {
       display: block;
       ul {
-        max-height: 360px;
+        max-height: 335px;
         overflow: auto;
       }
       li {
         padding: 10px 0;
-        border-bottom: 1px solid #E3EEFF;
+        border-bottom: 1px solid #e3eeff;
         &:first-child {
           padding-top: 0;
         }
@@ -207,13 +225,14 @@ export default defineComponent({
           border-bottom: none;
         }
       }
-      .left,.right {
+      .left,
+      .right {
         div:first-child {
           margin-bottom: 2px;
         }
         span {
           font-size: 14px;
-          color: #7E87C2;
+          color: #7e87c2;
         }
         p {
           font-size: 14px;

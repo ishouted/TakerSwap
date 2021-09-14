@@ -77,7 +77,7 @@
         </el-button>
       </template>
       <template v-else>
-        <AuthButton @loading="handleLoading"/>
+        <AuthButton @loading="handleLoading" />
       </template>
     </div>
   </div>
@@ -322,12 +322,16 @@ export default defineComponent({
       val => {
         if (val) {
           if (state.fromAsset) {
-            state.fromAsset = val.find(asset => asset.assetKey === state.fromAsset.assetKey
-            );
+            const asset = val.find(asset => asset.assetKey === state.fromAsset.assetKey);
+            if (asset) {
+              state.fromAsset = asset;
+            }
           }
           if (state.toAsset) {
-            state.toAsset = val.find(asset => asset.assetKey === state.toAsset.assetKey
-            );
+            const asset = val.find(asset => asset.assetKey === state.toAsset.assetKey);
+            if (asset) {
+              state.toAsset = asset;
+            }
           }
         }
       },

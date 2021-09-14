@@ -3,7 +3,7 @@
     <div class="pc-cont">
       <div class="getLp">
         <p class="click" @click="toAddLiquidity" v-if="isTalon && !isPool">
-          {{ $t("farm.farm7") }}{{ tokenInfo.name }}
+          {{ $t("farm.farm7") + " " + tokenInfo.name + " LP" }}
           <i class=""></i>
         </p>
         <!--        <p class="click">
@@ -152,7 +152,7 @@
         @click="toAddLiquidity"
         v-if="isTalon && !isPool"
       >
-        {{ $t("farm.farm7") }}{{ tokenInfo.name }}
+        {{ $t("farm.farm7") + " " + tokenInfo.name + " Lp" }}
       </div>
       <!--      <div class="text-4a mt-8">{{ $t("farm.farm8") }}</div>-->
     </div>
@@ -584,16 +584,22 @@ export default defineComponent({
           }
         }
         .btns {
-          width: 100px;
+          width: 90px;
           height: 38px;
           background: #4a5ef2;
           border-radius: 6px;
         }
       }
       .alter {
+        .right {
+          min-width: 145px;
+        }
         .btns {
-          width: 70px;
-          margin-left: 20px;
+          width: 65px;
+          margin-left: 15px;
+          &:first-child {
+            margin-left: 0;
+          }
           &.auth-btn {
             width: 100px;
           }

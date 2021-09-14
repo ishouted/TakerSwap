@@ -49,7 +49,10 @@
           v-for="item in list"
           :key="item.assetKey"
           :class="{
-            disable_asset: selectedAsset && selectedAsset.symbol === item.symbol
+            disable_asset:
+              selectedAsset &&
+              selectedAsset.chainId === item.chainId &&
+              selectedAsset.assetId === item.assetId
           }"
           @click="changeSelect(item)"
         >
