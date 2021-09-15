@@ -68,6 +68,7 @@ export default {
   margin-left: 200px;
   margin-top: 80px;
   flex: 1;
+  transition: padding-top 0.2s ease 0s, margin-left 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
   &.expand {
     margin-left: 64px;
   }

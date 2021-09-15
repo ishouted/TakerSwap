@@ -34,6 +34,6 @@ const i18n = createI18n({
 // console.log(ElementLocale, 66)
 // console.log(i18n.global.t, 656)
 // Ei18n(i18n.global.t);
-export function useI18n(app: App) {
+export function useI18nPlugin(app: App) {
   app.use(i18n);
 }

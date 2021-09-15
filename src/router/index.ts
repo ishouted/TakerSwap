@@ -18,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requireAuth: true }
   },
   {
-    path: "/trading",
+    path: "/trading/:fromAsset?/:toAsset?",
     name: "trading",
     component: () => import("@/views/trading/index.vue"),
     meta: { requireAuth: true }

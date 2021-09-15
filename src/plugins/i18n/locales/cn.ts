@@ -4,8 +4,10 @@ const cn = {
     header2: "流动性",
     header3: "连接钱包",
     header4: "首页",
-    header5: "创建Pool/Farm",
-    header6: "文档"
+    header5: "创建矿池/农场",
+    header6: "文档",
+    header7: "矿池",
+    header8: "农场"
   },
   public: {
     public1: "资产",
@@ -24,11 +26,12 @@ const cn = {
     public14: "网络错误",
     public15: "手续费: ",
     public16: "余额: ",
-    public17: "流动性不足"
+    public17: "流动性不足",
+    public18: "网络错误"
   },
   home: {
     home1: "总质押: ",
-    home2: "Taker实时信息",
+    home2: "TAKER实时信息",
     home3: "当前价格",
     home4: "总流通量",
     home5: "已销毁",

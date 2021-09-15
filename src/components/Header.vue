@@ -34,8 +34,9 @@
           class="wrong-chain"
           v-else-if="wrongChain"
           style="color: red; font-size: 14px"
+          @click="switchChain"
         >
-          Network Error
+          {{ $t("public.public18") }}
         </div>
         <div v-else @click="manageAccount = true" class="address-warp">
           <img src="../assets/img/eth-logo.png" alt="" />
@@ -103,6 +104,7 @@ import { superLong, getCurrentAccount, _networkInfo } from "@/api/util";
 import useEthereum, { providerList } from "@/hooks/useEthereum";
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
+import config from "@/config";
 
 export default defineComponent({
   name: "Header",
@@ -196,6 +198,15 @@ export default defineComponent({
     const wrongChain = computed(() => {
       return store.getters.wrongChain;
     });
+
+    function switchChain() {
+      const chainId = config.ETHNET === "ropsten" ? "0x3" : "0x1";
+      // const rpcUrl = "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
+      window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId }]
+      });
+    }
     return {
       address,
       showConnect,
@@ -209,7 +220,8 @@ export default defineComponent({
       openUrl,
       talonAddress,
       isCollapse,
-      wrongChain
+      wrongChain,
+      switchChain
     };
   },
   data() {

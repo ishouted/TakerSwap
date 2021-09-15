@@ -16,7 +16,7 @@
         <span @click="refresh" :class="{ refreshing: !canRefresh }" :style="{'cursor': canRefresh ? 'pointer' : 'not-allowed'}">
           <i class="iconfont icon-shuaxin"></i>
         </span>
-        <span><i class="iconfont icon-fenxiang"></i></span>
+        <span><i class="iconfont icon-fenxiang" @click="copyPair"></i></span>
         <span @click="toggleSettingDialog">
           <i class="iconfont icon-shezhi"></i>
         </span>
@@ -201,7 +201,8 @@ import {
   reactive,
   ref,
   toRefs,
-  watch
+  watch,
+  getCurrentInstance
 } from "vue";
 import CustomInput from "@/components/CustomInput.vue";
 import AuthButton from "@/components/AuthButton";
@@ -224,6 +225,7 @@ import { ElMessage } from "element-plus";
 import SymbolIcon from "@/components/SymbolIcon.vue";
 import { NTransfer } from "@/api/api";
 import config from "@/config";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "swap",
@@ -237,9 +239,11 @@ export default defineComponent({
     defaultAsset: Object
   },
   setup(props, context) {
+    const { proxy } = getCurrentInstance()
     let storedSwapPairInfo = {}; // 缓存的交易对全量的兑换路径
     const { t } = useI18n();
     const store = useStore();
+    const route = useRoute();
     const talonAddress = computed(() => {
       return store.getters.talonAddress;
     });
@@ -496,7 +500,9 @@ export default defineComponent({
       () => props.defaultAsset,
       val => {
         if (val) {
-          state.fromAsset = val;
+          state.fromAsset = val.from;
+          state.toAsset = val.to || {};
+          storeSwapPairInfo();
         }
       }
     );
@@ -908,6 +914,19 @@ export default defineComponent({
       return await transfer.broadcastHex(txHex);
     }
 
+    // 复制交易对url
+    function copyPair() {
+      const { fromAsset, toAsset } = state
+      const fromKey = fromAsset.assetKey;
+      const toKey = toAsset.assetKey;
+      if (!fromKey || !toKey) return;
+      const defaultUrl = window.location.origin;
+      const routeName = route.name;
+      // console.log(fromKey, toKey, 222, `${defaultUrl}/${routeName}/${fromKey}/${toKey}`, route)
+      // console.log(proxy, 666)
+      proxy.$copy(`${defaultUrl}/${routeName}/${fromKey}/${toKey}`);
+    }
+
     return {
       ...toRefs(state),
       minReceive,
@@ -931,7 +950,8 @@ export default defineComponent({
       protectPercentInput,
       talonAddress,
       handleLoading,
-      canRefresh
+      canRefresh,
+      copyPair
     };
   }
 });

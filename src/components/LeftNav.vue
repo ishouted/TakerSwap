@@ -1,5 +1,11 @@
 <template>
-  <div :class="['left-nav', isCollapse&&isMobile ? 'hide-nav' : '']">
+  <div
+    :class="[
+      'left-nav',
+      isCollapse && !isMobile ? 'collapse-nav' : '',
+      isCollapse && isMobile ? 'hide-nav' : ''
+    ]"
+  >
 <!--    <div class="top">
       <ul>
         <li>
@@ -40,13 +46,13 @@
       <el-menu-item index="pool">
         <i class="iconfont icon-Pool"></i>
         <template #title>
-          <span class="title">Pool</span>
+          <span class="title">{{ $t("header.header7") }}</span>
         </template>
       </el-menu-item>
       <el-menu-item index="farm">
         <i class="iconfont icon-Farm"></i>
         <template #title>
-          <span class="title">Farm</span>
+          <span class="title">{{ $t("header.header8") }}</span>
         </template>
       </el-menu-item>
       <el-menu-item index="createFarm">
@@ -55,16 +61,18 @@
           <span class="title">{{ $t("header.header5") }}</span>
         </template>
       </el-menu-item>
-      <el-menu-item>
+      <el-menu-item index="none">
         <i class="iconfont icon-Docs"></i>
         <template #title>
-          <span class="title">{{ $t("header.header6") }}</span>
+          <span class="title">
+            <a href="https://docs.takerswap.com/" target="_blank">{{ $t("header.header6") }}</a>
+          </span>
         </template>
       </el-menu-item>
       <!-- <el-menu-item index="info">Info</el-menu-item> -->
       <!-- <el-menu-item index="test">Test</el-menu-item> -->
     </el-menu>
-    <div class="nav-bottom" :style="{ width: isCollapse ? '64px' : '100%' }">
+    <div class="nav-bottom">
       <template v-if="!isCollapse">
         <div class="wrap">
           <div class="left flex-center">
@@ -75,7 +83,9 @@
         <div class="icon-wrap">
           <div class="icon">
             <i class="iconfont icon-Telegram"></i>
-            <i class="iconfont icon-Twitter"></i>
+            <a href="https://twitter.com/Takerswap" target="_blank">
+              <i class="iconfont icon-Twitter"></i>
+            </a>
           </div>
 
           <div class="lang" @click="switchLang">
@@ -131,6 +141,7 @@ export default {
     watch(
       () => route.path,
       val => {
+        console.log(val, 666)
         const path = val?.split("/")[1];
         if (path === "create-farm") {
           activeIndex.value = "createFarm";
@@ -221,6 +232,9 @@ export default {
           color: #8dc8d6;
         }
       }
+      .title a {
+        color: #fff;
+      }
     }
     .iconfont {
       color: #fff;
@@ -229,11 +243,10 @@ export default {
     }
   }
   .menu:not(.el-menu--collapse) {
-    width: 198px;
-    //width: 100%;
-    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    //width: 198px;
+    //transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
     &.collapse {
-      width: 64px;
+      //width: 64px;
       .title {
         opacity: 0;
       }
@@ -244,7 +257,7 @@ export default {
     border-top: 2px solid #3345C7;
     color: #fff;
     padding: 20px 20px 0;
-    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    //transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
     .wrap {
       display: flex;
       justify-content: space-between;
@@ -315,6 +328,10 @@ export default {
 .left-nav {
   overflow: hidden;
   transition: padding-top 0.2s ease 0s, width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  width: 198px;
+  &.collapse-nav {
+    width: 64px;
+  }
   &.hide-nav {
     width: 0;
   }

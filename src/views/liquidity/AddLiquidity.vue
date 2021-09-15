@@ -91,7 +91,8 @@ import {
   watch,
   nextTick,
   computed,
-  onBeforeUnmount
+  onBeforeUnmount,
+  onMounted
 } from "vue";
 import AuthButton from "../../components/AuthButton";
 import CustomInput from "@/components/CustomInput.vue";
@@ -129,9 +130,9 @@ export default defineComponent({
   setup(props, context) {
     const { t } = useI18n();
     const store = useStore();
+    let storedSwapPairInfo = {}; // 缓存的swapPairInfo
     const state = reactive({
       feeRate: 0.3, // 千三的手续费
-      storedSwapPairInfo: {}, // 缓存的swapPairInfo
       fromAmount: "",
       toAmount: "",
       fromAsset: {},
@@ -144,6 +145,7 @@ export default defineComponent({
       loading: false,
       disableCreate: false
     });
+    let customType = "from"; // 输入的input是from还是to， 默认from
 
     function handleLoading(status) {
       state.loading = status;
@@ -192,13 +194,12 @@ export default defineComponent({
       storeSwapPairInfo();
     }
 
-    async function storeSwapPairInfo(refreshKey) {
+    async function storeSwapPairInfo(refresh) {
       const fromAssetKey = state.fromAsset.assetKey;
       const toAssetKey = state.toAsset.assetKey;
-      const key = refreshKey ? refreshKey : fromAssetKey + "_" + toAssetKey;
-      console.log(key, refreshKey, 969696333);
+      const key = fromAssetKey + "_" + toAssetKey;
       if (fromAssetKey && toAssetKey) {
-        if (state.storedSwapPairInfo[key] && !refreshKey) {
+        if (storedSwapPairInfo[key] && !refresh) {
           // 如果存在切不需要刷新 则跳过
         } else {
           const result = await getSwapPairInfo({
@@ -208,13 +209,16 @@ export default defineComponent({
           if (result) {
             const token0Key =
               result.token0.assetChainId + "-" + result.token0.assetId;
-            state.storedSwapPairInfo[key] = {
+            storedSwapPairInfo[key] = {
               reserveFrom:
                 token0Key === fromAssetKey ? result.reserve0 : result.reserve1, // fromAsset的池子余额
               reserveTo:
                 token0Key === fromAssetKey ? result.reserve1 : result.reserve0 // // toAsset的池子余额
             };
             state.insufficient = false;
+            if (state.fromAmount && state.toAmount) {
+              refreshRate();
+            }
           } else {
             state.insufficient = true;
           }
@@ -234,7 +238,6 @@ export default defineComponent({
       () => props.defaultAsset,
       val => {
         if (val) {
-          console.log(val, 666)
           state.fromAsset = val.from;
           state.toAsset = val.to || {};
           storeSwapPairInfo();
@@ -250,6 +253,9 @@ export default defineComponent({
     watch(
       () => state.fromAmount,
       async val => {
+        if (!state.disableWatchFromAmount) {
+          customType = "from";
+        }
         if (val) {
           if (
             !Number(state.fromAsset.available) ||
@@ -285,6 +291,9 @@ export default defineComponent({
     watch(
       () => state.toAmount,
       async val => {
+        if (!state.disableWatchToAmount) {
+          customType = "to";
+        }
         if (val) {
           if (
             !Number(state.toAsset.available) ||
@@ -322,13 +331,17 @@ export default defineComponent({
       val => {
         if (val) {
           if (state.fromAsset) {
-            const asset = val.find(asset => asset.assetKey === state.fromAsset.assetKey);
+            const asset = val.find(
+              asset => asset.assetKey === state.fromAsset.assetKey
+            );
             if (asset) {
               state.fromAsset = asset;
             }
           }
           if (state.toAsset) {
-            const asset = val.find(asset => asset.assetKey === state.toAsset.assetKey);
+            const asset = val.find(
+              asset => asset.assetKey === state.toAsset.assetKey
+            );
             if (asset) {
               state.toAsset = asset;
             }
@@ -351,7 +364,7 @@ export default defineComponent({
           type === "from" ? state.fromAsset.decimals : state.toAsset.decimals;
         amount = timesDecimals(amount, fromDecimal);
         const key = fromAssetKey + "_" + toAssetKey;
-        const info = state.storedSwapPairInfo[key];
+        const info = storedSwapPairInfo[key];
         if (!info) {
           // setTimeout(() => {
           //   getLiquidAmount(amount, type);
@@ -366,13 +379,37 @@ export default defineComponent({
       }
     }
 
+    async function refreshRate() {
+      if (!state.fromAmount && !state.toAmount) return;
+      let res;
+      if (customType === "from") {
+        res = getLiquidAmount(state.fromAmount, "to"); // 通过from计算to
+      } else if (customType === "to") {
+        res = getLiquidAmount(state.toAmount, "from"); // 通过from计算to
+      }
+      if (res) {
+        state.disableWatchFromAmount = true;
+        state.disableWatchToAmount = true; // 避免进入无限循环计算
+        if (customType === "from") {
+          state.toAmount = res;
+        } else {
+          state.fromAmount = res;
+        }
+        // getSwapRate();
+        await nextTick();
+        state.disableWatchFromAmount = false;
+        state.disableWatchToAmount = false;
+      } else {
+        // getSwapRate(true);
+      }
+    }
+
     const priceInfo = computed(() => {
       const {
         fromAmount,
         toAmount,
         fromAsset: { assetKey: fromKey },
-        toAsset: { assetKey: toKey },
-        storedSwapPairInfo
+        toAsset: { assetKey: toKey }
       } = state;
       if (!fromKey || !toKey) {
         return null;
@@ -432,12 +469,6 @@ export default defineComponent({
               Minus(share, 0.0001) > 0
                 ? tofix(Times(share, 100), 2, 1)
                 : "<0.01";
-            // share =
-            //   Minus(share, 0.0001) > 0
-            //     ? Minus(share, 100) > 0
-            //       ? 100
-            //       : share
-            //     : "<0.01";
           }
           return {
             from_to,
@@ -471,9 +502,6 @@ export default defineComponent({
     });
 
     async function createPair() {
-      // const { fromAsset, toAsset } = state;
-      // refreshNewPair(fromAsset.assetKey, toAsset.assetKey);
-      // return;
       state.loading = true;
       try {
         const { fromAsset, toAsset } = state;
@@ -514,11 +542,11 @@ export default defineComponent({
       const key = fromKey + "_" + toKey;
       state.disableCreate = true;
       refreshPairTimer = setInterval(() => {
-        if (state.storedSwapPairInfo[key]) {
+        if (storedSwapPairInfo[key]) {
           state.disableCreate = false;
           clearInterval(refreshPairTimer);
         } else {
-          storeSwapPairInfo(key);
+          storeSwapPairInfo(true);
         }
       }, 2000);
     }
@@ -612,6 +640,16 @@ export default defineComponent({
     function back() {
       context.emit("update:show", false);
     }
+
+    let timer; // 5s刷新一次流动性兑换比例
+    onMounted(() => {
+      timer = setInterval(async () => {
+        await storeSwapPairInfo(true);
+      }, 5000);
+    });
+    onBeforeUnmount(() => {
+      clearInterval(timer);
+    });
     return {
       back,
       ...toRefs(state),

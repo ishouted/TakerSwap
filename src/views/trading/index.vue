@@ -54,6 +54,7 @@ import nerve from "nerve-sdk-js";
 import config from "@/config";
 import { divisionDecimals } from "@/api/util";
 import dayjs from "dayjs";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "trading",
@@ -64,6 +65,7 @@ export default defineComponent({
   props: {},
   setup() {
     const store = useStore();
+    const route = useRoute();
     const state = reactive({
       showOverview: false,
       assetsList: [],
@@ -81,7 +83,28 @@ export default defineComponent({
     let timer;
     onMounted(async () => {
       state.assetsList = await getAssetList(talonAddress.value);
-      state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
+      if (state.assetsList.length) {
+        const defaultAsset = {};
+        const { fromAsset, toAsset } = route.params;
+        const default_nvt = state.assetsList.find(
+          item => item.symbol === "NVT"
+        );
+        if (fromAsset || toAsset) {
+          const from = state.assetsList.find(
+            item => item.assetKey === fromAsset
+          );
+          const to = state.assetsList.find(item => item.assetKey === toAsset);
+          if (from || to) {
+            defaultAsset.from = from || default_nvt;
+            state.defaultAsset = { from, to };
+          }
+        } else {
+          state.defaultAsset = {
+            from: default_nvt
+          };
+        }
+      }
+      // state.defaultAsset = state.assetsList.find(item => item.symbol === "NVT");
       timer = setInterval(async () => {
         state.assetsList = await getAssetList(talonAddress.value);
         if (selectedAsset) {

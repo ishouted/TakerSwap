@@ -4,7 +4,7 @@ import router from "./router";
 import store from "./store";
 import { useElementPlus } from "@/plugins/element-plus";
 import "element-plus/dist/index.css";
-import { useI18n } from "@/plugins/i18n";
+import { useI18nPlugin } from "@/plugins/i18n";
 // import "amfe-flexible/index.js";
 // import "normalize.css"; // 初始化css
 // import { ElMessage } from "element-plus";
@@ -13,11 +13,12 @@ import "./config";
 
 setTimeout(() => {
   // 不延迟有时刷新会拿不到ethereum.selectedAddress???
-  createApp(App)
+  const app = createApp(App);
+  app
     .use(router)
     .use(store)
     .use(useElementPlus)
-    .use(useI18n)
+    .use(useI18nPlugin)
     .mixin({
       methods: {
         $copy(str: string) {

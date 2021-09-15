@@ -92,9 +92,10 @@
           ></el-checkbox>
         </el-form-item>
         <el-form-item class="confirm-wrap">
-          <el-button type="primary" @click="submitForm">
+          <el-button type="primary" @click="submitForm" v-if="talonAddress">
             {{ $t("farm.farm19") }}
           </el-button>
+          <auth-button v-else></auth-button>
         </el-form-item>
       </el-form>
     </div>
@@ -108,7 +109,8 @@ import {
   toRefs,
   ref,
   onMounted,
-  computed
+  computed,
+  watch
 } from "vue";
 import nerve from "nerve-sdk-js";
 import { useRouter } from "vue-router";
@@ -120,6 +122,7 @@ import { getAssetList, getBlockInfo } from "@/model";
 import { divisionAndFix, _networkInfo, Minus, timesDecimals } from "@/api/util";
 import config from "@/config";
 import dayjs from "dayjs";
+import AuthButton from "@/components/AuthButton";
 
 function parseChainInfo(key) {
   const arrry = key.split("-");
@@ -128,8 +131,14 @@ function parseChainInfo(key) {
 
 export default defineComponent({
   name: "CreateFarm",
+  components: {
+    AuthButton
+  },
   setup() {
     const store = useStore();
+    const talonAddress = computed(() => {
+      return store.getters.talonAddress;
+    });
     const { t } = useI18n();
     const form = ref(null);
     const loading = ref(false);
@@ -240,12 +249,25 @@ export default defineComponent({
       return new Date().getTime() > new Date(date).getTime();
     }
     const assetList = ref([]);
-    onMounted(() => {
-      const address = store.state.addressInfo.address.Talon;
-      getAssetList(address).then(res => {
-        assetList.value = res;
-      });
-    });
+    watch(
+      talonAddress,
+      val => {
+        if (val) {
+          getAssetList(val).then(res => {
+            assetList.value = res;
+          });
+        }
+      },
+      {
+        immediate: true
+      }
+    );
+    // onMounted(() => {
+    //   const address = talonAddress;
+    //   getAssetList(address).then(res => {
+    //     assetList.value = res;
+    //   });
+    // });
 
     function submitForm() {
       console.log(model, 999);
@@ -278,7 +300,7 @@ export default defineComponent({
           : 1;
         const lockTo = advanced.value ? dayjs(lockedTime).unix() : 1;
         const tx = await nerve.swap.farmCreate(
-          addressInfo.address.Talon,
+          talonAddress,
           nerve.swap.token(tokenA.chainId, tokenA.assetId),
           nerve.swap.token(tokenB.chainId, tokenB.assetId),
           config.chainId,
@@ -338,7 +360,8 @@ export default defineComponent({
       disableTime,
       submitForm,
       back,
-      advanced
+      advanced,
+      talonAddress
     };
   }
 });

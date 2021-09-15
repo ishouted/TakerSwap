@@ -76,7 +76,7 @@ export default function useData(isPool: boolean) {
   let onlySeeMortgage = false; // 只看已质押
   onBeforeUnmount(() => {
     unListen(url, "farmList");
-    unListen(url, "farmListSub");
+    subSocket.unListen(url, "farmListSub");
   });
   async function getFarmData() {
     const times = +new Date();
@@ -232,7 +232,7 @@ export default function useData(isPool: boolean) {
       // 每天产生的奖励总价值
       const c = Times(
         Times(dayNumber, candyPrice),
-        poolInfoValue[4]
+        poolInfoValue[4] // 每个区块奖励的糖果总数
       ).toString();
       //const a = 365 * (5760 * 1 * 88 / tokenInfo.candyDecimals); //365 * ( 每日出块数量  * candyPrice * candyPerBlock / candyDecimals )
       const a = Times(
@@ -241,7 +241,7 @@ export default function useData(isPool: boolean) {
       ).toString();
       //const b = 1 * 200000 / 50;  //lpPrice 1 * lpSupply / lpDecimals
       const b = Division(
-        Times(lpPrice, poolInfoValue[5]),
+        Times(lpPrice, poolInfoValue[5]), // [5]- 当前质押总量
         tokenInfo.stakeTokenDecimals
       ).toString();
       //APR = 365 * ( 每日出块数量  * candyPrice 1 * candyPerBlock / candyDecimals )
