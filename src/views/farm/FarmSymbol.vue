@@ -42,6 +42,7 @@ export default defineComponent({
     width: 65px;
     height: 100%;
     margin-right: 10px;
+    flex-shrink: 0;
     img {
       width: 40px;
       height: 40px;

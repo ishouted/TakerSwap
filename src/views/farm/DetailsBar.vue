@@ -539,7 +539,7 @@ export default defineComponent({
     align-items: center;
     justify-content: space-between;
     .getLp {
-      min-width: 200px;
+      width: 200px;
       p {
         font-size: 16px;
         font-weight: 500;

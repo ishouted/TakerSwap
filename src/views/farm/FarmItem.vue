@@ -227,6 +227,7 @@ export default defineComponent({
   }
   .farm-option {
     cursor: pointer;
+    flex-shrink: 0;
   }
 }
 .farm-item {
@@ -293,7 +294,7 @@ export default defineComponent({
     font-size: 20px !important;
   }
 }
-@media screen and (max-width: 120px) {
+@media screen and (max-width: 1200px) {
   .farm-item {
     display: none !important;
   }
