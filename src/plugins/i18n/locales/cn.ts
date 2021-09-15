@@ -117,9 +117,9 @@ const cn = {
     liquidity15: "你将收到"
   },
   login: {
-    login1: "请先生成Taker地址",
-    login2: "立即生成Taker地址",
-    login3: "生成Taker地址失败: ",
+    login1: "请先生成TAKER地址",
+    login2: "立即生成TAKER地址",
+    login3: "生成TAKER地址失败: ",
     login4: "连接钱包"
   },
   farm: {
@@ -140,7 +140,7 @@ const cn = {
     farm15: "奖励的Token资产",
     farm16: "奖励的Token数量/天",
     farm17: "奖励Token总量",
-    farm18: "我清楚创建Pool/Farm时，奖励给用户的Token将被立即转入智能合约",
+    farm18: "我清楚创建Pool/Farm时，奖励给用户的Token将被立即转入",
     farm19: "确认创建",
     farm20: "添加",
     farm21: "收取",
