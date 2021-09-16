@@ -61,6 +61,7 @@
             <div class="asset-base-info">
               <div>
                 {{ item.symbol }}
+                <span>({{ item.originNetwork }})</span>
               </div>
               <span v-if="showAmount">ID: {{ item.assetKey }}</span>
               <template v-else>
@@ -322,6 +323,7 @@ export default {
           span {
             font-size: 14px;
             color: #7e87c2;
+            font-weight: 400;
           }
           .mobile-span {
             display: none;

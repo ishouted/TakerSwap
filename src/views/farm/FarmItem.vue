@@ -56,23 +56,7 @@
       <div class="farm-item_cont">
         <div class="farm-item_list">
           <div class="symbol-cont">
-            <div class="symbol-icon-cont">
-              <span v-if="item.name.split('-')[0]">
-                <img
-                  :src="getIconSrc(item.name.split('-')[0])"
-                  @error="replaceImg"
-                  alt=""
-                />
-              </span>
-              <span v-if="item.name.split('-')[1]">
-                <img
-                  :src="getIconSrc(item.name.split('-')[1])"
-                  @error="replaceImg"
-                  alt=""
-                />
-              </span>
-            </div>
-            <span>{{ item.name }}</span>
+            <farm-symbol :name="item.name"></farm-symbol>
           </div>
           <div class="farm-info">
             <div class="farm-info_item">
@@ -110,8 +94,6 @@ import CollapseTransition from "@/components/CollapseTransition.vue";
 import FarmSymbol from "./FarmSymbol.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { getIconSrc } from "@/api/util";
-import defaultIcon from "@/assets/Talon.svg";
 
 export default defineComponent({
   name: "FarmItem",
@@ -151,18 +133,12 @@ export default defineComponent({
       emit("handleLoading", status);
     }
 
-    function replaceImg(e) {
-      e.target.src = defaultIcon;
-    }
-
     return {
       ...toRefs(state),
       talonAddress,
       showId,
       handleLoading,
-      createFarm,
-      replaceImg,
-      getIconSrc
+      createFarm
     };
   },
   components: {
@@ -193,23 +169,19 @@ export default defineComponent({
         display: flex;
         font-size: 15px;
         font-weight: bold;
-        .symbol-icon-cont {
-          display: flex;
-          width: 45px;
-          span {
-            height: 25px;
-            width: 25px;
-            border-radius: 50%;
-            z-index: 1;
-            overflow: hidden;
-            &:nth-child(2) {
-              transform: translateX(-9px);
-              z-index: 0;
-            }
+        :deep(.farm-item-symbol) {
+          width: auto;
+          padding: 0;
+          height: 35px;
+          .mult-img-wrap, .img-wrap {
+            width: 45px;
             img {
-              height: 100%;
-              width: 100%;
+              width: 30px;
+              height: 30px;
             }
+          }
+          .name {
+            font-size: 16px;
           }
         }
       }

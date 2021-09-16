@@ -18,8 +18,11 @@
       </div>
     </div>
     <div class="account-wrap">
-      <div class="asset-icon" v-if="talonAddress">
-        <img src="../assets/img/wallet.svg" alt="" @click="toAsset" />
+      <div class="asset-icon" v-if="address">
+        <img v-if="talonAddress" src="../assets/img/wallet.svg" alt="" @click="toAsset" />
+        <auth-button ref="authRef" v-else>
+          <img src="../assets/img/wallet.svg" alt="" @click="derivedAddress" />
+        </auth-button>
       </div>
       <div class="account">
         <!--<i class="el-icon-s-finance"></i>-->
@@ -105,9 +108,13 @@ import useEthereum, { providerList } from "@/hooks/useEthereum";
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import config from "@/config";
+import AuthButton from "./AuthButton.vue";
 
 export default defineComponent({
   name: "Header",
+  components: {
+    AuthButton
+  },
   props: {
     collapseMenu: Boolean
   },
@@ -207,6 +214,12 @@ export default defineComponent({
         params: [{ chainId }]
       });
     }
+    const authRef = ref(null);
+    async function derivedAddress() {
+      // @ts-ignore
+      await authRef.value.derivedAddress();
+      toAsset();
+    }
     return {
       address,
       showConnect,
@@ -221,7 +234,9 @@ export default defineComponent({
       talonAddress,
       isCollapse,
       wrongChain,
-      switchChain
+      switchChain,
+      authRef,
+      derivedAddress
     };
   },
   data() {
@@ -322,6 +337,7 @@ export default defineComponent({
       img {
         width: 30px;
         height: 30px;
+        margin-right: 3px;
       }
     }
   }
@@ -404,6 +420,24 @@ export default defineComponent({
     }
     .account {
       margin-left: 15px;
+    }
+    .connect-dialog {
+      //max-width: 470px !important;
+      .el-dialog__body {
+        .list {
+          padding: 0 25px 20px;
+          .connect-btn {
+            height: 45px;
+            line-height: 45px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            img {
+              width: 30px;
+              height: 30px;
+            }
+          }
+        }
+      }
     }
     .account-manage {
       .content .top span {

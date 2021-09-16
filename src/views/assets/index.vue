@@ -1,5 +1,6 @@
 <template>
   <div class="w1300 assets-wrap">
+    <!--    el-table resize卡顿问题-->
     <div
       class="hack-table-resize"
       v-if="!showTransfer"
@@ -18,48 +19,6 @@
               @click="showAssetManage = true"
             ></i>
           </div>
-          <div class="assets-list" v-loading="loading">
-            <template v-if="tableData && tableData.length !== 0">
-              <div
-                class="asset-item"
-                v-for="(item, index) in tableData"
-                :key="index"
-              >
-                <span class="assets_symbol">{{ item.symbol }}</span>
-                <div class="asset-info">
-                  <span>
-                    {{ $t("public.public2") }}：{{ item.number }}≈${{
-                      item.valuation
-                    }}
-                  </span>
-                  <span>{{ $t("public.public3") }}：{{ item.available }}</span>
-                  <span>{{ $t("public.public4") }}：{{ item.locking }}</span>
-                </div>
-                <div class="option_btn">
-                  <el-dropdown trigger="click">
-                    <span class="el-dropdown-link">
-                      {{ $t("public.public5") }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <el-dropdown-item @click="transfer(item, 'crossIn')">
-                          {{ $t("assets.assets4") }}
-                        </el-dropdown-item>
-                        <el-dropdown-item @click="transfer(item, 'general')">
-                          {{ $t("assets.assets5") }}
-                        </el-dropdown-item>
-                        <el-dropdown-item @click="transfer(item, 'withdrawal')">
-                          {{ $t("assets.assets6") }}
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                </div>
-              </div>
-            </template>
-            <el-empty description="No Data" v-if="!tableData.length"></el-empty>
-          </div>
           <el-table
             :data="tableData"
             height="480"
@@ -72,21 +31,43 @@
               <template v-slot="scope">
                 <div class="flex-center">
                   <symbol-icon :icon="scope.row.symbol"></symbol-icon>
-                  <span>{{ scope.row.symbol }}</span>
+                  <el-tooltip placement="top">
+                    <template #content>
+                      <div>
+                        ID: {{ scope.row.assetKey }}
+                        <br />
+                        <span
+                          v-if="
+                            getContractAddress(
+                              scope.row.heterogeneousList,
+                              scope.row.registerChainId
+                            )
+                          "
+                        >
+                          {{ $t("assets.assets10")
+                          }}{{
+                            getContractAddress(
+                              scope.row.heterogeneousList,
+                              scope.row.registerChainId
+                            )
+                          }}
+                        </span>
+                      </div>
+                    </template>
+                    <div class="t_info">
+                      <span>{{ scope.row.symbol }}</span>
+                      <p>{{ "(" + scope.row.originNetwork + ")" }}</p>
+                    </div>
+                  </el-tooltip>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column
-              :label="$t('public.public2')"
-            >
+            <el-table-column :label="$t('public.public2')">
               <template v-slot="scope">
                 {{ $thousands(scope.row.available) }}
               </template>
             </el-table-column>
-            <el-table-column
-              prop="locking"
-              :label="$t('public.public3')"
-            >
+            <el-table-column prop="locking" :label="$t('public.public3')">
               <template v-slot="scope">
                 {{ $thousands(scope.row.locking) }}
               </template>
@@ -125,23 +106,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-dialog
-            :title="$t('assets.assets7')"
-            custom-class="assets-manage"
-            :show-close="false"
-            v-model="showAssetsDialog"
-          >
-            <div class="content">
-              <div class="top">
-                <span>{{ superLong(address, 9) }}</span>
-                <span><i class="el-icon-copy-document"></i></span>
-                <span><i class="el-icon-copy-document"></i></span>
-              </div>
-              <div class="bottom tc">
-                <el-button type="primary">{{ $t("public.public7") }}</el-button>
-              </div>
-            </div>
-          </el-dialog>
         </div>
       </div>
     </div>
@@ -162,32 +126,51 @@
         v-if="!tableData.length"
       />
       <div v-for="(item, index) in tableData" v-else :key="index">
-        <div class="p-24 asset-cont" @click="assetClick(item)">
-          <div class="asset-item">
-            <span class="asset-img">
-              <img :src="getImageSrc(item.symbol)" @error="replaceImg" alt="" />
-            </span>
-            <span class="font-bold" style="font-size: 15px">
-              {{ item.symbol }}
-            </span>
-          </div>
-          <div class="asset-amount flex-center">
-            <div class="left">
-              <div class="font-bold align-right" style="font-size: 15px">
-                {{ $thousands(item.number) }}
-              </div>
-              <div class="size-13 text-7e align-right">
-                ≈{{ $thousands(item.valuation) }}
-              </div>
+        <div class="p-24 asset-cont-wrap" @click="assetClick(item)">
+          <div class="asset-cont">
+            <div class="asset-item">
+              <span class="asset-img">
+                <symbol-icon :icon="item.symbol"></symbol-icon>
+              </span>
+              <span class="font-bold" style="font-size: 14px;line-height: 1">
+                {{ item.symbol }}
+                <br>
+                <span>({{ item.originNetwork }})</span>
+              </span>
             </div>
-            <i
-              :class="[
-                'el-icon-caret-right',
-                item.showDetail ? 'rotate-icon' : ''
-              ]"
-            ></i>
+            <div class="asset-amount flex-center">
+              <div class="left">
+                <div class="font-bold align-right" style="font-size: 15px">
+                  {{ $thousands(item.number) }}
+                </div>
+                <div class="size-13 text-7e align-right">
+                  ≈{{ $thousands(item.valuation) }}
+                </div>
+              </div>
+              <i
+                :class="[
+                  'el-icon-caret-right',
+                  item.showDetail ? 'rotate-icon' : ''
+                ]"
+              ></i>
+            </div>
+          </div>
+          <div class="t_info">
+            <span>ID: {{ item.assetKey }}</span>
+            <br/>
+            <span
+              v-if="
+                getContractAddress(item.heterogeneousList, item.registerChainId)
+              "
+            >
+              {{ $t("assets.assets10")
+              }}{{
+                superLong(getContractAddress(item.heterogeneousList, item.registerChainId), 10)
+              }}
+            </span>
           </div>
         </div>
+
         <CollapseTransition>
           <div class="option-btn" v-if="item.showDetail">
             <div class="btn-cont">
@@ -199,10 +182,7 @@
               >
                 {{ $t("assets.assets4") }}
               </div>
-              <div
-                class="btn"
-                @click="transfer(item, 'general')"
-              >
+              <div class="btn" @click="transfer(item, 'general')">
                 {{ $t("assets.assets5") }}
               </div>
               <div
@@ -238,12 +218,7 @@ import { chainToSymbol, superLong, getIconSrc, _networkInfo } from "@/api/util";
 import SymbolIcon from "@/components/SymbolIcon.vue";
 import AssetsManage from "./AssetsManage.vue";
 import Transfer from "./transfer/index.vue";
-import { getAssetList } from "@/model";
-import config from "@/config";
-import defaultIcon from "../../assets/Talon.svg";
 import CollapseTransition from "@/components/CollapseTransition.vue";
-
-const url = config.WS_URL;
 
 export default defineComponent({
   name: "assets",
@@ -260,12 +235,12 @@ export default defineComponent({
     };
   },
   watch: {
-    address: {
+    "$store.state.assetList": {
       immediate: true,
+      deep: true,
       handler(val) {
-        console.log(val, 444);
-        if (val) {
-          this.getList();
+        if (val && val.length) {
+          this.getList(val);
         }
       }
     }
@@ -301,17 +276,12 @@ export default defineComponent({
       currentTab: "first",
       tableData: [],
       transferAsset: {},
-      show: false
+      show: false,
+      loaded: false
     };
   },
 
   methods: {
-    getImageSrc(icon) {
-      return "https://nuls-cf.oss-us-west-1.aliyuncs.com/icon/" + icon + ".png";
-    },
-    replaceImg(e) {
-      e.target.src = defaultIcon;
-    },
     assetClick(item) {
       for (let asset of this.tableData) {
         if (item.assetKey === asset.assetKey) {
@@ -321,14 +291,19 @@ export default defineComponent({
         }
       }
     },
-    async getList() {
-      this.loading = true;
-      const res = await getAssetList(this.talonAddress);
+    async getList(list) {
+      this.loading = !this.loaded;
       this.loading = false;
-      const sortDataByValue = [...res].sort((a, b) => {
+      list.map(v => {
+        const exist = this.allAssetsList.find(
+          item => v.assetKey === item.assetKey
+        );
+        v.showDetail = exist ? exist.showDetail : false;
+      });
+      const sortDataByValue = [...list].sort((a, b) => {
         return a.valuation - b.valuation > 0 ? -1 : 1;
       });
-      const crossInOutSymbol = [...res].filter(item => {
+      const crossInOutSymbol = [...list].filter(item => {
         if (!item.heterogeneousList) {
           return false;
         } else {
@@ -344,9 +319,10 @@ export default defineComponent({
         }
       });
       this.sortDataByValue = sortDataByValue;
-      this.allAssetsList = res;
+      this.allAssetsList = list;
       this.crossInOutSymbol = crossInOutSymbol;
       this.filterAssets();
+      this.loaded = true;
     },
     //过滤展示资产列表
     filterAssets() {
@@ -390,7 +366,7 @@ export default defineComponent({
       let supportedChain = false;
       item.heterogeneousList.map(v => {
         Object.keys(_networkInfo).map(key => {
-          if (_networkInfo[key].chainId === v.heterogeneousChainId) {
+          if (_networkInfo[key].chainId === v.heterogeneousChainId && _networkInfo[key].supported) {
             supportedChain = true;
           }
         });
@@ -399,6 +375,19 @@ export default defineComponent({
     },
     superLong(str, len = 9) {
       return superLong(str, len);
+    },
+    getContractAddress(heterogeneousList, registerChainId) {
+      if (!heterogeneousList || !heterogeneousList.length) {
+        return false;
+      }
+      const info = heterogeneousList.filter(
+        v => v.heterogeneousChainId === registerChainId
+      )[0];
+      if (!info) {
+        return false;
+      } else {
+        return info.contractAddress;
+      }
     }
   }
 });
@@ -417,7 +406,7 @@ export default defineComponent({
 
   .address-wrap {
     justify-content: space-between;
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
     margin: 20px 0 10px;
     i {
@@ -427,26 +416,41 @@ export default defineComponent({
       margin-left: 10px;
     }
   }
+  .asset-cont-wrap {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9ebf3;
+    .t_info {
+      font-size: 12px;
+      color: #7e87c2;
+      display: flex;
+      justify-content: space-between;
+      //padding-top: 2px;
+    }
+  }
   .asset-cont {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px;
-    border-bottom: 1px solid #e9ebf3;
+    padding: 3px 0;
     .asset-item {
       display: flex;
       align-items: center;
       max-width: 40%;
       .asset-img {
-        height: 22.5px;
-        width: 22.5px;
+        height: 25px;
+        width: 25px;
         overflow: hidden;
         margin-right: 6px;
         flex-shrink: 0;
-        img {
+        :deep(.symbol-icon) {
           height: 100%;
           width: 100%;
         }
+      }
+      .font-bold span {
+        color: #7e87c2;
+        font-weight: 400;
+        font-size: 12px;
       }
     }
     .asset-amount {
@@ -471,12 +475,12 @@ export default defineComponent({
       justify-content: center;
       .btn {
         cursor: pointer;
-        height: 39px;
-        width: 95px;
+        height: 36px;
+        width: 88px;
         font-size: 15px;
         background-color: #4a5ef2;
         color: #ffffff;
-        line-height: 39px;
+        line-height: 36px;
         text-align: center;
         border-radius: 10px;
         margin: 0 5px;
@@ -534,8 +538,22 @@ export default defineComponent({
     }
     tr .flex-center {
       span {
-        font-weight: 600;
+        //font-weight: 600;
+        //margin-left: 10px;
+      }
+      .t_info {
         margin-left: 10px;
+        span {
+          font-weight: 600;
+          line-height: 1;
+          margin-bottom: 5px;
+        }
+        p {
+          font-size: 14px;
+          text-align: left;
+          color: #7e87c2;
+          line-height: 1;
+        }
       }
     }
     .el-button--text {
@@ -546,25 +564,7 @@ export default defineComponent({
     }
   }
 }
-.assets-list {
-  display: none;
-  .asset-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    .assets_symbol {
-      width: 100px;
-    }
-    .asset-info {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-  }
-}
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1024px) {
   .mobile-cont {
     display: block;
   }

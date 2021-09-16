@@ -86,8 +86,14 @@ export default defineComponent({
     },
     "father.allAssetsList": {
       deep: true,
-      handler() {
-        this.selectAsset(this.father.transferAsset);
+      handler(val) {
+        // console.log()
+        if (val.length) {
+          this.assetsList = [...val];
+          this.balance = this.assetsList.find(
+            v => v.assetKey === this.transferAsset.assetKey
+          )?.available;
+        }
       }
     }
   },
@@ -104,9 +110,10 @@ export default defineComponent({
   },
   mounted() {
     this.assetsList = [...this.father.allAssetsList];
-    // console.log(this.father, "===commontransfer===");
-    // console.log(this.$store.state.addressInfo, "===addressInfo===");
     this.selectAsset(this.father.transferAsset);
+    /*this.balance = this.assetsList.find(
+      v => v.assetKey === this.transferAsset.assetKey
+    )?.available;*/
     this.transfer = new NTransfer({
       chain: "NERVE",
       type: 2
@@ -114,8 +121,8 @@ export default defineComponent({
   },
   methods: {
     selectAsset(asset) {
-      this.transferAsset = { ...asset };
-      this.balance = this.transferAsset.available;
+      this.transferAsset = asset;
+      this.balance = asset.available;
     },
     max() {
       this.amount = this.balance;

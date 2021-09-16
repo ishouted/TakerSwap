@@ -6,17 +6,6 @@
       isCollapse && isMobile ? 'hide-nav' : ''
     ]"
   >
-<!--    <div class="top">
-      <ul>
-        <li>
-          <i class="iconfont icon-Home"></i>
-          {{ $t("header.header4") }}
-        </li>
-      </ul>
-    </div>
-    <div class="bottom">
-:collapse="isMobile ? false : isCollapse"
-    </div>-->
     <el-menu
       :class="['menu', isCollapse ? 'collapse' : '']"
       @select="handleSelect"
@@ -61,22 +50,26 @@
           <span class="title">{{ $t("header.header5") }}</span>
         </template>
       </el-menu-item>
-      <el-menu-item index="none">
-        <i class="iconfont icon-Docs"></i>
+      <el-menu-item index="none" disabled>
+        <i class="iconfont icon-yuyan"></i>
         <template #title>
-          <span class="title">
-            <a href="https://docs.takerswap.com/" target="_blank">{{ $t("header.header6") }}</a>
-          </span>
+          <span class="title">{{ $t("header.header9") }}</span>
         </template>
       </el-menu-item>
-      <!-- <el-menu-item index="info">Info</el-menu-item> -->
-      <!-- <el-menu-item index="test">Test</el-menu-item> -->
+      <div class="custom-item">
+        <i class="iconfont icon-Docs"></i>
+        <span class="title">
+          <a href="https://docs.takerswap.com/" target="_blank">
+            {{ $t("header.header6") }}
+          </a>
+        </span>
+      </div>
     </el-menu>
     <div class="nav-bottom">
       <template v-if="!isCollapse">
         <div class="wrap">
           <div class="left flex-center">
-            <img src="../assets/s-logo.png" alt="" />
+            <img src="../assets/s-logo-w.svg" alt="" />
             ${{ usdValue }}
           </div>
         </div>
@@ -105,7 +98,7 @@
 import { computed, ref, watch, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import useLang from "@/hooks/useLang";
-import {listen} from "@/api/websocket";
+import { listen } from "@/api/websocket";
 import config from "@/config";
 
 const url = config.WS_URL;
@@ -141,7 +134,7 @@ export default {
     watch(
       () => route.path,
       val => {
-        console.log(val, 666)
+        console.log(val, 666);
         const path = val?.split("/")[1];
         if (path === "create-farm") {
           activeIndex.value = "createFarm";
@@ -167,7 +160,7 @@ export default {
     }
     const { lang, switchLang } = useLang();
 
-    const usdValue = ref("0.00")
+    const usdValue = ref("0.00");
     function getOverview() {
       const channel = "mainAssetInfo";
       const params = {
@@ -212,13 +205,14 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color:#4A5FF2;
-  border-right: 2px solid #3345C7;
+  background-color: #4a5ff2;
+  border-right: 2px solid #3345c7;
   z-index: 11;
   .menu {
     border-right: none;
     flex: 1;
-    .el-menu-item {
+    .el-menu-item,
+    .custom-item {
       display: flex;
       align-items: center;
       font-size: 16px;
@@ -234,6 +228,15 @@ export default {
       }
       .title a {
         color: #fff;
+      }
+    }
+    .custom-item {
+      padding: 0 20px;
+      height: 56px;
+      line-height: 56px;
+      cursor: pointer;
+      &:hover {
+        background-color: #3b4cc2;
       }
     }
     .iconfont {
@@ -254,7 +257,7 @@ export default {
   }
   .nav-bottom {
     height: 110px;
-    border-top: 2px solid #3345C7;
+    border-top: 2px solid #3345c7;
     color: #fff;
     padding: 20px 20px 0;
     //transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
@@ -327,8 +330,9 @@ export default {
 }
 .left-nav {
   overflow: hidden;
-  transition: padding-top 0.2s ease 0s, width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-  width: 198px;
+  transition: padding-top 0.2s ease 0s,
+    width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  width: 208px;
   &.collapse-nav {
     width: 64px;
   }
@@ -338,7 +342,7 @@ export default {
 }
 @media screen and (max-width: 1200px) {
   .left-nav {
-    width: 198px;
+    width: 208px;
   }
   .inner_content {
     margin-left: 0;

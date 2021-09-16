@@ -4,9 +4,7 @@ import {
   divisionAndFix,
   Plus,
   Times,
-  toNumberStr,
-  tofix,
-  divisionDecimals
+  _networkInfo
 } from "@/api/util";
 import config from "@/config";
 import store from "@/store";
@@ -58,22 +56,7 @@ export async function getAssetList(address = store.state.destroyAddress) {
       Times(item.number || 0, item.usdPrice).toFixed(2);
     item.available = divisionAndFix(item.balanceStr, decimal, decimal);
     item.listAvailable = divisionAndFix(item.balanceStr, decimal, 6);
-    /*item.available = toNumberStr(
-      parseFloat(
-        tofix(
-          divisionDecimals(item.balanceStr, decimal).toString(),
-          decimal,
-          -1
-        )
-      ),
-      decimal
-    );
-    item.listAvailable = toNumberStr(
-      parseFloat(
-        tofix(divisionDecimals(item.balanceStr, decimal).toString(), 6, -1)
-      ),
-      6
-    );*/
+    item.originNetwork = Object.values(_networkInfo).find(v => v.chainId === item.registerChainId)?.name;
   });
   // 返回按字母排序
   const sortDataBySymbol = [...res]

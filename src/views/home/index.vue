@@ -118,13 +118,13 @@
                   <p class="value">{{ item.syrupTokenSymbol }}</p>
                 </div>
               </div>
-              <div
-                class="handle click"
-                @click="addLP(item)"
-                v-if="talonAddress"
-              >
-                {{ $t("home.home11") }}
-              </div>
+<!--              <div-->
+<!--                class="handle click"-->
+<!--                @click="addLP(item)"-->
+<!--                v-if="talonAddress"-->
+<!--              >-->
+<!--                {{ $t("home.home11") }}-->
+<!--              </div>-->
             </div>
           </div>
         </div>
@@ -557,7 +557,7 @@ export default {
           margin-top: 0;
         }
         .farm-symbol {
-          width: 235px;
+          width: 285px;
         }
         .farm-info {
           flex: 1;

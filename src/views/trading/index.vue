@@ -73,14 +73,56 @@ export default defineComponent({
       swapSymbol: [],
       orderList: [],
       orderLoading: false,
-      defaultAsset: null, // 默认选择的资产
+      defaultAsset: null // 默认选择的资产
     });
     function toggleExpand() {
       state.showOverview = !state.showOverview;
     }
 
     const talonAddress = computed(() => store.getters.talonAddress);
-    let timer;
+    let isLoaded = false;
+    watch(
+      store.state.assetList,
+      val => {
+        if (val && val.length) {
+          state.assetsList = val;
+          if (!isLoaded) {
+            // 默认选择资产
+            const defaultAsset = {};
+            const { fromAsset, toAsset } = route.params;
+            const default_nvt = state.assetsList.find(
+              item => item.symbol === "NVT"
+            );
+            if (fromAsset || toAsset) {
+              const from = state.assetsList.find(
+                item => item.assetKey === fromAsset
+              );
+              const to = state.assetsList.find(
+                item => item.assetKey === toAsset
+              );
+              if (from || to) {
+                defaultAsset.from = from || default_nvt;
+                state.defaultAsset = { from, to };
+              }
+            } else {
+              state.defaultAsset = {
+                from: default_nvt
+              };
+            }
+            console.log(state.defaultAsset, 9666)
+            isLoaded = true;
+          }
+          if (selectedAsset) {
+            selectAsset(selectedAsset.from, selectedAsset.to);
+          }
+        }
+      },
+      {
+        immediate: true,
+        deep: true
+      }
+    );
+    /*let timer;
     onMounted(async () => {
       state.assetsList = await getAssetList(talonAddress.value);
       if (state.assetsList.length) {
@@ -114,7 +156,7 @@ export default defineComponent({
     });
     onBeforeUnmount(() => {
       clearInterval(timer);
-    });
+    });*/
 
     const pager = reactive({
       index: 1,
@@ -213,16 +255,17 @@ export default defineComponent({
   padding: 0 20px;
   .mobile-overview-dialog {
     max-width: 680px !important;
-    .el-dialog__header, .el-dialog__body {
-      padding-left: 16px!important;
-      padding-right: 16px!important;
+    .el-dialog__header,
+    .el-dialog__body {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
     }
     .el-dialog__header {
-      padding-top: 16px!important;
+      padding-top: 16px !important;
       padding-bottom: 0;
     }
     .el-dialog__body {
-      padding-top: 10px!important;
+      padding-top: 10px !important;
     }
     .overview {
       width: 100%;

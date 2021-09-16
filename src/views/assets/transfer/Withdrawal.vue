@@ -57,6 +57,7 @@ export default defineComponent({
     CustomInput
   },
   data() {
+    this.timer = null;
     return {
       loading: false,
       assetsList: [],
@@ -106,7 +107,10 @@ export default defineComponent({
       deep: true,
       handler() {
         this.filterAssets();
-        this.selectAsset(this.father.transferAsset);
+        // this.selectAsset(this.father.transferAsset);
+        this.balance = this.assetsList.find(
+          v => v.assetKey === this.transferAsset.assetKey
+        )?.available;
       }
     }
   },
@@ -127,6 +131,9 @@ export default defineComponent({
     // console.log(this.$store.state.addressInfo, "===addressInfo===");
     this.filterAssets();
     this.selectAsset(this.father.transferAsset);
+  },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer);
   },
   methods: {
     filterAssets() {
@@ -158,7 +165,11 @@ export default defineComponent({
         this.transferAsset = asset;
         this.balance = this.transferAsset.available;
         this.heterogeneousInfo = heterogeneousInfo;
+        if (this.timer) clearInterval(this.timer);
         this.getCrossOutFee();
+        this.timer = setInterval(() => {
+          this.getCrossOutFee();
+        }, 5000);
       } else {
         this.transferAsset = {};
       }

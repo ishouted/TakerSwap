@@ -118,7 +118,7 @@ import { NTransfer } from "@/api/api";
 import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { getAssetList, getBlockInfo } from "@/model";
+import { getBlockInfo } from "@/model";
 import { divisionAndFix, _networkInfo, Minus, timesDecimals } from "@/api/util";
 import config from "@/config";
 import dayjs from "dayjs";
@@ -248,26 +248,7 @@ export default defineComponent({
       // console.log(date, 132465)
       return new Date().getTime() > new Date(date).getTime();
     }
-    const assetList = ref([]);
-    watch(
-      talonAddress,
-      val => {
-        if (val) {
-          getAssetList(val).then(res => {
-            assetList.value = res;
-          });
-        }
-      },
-      {
-        immediate: true
-      }
-    );
-    // onMounted(() => {
-    //   const address = talonAddress;
-    //   getAssetList(address).then(res => {
-    //     assetList.value = res;
-    //   });
-    // });
+    const assetList = computed(() => store.state.assetList);
 
     function submitForm() {
       console.log(model, 999);

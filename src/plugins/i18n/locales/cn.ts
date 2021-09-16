@@ -7,7 +7,8 @@ const cn = {
     header5: "创建矿池/农场",
     header6: "文档",
     header7: "矿池",
-    header8: "农场"
+    header8: "农场",
+    header9: "浏览器"
   },
   public: {
     public1: "资产",
@@ -54,7 +55,8 @@ const cn = {
     assets6: "L2转至L1",
     assets7: "资产管理",
     assets8: "使用资产名称或ID进行查询",
-    assets9: "使用资产名称或合约地址进行查询"
+    assets9: "使用资产名称或合约地址进行查询",
+    assets10: "合约地址: "
   },
   transfer: {
     transfer1: "充值到L2",

@@ -23,6 +23,7 @@
             <div class="asset-base-info">
               <div>
                 {{ item.symbol }}
+                <span>({{ item.originNetwork }})</span>
               </div>
               <span>ID: {{ item.assetKey }}</span>
             </div>
@@ -190,6 +191,7 @@ export default {
         span {
           font-size: 14px;
           color: #7e87c2;
+          font-weight: 400;
         }
       }
       .el-checkbox {

@@ -278,13 +278,13 @@ const KCCOrigin = isBeta
   : "https://explorer.kcc.io";
 
 export const _networkInfo = {
-  /* NULS: {
+ NULS: {
     name: "NULS",
     chainId: isBeta ? 2 : 1,
     origin: NULSOrigin,
     color: "#00da9d",
     mainAsset: "NULS"
-  }, */
+  },
   NERVE: {
     name: "NERVE",
     chainId: isBeta ? 5 : 9,
@@ -299,27 +299,28 @@ export const _networkInfo = {
     color: "#5e5e5e",
     mainAsset: "ETH",
     ropsten: "0x3",
-    homestead: "0x1"
-  }
-  // BSC: {
-  //   name: "BSC",
-  //   chainId: 102,
-  //   origin: BNBOrigin,
-  //   color: "#e7b941",
-  //   mainAsset: "BNB",
-  //   ropsten: "0x61",
-  //   homestead: "0x38"
-  // },
-  // Heco: {
-  //   name: "Heco",
-  //   chainId: 103,
-  //   origin: HTOrigin,
-  //   color: "#336adb",
-  //   mainAsset: "HT",
-  //   ropsten: "0x100",
-  //   homestead: "0x80"
-  // },
-  /* OKExChain: {
+    homestead: "0x1",
+    supported: true
+  },
+  BSC: {
+    name: "BSC",
+    chainId: 102,
+    origin: BNBOrigin,
+    color: "#e7b941",
+    mainAsset: "BNB",
+    ropsten: "0x61",
+    homestead: "0x38"
+  },
+  Heco: {
+    name: "Heco",
+    chainId: 103,
+    origin: HTOrigin,
+    color: "#336adb",
+    mainAsset: "HT",
+    ropsten: "0x100",
+    homestead: "0x80"
+  },
+  OKExChain: {
     name: "OKExChain",
     chainId: 104,
     origin: OKOrigin,
@@ -354,7 +355,7 @@ export const _networkInfo = {
     mainAsset: "KCS",
     ropsten: "0x142",
     homestead: "0x141"
-  } */
+  }
 };
 
 // assetKey -> [chainId, assetId]

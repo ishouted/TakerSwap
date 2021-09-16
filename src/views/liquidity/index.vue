@@ -84,7 +84,8 @@ import {
   onMounted,
   reactive,
   toRefs,
-  onBeforeUnmount
+  onBeforeUnmount,
+  watch
 } from "vue";
 import AddLiquidity from "./AddLiquidity.vue";
 import CollapseTransition from "@/components/CollapseTransition.vue";
@@ -117,12 +118,51 @@ export default defineComponent({
       loading: false,
       defaultAsset: null
     });
+    let isLoaded = false;
+    watch(
+      store.state.assetList,
+      val => {
+        if (val && val.length) {
+          state.assetsList = val;
+          if (!isLoaded) {
+            // 默认选择资产
+            const defaultAsset = {};
+            const { fromAsset, toAsset } = route.params;
+            const default_nvt = state.assetsList.find(
+              item => item.symbol === "NVT"
+            );
+            if (fromAsset || toAsset) {
+              const from = state.assetsList.find(
+                item => item.assetKey === fromAsset
+              );
+              const to = state.assetsList.find(
+                item => item.assetKey === toAsset
+              );
+              if (from || to) {
+                state.addLiquidity = true;
+                defaultAsset.from = from || default_nvt;
+                state.defaultAsset = { from, to };
+              }
+            } else {
+              state.defaultAsset = {
+                from: default_nvt
+              };
+            }
+            isLoaded = true;
+          }
+        }
+      },
+      {
+        immediate: true,
+        deep: true
+      }
+    );
     let timer;
     onMounted(async () => {
       await getData();
       // await getUserLiquidity();
       // state.assetsList = await getAssetList(talonAddress.value);
-      if (state.assetsList.length) {
+      /*if (state.assetsList.length) {
         const defaultAsset = {};
         const { fromAsset, toAsset } = route.params;
         const default_nvt = state.assetsList.find(
@@ -144,14 +184,14 @@ export default defineComponent({
           };
         }
       }
-      console.log(state.defaultAsset, 99999)
+      console.log(state.defaultAsset, 99999)*/
       timer = setInterval(async () => {
         await getData();
       }, 5000);
     });
     async function getData() {
       await getUserLiquidity();
-      state.assetsList = await getAssetList(talonAddress.value);
+      // state.assetsList = await getAssetList(talonAddress.value);
     }
     onBeforeUnmount(() => {
       clearInterval(timer);

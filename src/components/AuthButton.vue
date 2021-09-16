@@ -1,11 +1,17 @@
 <template>
   <div class="auth-button">
-    <el-button type="primary" v-if="!address" @click="showConnectDialog(true)">
-      {{ $t("header.header3") }}
-    </el-button>
-    <el-button v-else type="primary" @click="derivedAddress">
-      {{ $t("login.login2") }}
-    </el-button>
+    <slot>
+      <el-button
+        type="primary"
+        v-if="!address"
+        @click="showConnectDialog(true)"
+      >
+        {{ $t("header.header3") }}
+      </el-button>
+      <el-button v-else type="primary" @click="derivedAddress">
+        {{ $t("login.login2") }}
+      </el-button>
+    </slot>
   </div>
 </template>
 

@@ -22,33 +22,70 @@ import LeftNav from "@/components/LeftNav";
 import { ElConfigProvider } from "element-plus";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import enLocale from "element-plus/lib/locale/lang/en";
+
+import {watch, ref, computed} from "vue";
+import { useStore } from "vuex";
+import { getAssetList } from "@/model";
+
 import nerve from "nerve-sdk-js";
 import config from "@/config";
 nerve.customnet(config.chainId, config.API_URL, config.timeout); // sdk设置测试网chainId
+
 const navigatorLang = window.navigator.language === "zh-CN" ? "zh-cn" : "en";
 const lang = localStorage.getItem("lang") || navigatorLang;
 
 export default {
   name: "App",
-  data() {
-    return {
-      locale: lang === "zh-cn" ? zhCn : enLocale,
-      collapseMenu: false
-    };
-  },
-  watch: {
-    "$store.state.lang": {
-      immediate: true,
-      handler(val) {
-        this.locale = val === "zh-cn" ? zhCn : enLocale;
-      }
-    }
-  },
   components: {
     Header,
     LeftNav,
     ElConfigProvider
+  },
+  setup() {
+    const store = useStore();
+    const locale = ref("zh-cn");
+    locale.value = lang === "zh-cn" ? zhCn : enLocale;
+    watch(store.state.lang, val => {
+      locale.value = val === "zh-cn" ? zhCn : enLocale;
+    });
+    let timer;
+    const takerAddress = computed(() => store.getters.talonAddress);
+    watch(
+      takerAddress,
+      val => {
+        console.log(val, 6666)
+        if (val) {
+          if (timer) clearInterval(timer);
+          timer = setInterval(() => {
+            // getAssetList(val);
+            store.dispatch("getAssetList", val);
+          }, 5000);
+        }
+      },
+      {
+        immediate: true
+      }
+    );
+    const collapseMenu = ref(false);
+    return {
+      locale,
+      collapseMenu
+    };
   }
+  // data() {
+  //   return {
+  //     locale: lang === "zh-cn" ? zhCn : enLocale,
+  //     collapseMenu: false
+  //   };
+  // },
+  // watch: {
+  //   "$store.state.lang": {
+  //     immediate: true,
+  //     handler(val) {
+  //       this.locale = val === "zh-cn" ? zhCn : enLocale;
+  //     }
+  //   }
+  // },
 };
 </script>
 
@@ -65,12 +102,16 @@ export default {
   position: relative;
   z-index: 10;
   padding-top: 50px;
-  margin-left: 200px;
+  margin-left: 210px;
   margin-top: 80px;
   flex: 1;
-  transition: padding-top 0.2s ease 0s, margin-left 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+  transition: padding-top 0.2s ease 0s,
+    margin-left 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;
   &.expand {
     margin-left: 64px;
+  }
+  @media screen and (max-width: 1440px) {
+    margin-top: 50px;
   }
   @media screen and (max-width: 1200px) {
     margin-left: 0;
@@ -78,9 +119,9 @@ export default {
       margin-left: 0;
     }
   }
-  @media screen and (max-width: 500px) {
-    margin-top: 50px;
-  }
+  //@media screen and (max-width: 500px) {
+  //  margin-top: 50px;
+  //}
 }
 .nav-mask {
   display: none;

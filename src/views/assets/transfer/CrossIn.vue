@@ -83,9 +83,7 @@ export default defineComponent({
     "father.crossInOutSymbol": {
       deep: true,
       handler() {
-        console.log(99999);
-        this.filterAssets();
-        this.selectAsset(this.father.transferAsset);
+        // this.filterAssets();
       }
     }
   },
@@ -124,6 +122,10 @@ export default defineComponent({
     this.filterAssets();
     this.selectAsset(this.father.transferAsset);
   },
+  beforeUnmount() {
+    if (this.timer) clearInterval(this.timer);
+    this.timer = null;
+  },
   methods: {
     filterAssets() {
       // console.log(123465,this.father);
@@ -139,7 +141,7 @@ export default defineComponent({
         .map(item => {
           const tempAddress = item.heterogeneousList?.find(
             v => v.heterogeneousChainId === chain.chainId
-          ).contractAddress;
+          )?.contractAddress;
           return {
             ...item,
             contractAddress: tempAddress
@@ -149,11 +151,13 @@ export default defineComponent({
         item => item.symbol === mainAsset
       );
       const tempAsset = this.assetsList[tempIndex];
+      // 将主资产排序到到第一个
       this.assetsList.splice(tempIndex, 1);
       this.assetsList.unshift(tempAsset);
     },
     async selectAsset(asset) {
-      console.log(asset, 789654, this.father);
+      this.transferAsset = asset;
+      // console.log(asset, 789654, this.father);
       if (this.timer) clearInterval(this.timer);
       if (this.father.disableTx) return;
       await this.checkAsset(asset);
@@ -164,9 +168,9 @@ export default defineComponent({
     // 检查资产是否支持从该异构链转入
     async checkAsset(asset) {
       // const asset = this.transferAsset;
-      this.fee = "";
-      this.amount = "";
-      this.balance = "";
+      // this.fee = "";
+      // this.amount = "";
+      // this.balance = "";
       this.needAuth = false;
       const heterogeneousList = asset.heterogeneousList || [];
       const heterogeneousChainId = _networkInfo[this.father.network]?.chainId;
@@ -212,6 +216,7 @@ export default defineComponent({
       // console.log(this.fee, 444);
     },
     async getBalance() {
+      if (!this.heterogeneousInfo) return;
       const { contractAddress, isToken } = this.heterogeneousInfo;
       if (isToken) {
         this.balance = await this.transfer.getERC20Balance(
@@ -300,10 +305,6 @@ export default defineComponent({
       const { origin } = _networkInfo[network];
       window.open(origin + "/address/" + address);
     }
-  },
-  beforeUnmount() {
-    if (this.timer) clearInterval(this.timer);
-    this.timer = null;
   }
 });
 </script>

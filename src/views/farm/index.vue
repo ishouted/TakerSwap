@@ -12,14 +12,14 @@
         :class="{ isActive: current === 1 }"
         @click="current = 1"
       >
-        L1 Farm
+        L1 {{ $t("header.header8") }}
       </div>
       <div
         class="fr tab-item"
         :class="{ isActive: current === 2 }"
         @click="current = 2"
       >
-        Taker Farm
+        Taker {{ $t("header.header8") }}
       </div>
     </div>
     <div class="search">
