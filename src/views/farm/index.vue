@@ -922,7 +922,7 @@ export default defineComponent({
     height: 40px;
     margin: 10px 0 20px;
     .sort {
-      width: 150px;
+      width: 170px;
       height: 40px;
       .el-input__inner {
         background: #5f71f5;

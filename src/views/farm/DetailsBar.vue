@@ -2,8 +2,8 @@
   <div class="farm-details">
     <div class="pc-cont">
       <div class="getLp">
-        <p class="click" @click="toAddLiquidity" v-if="isTalon && !isPool">
-          {{ $t("farm.farm7") + " " + tokenInfo.name + " LP" }}
+        <p class="click" @click="toAddLiquidity" v-if="isTalon">
+          {{ $t("farm.farm7") + " " + tokenInfo.name }}{{ !isPool ? " LP" : "" }}
           <i class=""></i>
         </p>
         <!--        <p class="click">
@@ -150,7 +150,7 @@
       <div
         class="text-4a mt-8"
         @click="toAddLiquidity"
-        v-if="isTalon && !isPool"
+        v-if="isTalon"
       >
         {{ $t("farm.farm7") + " " + tokenInfo.name + " Lp" }}
       </div>
@@ -177,7 +177,7 @@ import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ETransfer, NTransfer } from "@/api/api";
-import { timesDecimals, divisionDecimals } from "@/api/util";
+import { timesDecimals, divisionDecimals, isBeta } from "@/api/util";
 import { contractAddress, txAbi } from "@/hooks/farm/contractConfig";
 import { ethers } from "ethers";
 import { getAssetBalance } from "@/model";
@@ -477,12 +477,18 @@ export default defineComponent({
         lpPairAssetAAssetId,
         lpPairAssetAChainId,
         lpPairAssetBAssetId,
-        lpPairAssetBChainId
+        lpPairAssetBChainId,
+        stakeTokenChainId,
+        stakeTokenAssetId
       } = props.tokenInfo;
-
-      router.push(
-        `/liquidity/${lpPairAssetAChainId}-${lpPairAssetAAssetId}/${lpPairAssetBChainId}-${lpPairAssetBAssetId}`
-      );
+      let url;
+      if (!props.isPool) {
+        url = `/liquidity/${lpPairAssetAChainId}-${lpPairAssetAAssetId}/${lpPairAssetBChainId}-${lpPairAssetBAssetId}`
+      } else {
+        const USDT = isBeta ? "5-7" : "9-3";
+        url = `/trading/${USDT}/${stakeTokenChainId}-${stakeTokenAssetId}`;
+      }
+      router.push(url);
     }
     return {
       needAuth,

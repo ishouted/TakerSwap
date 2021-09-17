@@ -217,8 +217,10 @@ export default defineComponent({
     const authRef = ref(null);
     async function derivedAddress() {
       // @ts-ignore
-      await authRef.value.derivedAddress();
-      toAsset();
+      const result = await authRef.value.derivedAddress();
+      if (result) {
+        toAsset();
+      }
     }
     return {
       address,

@@ -52,6 +52,7 @@ export default {
       }
     );
     async function derivedAddress() {
+      let result = false;
       emit("loading", true);
       try {
         if (!address.value) {
@@ -104,6 +105,7 @@ export default {
           }
           localStorage.setItem("accountList", JSON.stringify(accountList));
           store.commit("setCurrentAddress", account);
+          result = true;
           // const fromPath = route.redirectedFrom?.fullPath || "/";
           // router.push(fromPath);
         }
@@ -114,6 +116,7 @@ export default {
         });
       }
       emit("loading", false);
+      return result;
     }
     function showConnect() {
       store.commit("changeConnectShow", true);

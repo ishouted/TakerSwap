@@ -88,10 +88,10 @@ export default {
       this.filter(val);
     },
     assetList: {
-      deep: true,
+      // deep: true,
       immediate: true,
       handler(val) {
-        if (!val || !val.length) return;
+        if (!val || !val.length || (this.show && this.list.length)) return;
         const list = _.cloneDeep(this.assetList);
         list.map(item => {
           item.added = false;

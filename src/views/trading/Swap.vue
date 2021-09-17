@@ -14,7 +14,7 @@
       </div>
       <div class="right flex-center">
         <span
-          @click="refresh"
+          @click="forceRefresh"
           :class="{ refreshing: !canRefresh }"
           :style="{ cursor: canRefresh ? 'pointer' : 'not-allowed' }"
         >
@@ -538,6 +538,7 @@ export default defineComponent({
     );
     const canRefresh = ref(true);
     async function refresh() {
+      const startTime = new Date().getTime();
       try {
         canRefresh.value = false;
         await storeSwapPairInfo(true);
@@ -545,9 +546,23 @@ export default defineComponent({
       } catch (e) {
         //
       }
-      setTimeout(() => {
+      const endTime = new Date().getTime();
+      const diff = endTime - startTime;
+      // console.log(diff, 666)
+      if (diff < 1500) {
+        setTimeout(() => {
+          canRefresh.value = true;
+        }, 1500 - diff);
+      } else {
         canRefresh.value = true;
-      }, 1000);
+      }
+    }
+    async function forceRefresh() {
+      if (timer) clearInterval(timer);
+      await refresh();
+      timer = setInterval(async () => {
+        await refresh();
+      }, 5000);
     }
     async function refreshRate() {
       if (!state.fromAmount && !state.toAmount) return;
@@ -952,7 +967,7 @@ export default defineComponent({
       toggleExpand,
       toggleSettingDialog,
       swapTrade,
-      refresh,
+      forceRefresh,
       priceImpactFloat,
       changeDirection,
       customerFocus,
@@ -989,13 +1004,17 @@ export default defineComponent({
         cursor: pointer;
         &:first-child {
           margin-left: 0;
+          width: 22px;
+          height: 22px;
+          overflow: hidden;
         }
         i {
           font-size: 22px;
         }
       }
       .refreshing {
-        animation: beRotate 1s linear infinite;
+        transform-origin: center center;
+        animation: beRotate 1.5s linear infinite;
       }
     }
   }

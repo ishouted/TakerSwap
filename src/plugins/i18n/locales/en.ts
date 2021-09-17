@@ -5,7 +5,7 @@ const en = {
     header3: "Connect Wallet",
     header4: "Home",
     header5: "Create Pool/Farm",
-    header6: "Doc",
+    header6: "Docs",
     header7: "Pool",
     header8: "Farm",
     header9: "Explore"
@@ -15,7 +15,7 @@ const en = {
     public2: "Available",
     public3: "Locked",
     public4: "Total Amount",
-    public5: "操作",
+    public5: "Operation",
     public6: "Account",
     public7: "Disconnect Wallet",
     public8: "Cancel",
@@ -85,7 +85,7 @@ const en = {
     trading1: "Order History",
     trading2: "Time",
     trading3: "Receive",
-    trading4: "Pay",
+    trading4: "Send",
     trading5: "Status",
     trading6: "Slippage Tolerance",
     trading7: "Price Impact",
@@ -126,7 +126,7 @@ const en = {
   },
   farm: {
     farm1: "Staked Only",
-    farm2: "Yield",
+    farm2: " Yield",
     farm3: "APY",
     farm4: "Total value of liquidity",
     farm5: "Total Reward remaining",
@@ -164,7 +164,7 @@ const en = {
     createFarm12: "Advanced"
   },
   farmRankType: {
-    apr: "Rank by APY",
+    apr: "Rank by APR",
     usd: "Rank by liquidity"
   }
 };
