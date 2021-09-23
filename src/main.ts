@@ -5,11 +5,21 @@ import store from "./store";
 import { useElementPlus } from "@/plugins/element-plus";
 import "element-plus/dist/index.css";
 import { useI18nPlugin } from "@/plugins/i18n";
-// import "amfe-flexible/index.js";
-// import "normalize.css"; // 初始化css
-// import { ElMessage } from "element-plus";
-import { copys, toThousands } from "./api/util";
 import "./config";
+import { useCommonMethods } from "@/plugins/commonMethods";
+
+// toast
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+const toastOptions = {
+  position: "top-right",
+  timeout: 2000,
+  closeOnClick: false,
+  draggable: false,
+  container: () => document.querySelector("#inner_content"),
+  transition: "Vue-Toastification__fade",
+  hideProgressBar: true
+};
 
 setTimeout(() => {
   // 不延迟有时刷新会拿不到ethereum.selectedAddress???
@@ -19,19 +29,7 @@ setTimeout(() => {
     .use(store)
     .use(useElementPlus)
     .use(useI18nPlugin)
-    .mixin({
-      methods: {
-        $copy(str: string) {
-          copys(str);
-          this.$message({
-            message: this.$t("public.public13"),
-            type: "success"
-          });
-        },
-        $thousands(str: string | number) {
-          return toThousands(str);
-        }
-      }
-    })
+    .use(Toast, toastOptions)
+    .use(useCommonMethods)
     .mount("#app");
 }, 500);

@@ -8,7 +8,7 @@ const en = {
     header6: "Docs",
     header7: "Pool",
     header8: "Farm",
-    header9: "Explore"
+    header9: "Explorer"
   },
   public: {
     public1: "Asset",
@@ -17,7 +17,7 @@ const en = {
     public4: "Total Amount",
     public5: "Operation",
     public6: "Account",
-    public7: "Disconnect Wallet",
+    public7: "Disconnect",
     public8: "Cancel",
     public9: "Confirm",
     public10: "Confirm",
@@ -111,7 +111,7 @@ const en = {
     liquidity7: "Add Liquidity",
     liquidity8: "Pool Share",
     liquidity9: "Confirm",
-    liquidity10: "You are the first liquidity provider. The ratio of tokens you add will set the price of this pool你是该交易对首位流动性的提供者，因此你首次加入池子 的Token比例会作为他们的初始价格",
+    liquidity10: "You are the first liquidity provider. The ratio of tokens you add will set the price of this pool",
     liquidity11: "Pool share",
     liquidity12: "Create liquidity",
     liquidity13: "Create pair",
@@ -137,7 +137,7 @@ const en = {
     farm10: "Claim",
     farm11: "Create New Farm",
     farm12: "Create Pool/Farm",
-    farm13: "Staked",
+    farm13: "Stake",
     farm14: "Unlock at",
     farm15: "Token rewarded",
     farm16: "Token rewarded/day",

@@ -1,4 +1,7 @@
-export const contractAddress = "0x0faee22173db311f4c57c81ec6867e5deef6c218";
+// export const contractAddress = "0x0faee22173db311f4c57c81ec6867e5deef6c218";
+export const contract_ETH = "0x0faee22173db311f4c57c81ec6867e5deef6c218";
+
+export const contract_BSC = "0x116e9fe9bc1652f9cb2f75c2a15773b3f1b19d8e";
 
 export const abi = [
   "function owner() public view returns (address)",

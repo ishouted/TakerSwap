@@ -5,7 +5,7 @@
     element-loading-background="rgba(255, 255, 255, 0.8)"
   >
     <div class="title">
-      {{ "From " + $t("transfer.transfer21") }}
+      {{ "From " + $store.getters.chain }}
       <span class="click" @click="openUrl(father.address, father.network)">
         {{ superLong(father.address) }}
         <i class="iconfont icon-tiaozhuanlianjie"></i>
@@ -257,9 +257,8 @@ export default defineComponent({
           this.getERC20Allowance();
         }
       } catch (e) {
-        this.$message({
-          message: e.message || e,
-          type: "warning"
+        this.$toast(e.message || e, {
+          type: "error"
         });
       }
       this.loading = false;
@@ -282,9 +281,8 @@ export default defineComponent({
         this.handleMsg(res);
       } catch (e) {
         console.log(e, "crossin-transfer-error");
-        this.$message({
-          message: e.message || e,
-          type: "warning"
+        this.$toast(e.message || e, {
+          type: "error"
         });
       }
       this.loading = false;
@@ -293,12 +291,11 @@ export default defineComponent({
       // console.log(data, 555);
       if (data.hash) {
         this.amount = "";
-        this.$message({
-          message: this.$t("transfer.transfer14"),
-          type: "success"
-        });
+        this.$toast(this.$t("transfer.transfer14"));
       } else {
-        this.$message({ message: data.message || data, type: "warning" });
+        this.$toast(data.message || data, {
+          type: "error"
+        });
       }
     },
     openUrl(address, network) {

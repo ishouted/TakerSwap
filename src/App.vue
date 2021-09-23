@@ -4,7 +4,10 @@
     <div class="flex">
       <left-nav v-model:collapseMenu="collapseMenu"></left-nav>
       <!--      <left-nav :class="['mobile_nav', collapseMenu ? 'hide-nav' : '']" :collapseMenu="false" mobile></left-nav>-->
-      <div :class="['inner_content', collapseMenu ? 'expand' : '']">
+      <div
+        id="inner_content"
+        :class="['inner_content', collapseMenu ? 'expand' : '']"
+      >
         <router-view></router-view>
       </div>
     </div>
@@ -23,7 +26,7 @@ import { ElConfigProvider } from "element-plus";
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import enLocale from "element-plus/lib/locale/lang/en";
 
-import {watch, ref, computed} from "vue";
+import { watch, ref, computed } from "vue";
 import { useStore } from "vuex";
 import { getAssetList } from "@/model";
 
@@ -50,42 +53,25 @@ export default {
     });
     let timer;
     const takerAddress = computed(() => store.getters.talonAddress);
-    watch(
-      takerAddress,
-      val => {
-        console.log(val, 6666)
-        if (val) {
-          if (timer) clearInterval(timer);
-          timer = setInterval(() => {
-            // getAssetList(val);
-            store.dispatch("getAssetList", val);
-          }, 5000);
-        }
-      },
-      {
-        immediate: true
+    watch(takerAddress, val => {
+      // console.log(val, 6666);
+      if (val) {
+        store.dispatch("getAssetList", val);
+        if (timer) clearInterval(timer);
+        timer = setInterval(() => {
+          // getAssetList(val);
+          store.dispatch("getAssetList", val);
+        }, 5000);
+      } else {
+        store.commit("setAssetList", []);
       }
-    );
+    });
     const collapseMenu = ref(false);
     return {
       locale,
       collapseMenu
     };
   }
-  // data() {
-  //   return {
-  //     locale: lang === "zh-cn" ? zhCn : enLocale,
-  //     collapseMenu: false
-  //   };
-  // },
-  // watch: {
-  //   "$store.state.lang": {
-  //     immediate: true,
-  //     handler(val) {
-  //       this.locale = val === "zh-cn" ? zhCn : enLocale;
-  //     }
-  //   }
-  // },
 };
 </script>
 

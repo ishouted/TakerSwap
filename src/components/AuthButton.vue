@@ -18,7 +18,7 @@
 <script>
 import { useStore } from "vuex";
 import nerve from "nerve-sdk-js";
-import { ElMessage } from "element-plus";
+import { useToast } from "vue-toastification";
 import useEthereum, { getProvider } from "@/hooks/useEthereum";
 import { useI18n } from "vue-i18n";
 import config from "@/config";
@@ -34,6 +34,7 @@ export default {
   setup(_, { emit }) {
     const store = useStore();
     const { t } = useI18n();
+    const toast = useToast();
     const { address, initProvider } = useEthereum();
     initProvider();
     function showConnectDialog(state) {
@@ -110,10 +111,7 @@ export default {
           // router.push(fromPath);
         }
       } catch (e) {
-        ElMessage({
-          message: t("login.login3"),
-          type: "warning"
-        });
+        toast.error(t("login.login3"));
       }
       emit("loading", false);
       return result;

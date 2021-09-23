@@ -1,8 +1,8 @@
 <template>
   <div class="tab-bar" v-if="!isPool">
-    <span @click="current = 1" :class="{ active: current === 1 }">L1 Farm</span>
+    <span @click="current = 1" :class="{ active: current === 1 }">L1 {{ $t("header.header8") }}</span>
     <span @click="current = 2" :class="{ active: current === 2 }">
-      Taker Farm
+      Taker {{ $t("header.header8") }}
     </span>
   </div>
   <div class="w1300 farm">

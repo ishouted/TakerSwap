@@ -42,7 +42,7 @@
           {{ $t("public.public18") }}
         </div>
         <div v-else @click="manageAccount = true" class="address-warp">
-          <img src="../assets/img/eth-logo.png" alt="" />
+          <img :src="chainLogo" alt="" />
           {{ superLong(address, 4) }}
         </div>
       </div>
@@ -182,6 +182,7 @@ export default defineComponent({
     function disconnectProvider() {
       disconnect();
       manageAccount.value = false;
+      store.commit("setCurrentAddress", {});
     }
 
     const activeIndex = ref("");
@@ -207,12 +208,12 @@ export default defineComponent({
     });
 
     function switchChain() {
-      const chainId = config.ETHNET === "ropsten" ? "0x3" : "0x1";
+      /*const chainId = config.ETHNET === "ropsten" ? "0x3" : "0x1";
       // const rpcUrl = "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
       window.ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId }]
-      });
+      });*/
     }
     const authRef = ref(null);
     async function derivedAddress() {
@@ -222,6 +223,13 @@ export default defineComponent({
         toAsset();
       }
     }
+
+    const chainLogo = computed(() => {
+      const network = store.getters.chain;
+      const { logo } = _networkInfo[network];
+      return logo;
+    });
+
     return {
       address,
       showConnect,
@@ -238,7 +246,8 @@ export default defineComponent({
       wrongChain,
       switchChain,
       authRef,
-      derivedAddress
+      derivedAddress,
+      chainLogo
     };
   },
   data() {
@@ -334,12 +343,12 @@ export default defineComponent({
     .address-warp {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      //justify-content: space-between;
       padding: 0 10px 0 5px;
       img {
-        width: 30px;
-        height: 30px;
-        margin-right: 3px;
+        width: 28px;
+        height: 28px;
+        margin-right: 7px;
       }
     }
   }

@@ -67,7 +67,8 @@ export default createStore<State>({
     wrongChain(state) {
       const chainId = state.chainId;
       return Object.keys(_networkInfo).every(v => {
-        return _networkInfo[v][config.ETHNET] !== chainId;
+        const chain = _networkInfo[v];
+        return chain[config.ETHNET] !== chainId || !chain.supported;
       });
     },
     currentAddress(state) {
@@ -103,6 +104,7 @@ export default createStore<State>({
       if (!address) return;
       const res = await getAssetList(address);
       if (res && res.length) {
+        console.log("====set-asset====")
         commit("setAssetList", res);
       }
     }

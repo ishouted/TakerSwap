@@ -225,7 +225,7 @@ import { useI18n } from "vue-i18n";
 import { getWholeTradeExactIn, getSwapPairInfo } from "@/model";
 import nerve from "nerve-sdk-js";
 import { useStore } from "vuex";
-import { ElMessage } from "element-plus";
+import { useToast } from "vue-toastification";
 import SymbolIcon from "@/components/SymbolIcon.vue";
 import { NTransfer } from "@/api/api";
 import config from "@/config";
@@ -248,6 +248,7 @@ export default defineComponent({
     const { t } = useI18n();
     const store = useStore();
     const route = useRoute();
+    const toast = useToast();
     const talonAddress = computed(() => {
       return store.getters.talonAddress;
     });
@@ -900,25 +901,16 @@ export default defineComponent({
         const res = await handleHex(tx.hex);
         if (res && res.hash) {
           context.emit("selectAsset", state.fromAsset, state.toAsset);
-          ElMessage.success({
-            message: t("transfer.transfer14"),
-            type: "success"
-          });
+          toast.success(t("transfer.transfer14"));
           state.fromAmount = "";
           state.toAmount = "";
           state.priceImpact = "";
         } else {
-          ElMessage.warning({
-            message: "Swap Failed",
-            type: "warning"
-          });
+          toast.error("Swap Failed");
         }
       } catch (e) {
         console.log(e, "Swap-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
       state.loading = false;
     }

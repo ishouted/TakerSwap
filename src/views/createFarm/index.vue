@@ -115,7 +115,7 @@ import {
 import nerve from "nerve-sdk-js";
 import { useRouter } from "vue-router";
 import { NTransfer } from "@/api/api";
-import { ElMessage } from "element-plus";
+import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { getBlockInfo } from "@/model";
@@ -140,6 +140,7 @@ export default defineComponent({
       return store.getters.talonAddress;
     });
     const { t } = useI18n();
+    const toast = useToast();
     const form = ref(null);
     const loading = ref(false);
     const model = reactive({
@@ -304,23 +305,14 @@ export default defineComponent({
         // console.log(txHex, 666);
         const result = await transfer.broadcastHex(txHex);
         if (result && result.hash) {
-          ElMessage.success({
-            message: t("transfer.transfer14"),
-            type: "success"
-          });
+          toast.success(t("transfer.transfer14"));
           back();
         } else {
-          ElMessage.warning({
-            message: "Create farm failed",
-            type: "warning"
-          });
+          toast.error("Create farm failed");
         }
       } catch (e) {
         console.log(e, "create-farm-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
       loading.value = false;
     }

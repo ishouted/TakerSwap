@@ -114,7 +114,7 @@ import { useStore } from "vuex";
 import { getSwapPairInfo, calMinAmountOnSwapAddLiquidity } from "@/model";
 import nerve from "nerve-sdk-js";
 import { NTransfer } from "@/api/api";
-import { ElMessage } from "element-plus";
+import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "addLiquidity",
@@ -130,6 +130,7 @@ export default defineComponent({
   setup(props, context) {
     const { t } = useI18n();
     const store = useStore();
+    const toast = useToast();
     let storedSwapPairInfo = {}; // 缓存的swapPairInfo
     const state = reactive({
       feeRate: 0.3, // 千三的手续费
@@ -515,23 +516,14 @@ export default defineComponent({
         );
         const res = await handleHex(tx.hex);
         if (res && res.hash) {
-          ElMessage.success({
-            message: t("liquidity.liquidity14"),
-            type: "success"
-          });
+          toast.success(t("liquidity.liquidity14"));
           refreshNewPair(fromAsset.assetKey, toAsset.assetKey);
         } else {
-          ElMessage.warning({
-            message: "Create Pair Failed",
-            type: "warning"
-          });
+          toast.error("Create Pair Failed");
         }
       } catch (e) {
         console.log(e, "Create Pair-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
       state.loading = false;
     }
@@ -596,27 +588,18 @@ export default defineComponent({
         );
         const res = await handleHex(tx.hex);
         if (res && res.hash) {
-          ElMessage.success({
-            message: t("transfer.transfer14"),
-            type: "success"
-          });
+          toast.success(t("transfer.transfer14"));
           state.fromAmount = "";
           state.toAmount = "";
           setTimeout(() => {
             context.emit("updateList");
           }, 200);
         } else {
-          ElMessage.warning({
-            message: "Create Pair Failed",
-            type: "warning"
-          });
+          toast.error("Create Pair Failed");
         }
       } catch (e) {
         console.log(e, "Create Pair-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
       state.loading = false;
     }

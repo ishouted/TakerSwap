@@ -5,7 +5,7 @@
     element-loading-background="rgba(255, 255, 255, 0.8)"
   >
     <div class="title">
-      {{ "To " + $t("transfer.transfer21") }}
+      {{ "To " + $store.getters.chain }}
       <span class="click" @click="openUrl(father.address, father.network)">
         {{ superLong(father.address) }}
         <i class="iconfont icon-tiaozhuanlianjie"></i>
@@ -243,18 +243,16 @@ export default defineComponent({
         const result = await transfer.broadcastHex(txHex);
         if (result && result.hash) {
           this.amount = "";
-          this.$message({
-            message: this.$t("transfer.transfer14"),
-            type: "success"
-          });
+          this.$toast(this.$t("transfer.transfer14"));
         } else {
-          this.$message({ message: "Broadcast tx failed", type: "warning" });
+          this.$toast("Broadcast tx failed", {
+            type: "error"
+          });
         }
       } catch (e) {
         console.log(e, "common-transfer-error");
-        this.$message({
-          message: e.message || e,
-          type: "warning"
+        this.$toast(e.message || e, {
+          type: "error"
         });
       }
       this.loading = false;

@@ -82,8 +82,9 @@ export default defineComponent({
     const talonAddress = computed(() => store.getters.talonAddress);
     let isLoaded = false;
     watch(
-      store.state.assetList,
+      () => store.state.assetList,
       val => {
+        // console.log(val, "-=-=-=-=-=-=")
         if (val && val.length) {
           state.assetsList = val;
           if (!isLoaded) {

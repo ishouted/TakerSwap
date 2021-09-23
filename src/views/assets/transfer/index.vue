@@ -6,26 +6,32 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane name="first" :disabled="father.disableTx">
             <template #label>
-              <span>
-                <i class="iconfont icon-chongzhi"></i>
-                {{ $t("transfer.transfer1") }}
-              </span>
+              <el-tooltip
+                :content="$t('assets.assets4')"
+                placement="top"
+              >
+                <i class="iconfont icon-chongzhidaoL2"></i>
+              </el-tooltip>
             </template>
           </el-tab-pane>
           <el-tab-pane name="second">
             <template #label>
-              <span>
+              <el-tooltip
+                :content="$t('assets.assets5')"
+                placement="top"
+              >
                 <i class="iconfont icon-L2zhuanzhang"></i>
-                {{ $t("transfer.transfer2") }}
-              </span>
+              </el-tooltip>
             </template>
           </el-tab-pane>
           <el-tab-pane name="third" :disabled="father.disableTx">
             <template #label>
-              <span>
-                <i class="iconfont icon-tixian"></i>
-                {{ $t("transfer.transfer3") }}
-              </span>
+              <el-tooltip
+                :content="$t('assets.assets6')"
+                placement="top"
+              >
+                <i class="iconfont icon-tixiandaoL1"></i>
+              </el-tooltip>
             </template>
           </el-tab-pane>
         </el-tabs>
@@ -104,13 +110,22 @@ export default defineComponent({
     height: 173px;
     padding: 40px;
     .back {
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       .iconfont {
         font-size: 25px;
         color: #fff;
         /* margin: -10px 0 30px -5px; */
         cursor: pointer;
       }
+    }
+  }
+  .el-tabs .el-tabs__item {
+    height: 50px;
+    line-height: 50px;
+    //width: 60px;
+    //text-align: center;
+    .iconfont {
+      font-size: 28px;
     }
   }
   .el-tabs__item .iconfont {
@@ -132,15 +147,15 @@ export default defineComponent({
           font-size: 20px;
         }
       }
-      .el-tabs {
-        .el-tabs__item {
-          font-size: 16px!important;
-          padding: 0 18px 0 0;
-          .iconfont {
-            font-size: 16px;
-          }
-        }
-      }
+      //.el-tabs {
+      //  .el-tabs__item {
+      //    font-size: 16px!important;
+      //    padding: 0 18px 0 0;
+      //    .iconfont {
+      //      font-size: 16px;
+      //    }
+      //  }
+      //}
     }
     .bottom {
       padding: 30px 20px;

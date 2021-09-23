@@ -45,11 +45,11 @@
 import { defineComponent, ref, computed } from "vue";
 import { Times, timesDecimals, divisionDecimals, Minus } from "@/api/util";
 import nerve from "nerve-sdk-js";
-import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
 import { NTransfer } from "@/api/api";
 import { useStore } from "vuex";
 import { calMinAmountOnSwapRemoveLiquidity, getSwapPairInfo } from "@/model";
+import { useToast } from "vue-toastification";
 
 export default defineComponent({
   props: {
@@ -59,6 +59,7 @@ export default defineComponent({
   setup(props, context) {
     const { t } = useI18n();
     const store = useStore();
+    const toast = useToast();
     const rates = ref([25, 50, 75, 100]);
     const quitNumber = ref("");
     const showInfo = ref(false);
@@ -195,22 +196,13 @@ export default defineComponent({
           setTimeout(() => {
             context.emit("updateList");
           }, 200);
-          ElMessage.success({
-            message: t("transfer.transfer14"),
-            type: "success"
-          });
+          toast.success(t("transfer.transfer14"));
         } else {
-          ElMessage.warning({
-            message: "Remove liquidity Failed",
-            type: "warning"
-          });
+          toast.error("Remove liquidity Failed");
         }
       } catch (e) {
         console.log(e, "Remove-liquidity-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
       context.emit("loading", false);
     }

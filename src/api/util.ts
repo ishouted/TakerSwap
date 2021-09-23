@@ -2,6 +2,9 @@ import { BigNumber } from "bignumber.js";
 import copy from "copy-to-clipboard";
 import config from "@/config";
 
+import ethLogo from "@/assets/img/eth-logo.png";
+import bscLogo from "@/assets/img/BNB-logo.png";
+
 interface Obj {
   [key: string]: unknown;
 }
@@ -300,7 +303,8 @@ export const _networkInfo = {
     mainAsset: "ETH",
     ropsten: "0x3",
     homestead: "0x1",
-    supported: true
+    supported: true,
+    logo: ethLogo
   },
   BSC: {
     name: "BSC",
@@ -309,7 +313,9 @@ export const _networkInfo = {
     color: "#e7b941",
     mainAsset: "BNB",
     ropsten: "0x61",
-    homestead: "0x38"
+    homestead: "0x38",
+    supported: true,
+    logo: bscLogo
   },
   Heco: {
     name: "Heco",

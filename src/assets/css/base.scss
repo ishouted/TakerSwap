@@ -1,6 +1,6 @@
 @import "./style.scss";
 @import "./element.scss";
-@import "http://at.alicdn.com/t/font_2562897_69iqxxb2ajy.css";
+@import "http://at.alicdn.com/t/font_2562897_q27ocp1p97.css";
 
 
 body,
@@ -345,3 +345,22 @@ a.line {
     display: initial;
   }
 }
+
+// toast定位 fix->absolute
+.inner_content {
+  .Vue-Toastification__container.top-right, .Vue-Toastification__container.bottom-right {
+    position: absolute;
+    //top: 1rem;
+    @media screen and (max-width: 600px) {
+      top: 1rem;
+      width: 96%;
+      left: 2%;
+      .Vue-Toastification__toast {
+        padding: 0 24px;
+        align-items: center;
+        min-height: 54px;
+      }
+    }
+  }
+}
+

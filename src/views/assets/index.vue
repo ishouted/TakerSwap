@@ -81,28 +81,45 @@
             <el-table-column
               :label="$t('public.public5')"
               align="center"
-              width="240px"
+              width="260px"
             >
               <template v-slot="scope">
-                <el-button
-                  @click="transfer(scope.row, 'crossIn')"
-                  type="text"
-                  v-if="isShowCrossHandle(scope.row)"
-                  :disabled="disableTx"
-                >
-                  {{ $t("assets.assets4") }}
-                </el-button>
-                <el-button @click="transfer(scope.row, 'general')" type="text">
-                  {{ $t("assets.assets5") }}
-                </el-button>
-                <el-button
-                  @click="transfer(scope.row, 'withdrawal')"
-                  type="text"
-                  :disabled="disableTx"
-                  v-if="isShowCrossHandle(scope.row)"
-                >
-                  {{ $t("assets.assets6") }}
-                </el-button>
+                <div class="handle-column" v-if="scope.row">
+                  <el-tooltip
+                    :content="$t('assets.assets4')"
+                    placement="top"
+                    v-if="isShowCrossHandle(scope.row)"
+                  >
+                    <i
+                      class="iconfont icon-chongzhidaoL2"
+                      :class="{ disable: disableTx }"
+                      @click="transfer(scope.row, 'crossIn')"
+                    ></i>
+                  </el-tooltip>
+                  <el-divider direction="vertical" v-if="isShowCrossHandle(scope.row)"></el-divider>
+                  <el-tooltip
+                    :content="$t('assets.assets5')"
+                    placement="top"
+                  >
+                    <i
+                      class="iconfont icon-L2zhuanzhang"
+                      @click="transfer(scope.row, 'general')"
+                    ></i>
+                  </el-tooltip>
+                  <el-divider direction="vertical" v-if="isShowCrossHandle(scope.row)"></el-divider>
+                  <el-tooltip
+                    :content="$t('assets.assets6')"
+                    placement="top"
+                    v-if="isShowCrossHandle(scope.row)"
+                  >
+                    <i
+                      class="iconfont icon-tixiandaoL1"
+                      :class="{ disable: disableTx }"
+                      @click="transfer(scope.row, 'withdrawal')"
+                    ></i>
+                  </el-tooltip>
+                </div>
+
               </template>
             </el-table-column>
           </el-table>
@@ -241,6 +258,8 @@ export default defineComponent({
       handler(val) {
         if (val && val.length) {
           this.getList(val);
+        } else {
+          this.getList([]);
         }
       }
     }
@@ -279,6 +298,12 @@ export default defineComponent({
       show: false,
       loaded: false
     };
+  },
+
+  mounted() {
+    if (!this.$store.getters.talonAddress){
+      this.$router.push("/")
+    }
   },
 
   methods: {
@@ -347,6 +372,7 @@ export default defineComponent({
     },
 
     transfer(asset, type) {
+      if (type !== "general" && this.disableTx) return;
       if (type === "crossIn") {
         // L1到L2
         this.currentTab = "first";
@@ -396,6 +422,21 @@ export default defineComponent({
 <style lang="scss" scoped>
 .assets-wrap {
   padding: 0 20px;
+}
+.handle-column {
+  line-height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .iconfont {
+    font-size: 24px;
+    color: #4a5ef2;
+    margin: 0 10px;
+    cursor: pointer;
+    &.disable {
+      cursor: not-allowed;
+    }
+  }
 }
 .mobile-cont {
   display: none;
@@ -523,7 +564,7 @@ export default defineComponent({
     margin: 10px 0 30px;
     i {
       color: #4a5ef2;
-      font-size: 36px;
+      font-size: 32px;
       cursor: pointer;
       margin-left: 20px;
     }

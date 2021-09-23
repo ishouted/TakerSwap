@@ -17,8 +17,14 @@
             <div class="info-title">
               {{ tokenInfo.syrupTokenSymbol }}{{ $t("farm.farm2") }}
             </div>
-            <p>{{ tokenInfo.pendingReward }}</p>
-            <span>≈${{ tokenInfo.pendingRewardUSD }}</span>
+            <el-tooltip placement="top">
+              <template #content>
+                {{ $thousands(tokenInfo.pendingReward) }}
+              </template>
+              <p class="ellipsis">{{ $thousands(tokenInfo.pendingReward) }}</p>
+            </el-tooltip>
+<!--            <p class="ellipsis">{{ $thousands(tokenInfo.pendingReward) }}</p>-->
+            <span>≈${{ $thousands(tokenInfo.pendingRewardUSD) }}</span>
           </div>
           <div class="right">
             <el-button
@@ -35,8 +41,14 @@
         <div class="alter">
           <div class="left">
             <div class="info-title">{{ $t("farm.farm9") }}LP</div>
-            <p>{{ tokenInfo.stakeAmount }}</p>
-            <span>≈${{ tokenInfo.stakeUSD }}</span>
+            <el-tooltip placement="top">
+              <template #content>
+                {{ $thousands(tokenInfo.stakeAmount) }}
+              </template>
+              <p class="ellipsis">{{ $thousands(tokenInfo.stakeAmount) }}</p>
+            </el-tooltip>
+<!--            <p class="ellipsis">{{ $thousands(tokenInfo.stakeAmount) }}</p>-->
+            <span>≈${{ $thousands(tokenInfo.stakeUSD) }}</span>
           </div>
           <div class="right">
             <template v-if="needAuth">
@@ -58,7 +70,7 @@
                 :disabled="
                   !!!Number(tokenInfo.stakeAmount) ||
                   !talonAddress ||
-                  !tokenInfo.isLocked
+                  (!tokenInfo.isLocked && isTalon)
                 "
                 @click="handleLP('minus')"
               ></el-button>
@@ -83,7 +95,11 @@
           {{ $t("farm.farm23") }}{{ tokenInfo.syrupTokenSymbol }}
         </div>
         <div class="d-flex align-items-center space-between">
-          <div class="count-cont">{{ tokenInfo.pendingReward }}</div>
+          <div class="count-cont">
+            {{ $thousands(tokenInfo.pendingReward) }}
+            <br />
+            <span>≈${{ $thousands(tokenInfo.pendingRewardUSD) }}</span>
+          </div>
           <div
             class="btn"
             @click="gether"
@@ -98,7 +114,7 @@
       <div class="option-cont mt-15">
         <div class="text-90">{{ $t("farm.farm9") }} LP</div>
         <div class="d-flex align-items-center space-between mt-15">
-          <div class="count-cont">{{ tokenInfo.stakeAmount }}</div>
+          <div class="count-cont">{{ $thousands(tokenInfo.stakeAmount) }}</div>
           <div class="btn-group">
             <template v-if="needAuth">
               <el-button
@@ -119,7 +135,7 @@
                 :disabled="
                   !!!Number(tokenInfo.stakeAmount) ||
                   !talonAddress ||
-                  !tokenInfo.isLocked
+                  (!tokenInfo.isLocked && isTalon)
                 "
                 @click="handleLP('minus')"
               ></el-button>
@@ -139,12 +155,12 @@
       </div>
       <div class="d-flex align-items-center space-between mt-8 size-14">
         <span class="text-7e">{{ $t("farm.farm4") }}</span>
-        <span>{{ tokenInfo.tatalStakeTokenUSD }}</span>
+        <span>{{ Number(tokenInfo.tatalStakeTokenUSD) ? $thousands(tokenInfo.tatalStakeTokenUSD) : "--" }}</span>
       </div>
       <div class="d-flex align-items-center space-between mt-8 size-14">
         <span class="text-7e">{{ $t("farm.farm5") }}</span>
         <span>
-          {{ tokenInfo.syrupTokenBalance }} {{ tokenInfo.syrupTokenSymbol }}
+          {{ $thousands(tokenInfo.syrupTokenBalance) }} {{ tokenInfo.syrupTokenSymbol }}
         </span>
       </div>
       <div
@@ -172,13 +188,15 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import config from "@/config";
 import nerve from "nerve-sdk-js";
-import { ElMessage } from "element-plus";
+import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { ETransfer, NTransfer } from "@/api/api";
 import { timesDecimals, divisionDecimals, isBeta } from "@/api/util";
-import { contractAddress, txAbi } from "@/hooks/farm/contractConfig";
+// import { contractAddress, txAbi } from "@/hooks/farm/contractConfig";
+import { txAbi } from "@/hooks/farm/contractConfig";
+import useContractAddress from "@/hooks/farm/useContractAddress";
 import { ethers } from "ethers";
 import { getAssetBalance } from "@/model";
 import LpDialog from "@/components/LpDialog";
@@ -215,6 +233,7 @@ export default defineComponent({
     const router = useRouter();
     const store = useStore();
     const { t } = useI18n();
+    const toast = useToast();
     const dialogAddOrMinus = ref(false);
     const addOrMinus = ref("add");
     const loading = ref(false);
@@ -224,6 +243,7 @@ export default defineComponent({
       return store.state.addressInfo;
     });
     const balance = ref(0);
+    const contractAddress = useContractAddress().value;
     onMounted(async () => {
       // console.log(props.tokenInfo, 9696);
       getERC20Allowance();
@@ -260,20 +280,14 @@ export default defineComponent({
           addressInfo.value?.address?.Ethereum
         );
         if (res.hash) {
-          ElMessage.success({
-            message: t("transfer.transfer14"),
-            type: "success"
-          });
+          toast.success(t("transfer.transfer14"));
           refreshAuth.value = true;
           getERC20Allowance();
         } else {
-          ElMessage.warning({ message: res.message || res, type: "warning" });
+          toast.error(res.message || res);
         }
       } catch (e) {
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
       emit("loading", false);
     }
@@ -310,10 +324,7 @@ export default defineComponent({
         await handleHex(tx.hex);
       } catch (e) {
         console.log(e, "gain-profit-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
     }
 
@@ -403,10 +414,7 @@ export default defineComponent({
         await handleHex(tx.hex);
       } catch (e) {
         console.log(e, "gain-profit-error");
-        ElMessage.warning({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
     }
 
@@ -430,19 +438,13 @@ export default defineComponent({
           res = await contracts.deposit(pid, amount);
         }
         if (res.hash) {
-          ElMessage({
-            message: t("transfer.transfer14"),
-            type: "success"
-          });
+          toast.success(t("transfer.transfer14"));
           dialogAddOrMinus.value = false;
         } else {
-          ElMessage({ message: res.message || res, type: "warning" });
+          toast.error(res.message || res);
         }
       } catch (e) {
-        ElMessage({
-          message: e.message || e,
-          type: "warning"
-        });
+        toast.error(e.message || e);
       }
     }
 
@@ -460,15 +462,9 @@ export default defineComponent({
       const result = await transfer.broadcastHex(txHex);
       if (result && result.hash) {
         dialogAddOrMinus.value = false;
-        ElMessage.success({
-          message: t("transfer.transfer14"),
-          type: "success"
-        });
+        toast.success(t("transfer.transfer14"));
       } else {
-        ElMessage.warning({
-          message: "Failed",
-          type: "warning"
-        });
+        toast.error("Failed");
       }
     }
 
@@ -518,7 +514,12 @@ export default defineComponent({
       color: #333333;
       font-weight: bold;
       font-size: 20px;
-      width: 120px;
+      width: 160px;
+      span {
+        font-size: 14px;
+        font-weight: bold;
+        color: #858fb1;
+      }
     }
     .btn {
       height: 36px;
@@ -574,7 +575,7 @@ export default defineComponent({
         border: 1px solid #e4efff;
         border-radius: 10px;
         .left {
-          max-width: 170px;
+          max-width: 200px;
           .info-title {
             font-size: 14px;
             margin-bottom: 5px;
@@ -624,6 +625,7 @@ export default defineComponent({
   background-color: #a0cfff !important;
   cursor: not-allowed;
 }
+
 @media screen and (max-width: 1200px) {
   .farm-details {
     padding: 20px 15px;
@@ -640,6 +642,11 @@ export default defineComponent({
   }
   .info-title {
     width: 80px;
+  }
+}
+@media screen and (max-width: 1100px) {
+  .farm-details .pc-cont .biaoge .gain .left, .farm-details .pc-cont .biaoge .alter .left {
+    max-width: 170px;
   }
 }
 @media screen and (max-width: 850px) {

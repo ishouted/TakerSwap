@@ -415,9 +415,8 @@ export default {
         await this.handleHex(tx.hex);
       } catch (e) {
         console.log(e, "add-lp-error");
-        this.$message({
-          message: e.message || e,
-          type: "warning"
+        this.$toast(e.message || e, {
+          type: "error"
         });
       }
       this.dialogLoading = false;
@@ -436,14 +435,10 @@ export default {
       const result = await transfer.broadcastHex(txHex);
       if (result && result.hash) {
         this.showLPDialog = false;
-        this.$message({
-          message: this.$t("transfer.transfer14"),
-          type: "success"
-        });
+        this.$toast(this.$t("transfer.transfer14"));
       } else {
-        this.$message({
-          message: "Failed",
-          type: "warning"
+        this.$toast("Failed", {
+          type: "error"
         });
       }
     },

@@ -8,15 +8,20 @@ import {
   divisionAndFix,
   divisionDecimals,
   Times,
-  Minus
+  Minus, fixNumber
 } from "@/api/util";
-import { contractAddress, abi, abiTwo, abiThree } from "./contractConfig";
+import {
+  abi,
+  abiTwo,
+  abiThree
+} from "./contractConfig";
 // @ts-ignore
 import { ETransfer } from "@/api/api";
 import { ethers } from "ethers";
 // @ts-ignore
 import { uniAssetPrice } from "@/model";
 import { useStore } from "vuex";
+import useContractAddress from "./useContractAddress"
 
 const url = config.WS_URL;
 
@@ -150,6 +155,8 @@ export default function useData(isPool: boolean) {
     }
   );
 
+  const contractAddress = useContractAddress().value;
+
   async function getUniData() {
     if (disableTx.value) {
       state.uniList = [];
@@ -226,8 +233,9 @@ export default function useData(isPool: boolean) {
       );
 
       const dayNumber = 5760; //每日出块数量(86400/15=5760)
-      const candyPrice = await uniAssetPrice(tokenInfo.syrupTokenSymbol);
-      const lpPrice = await uniAssetPrice(tokenInfo.stakeTokenSymbol);
+      // console.log(tokenInfo, 66333)
+      const candyPrice = await uniAssetPrice(tokenInfo.syrupTokenSymbol) || 0;
+      const lpPrice = await uniAssetPrice(tokenInfo.stakeTokenSymbol) || 0;
 
       // 每天产生的奖励总价值
       const c = Times(
@@ -247,10 +255,10 @@ export default function useData(isPool: boolean) {
       //APR = 365 * ( 每日出块数量  * candyPrice 1 * candyPerBlock / candyDecimals )
       //除以
       //( lpPrice 1 * lpSupply / lpDecimals )
-      tokenInfo.apr = Division(a, b).toFixed(2);
+      tokenInfo.apr = b === "0" ? "0" : Division(a, b).toFixed(2);
 
       tokenInfo.tatalStakeTokenUSD = Times(
-        lpPrice.toString(),
+        lpPrice,
         divisionDecimals(poolInfoValue[5], tokenInfo.stakeTokenDecimals)
       ).toString();
 
@@ -264,10 +272,10 @@ export default function useData(isPool: boolean) {
         );
 
         // 待领取收益数量-usd
-        tokenInfo.pendingRewardUSD = Times(
+        tokenInfo.pendingRewardUSD = fixNumber(Times(
           tokenInfo.pendingReward,
           candyPrice
-        ).toString();
+        ).toString(), 4);
 
         // console.log(tokenInfo.pendingReward, 99)
 

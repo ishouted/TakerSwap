@@ -159,18 +159,16 @@ export default defineComponent({
         if (result && result.hash) {
           this.amount = "";
           this.toAddress = "";
-          this.$message({
-            message: this.$t("transfer.transfer14"),
-            type: "success"
-          });
+          this.$toast(this.$t("transfer.transfer14"));
         } else {
-          this.$message({ message: "Broadcast tx failed", type: "warning" });
+          this.$toast("Broadcast tx failed", {
+            type: "error"
+          });
         }
       } catch (e) {
         console.log(e, "common-transfer-error");
-        this.$message({
-          message: e.message || e,
-          type: "warning"
+        this.$toast(e.message || e, {
+          type: "error"
         });
       }
       this.loading = false;

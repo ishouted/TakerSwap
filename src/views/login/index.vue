@@ -29,10 +29,10 @@ import { defineComponent, ref } from "vue";
 import nerve from "nerve-sdk-js";
 import useEthereum, { getProvider } from "@/hooks/useEthereum";
 import config from "@/config";
-import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
 import { useRouter, useRoute } from "vue-router";
+import { useToast } from "vue-toastification";
 
 const ethers = require("ethers");
 
@@ -45,6 +45,7 @@ export default defineComponent({
     const { t } = useI18n();
     const route = useRoute();
     const router = useRouter();
+    const toast = useToast();
     // console.log(444, route, route.redirectedFrom, route.fullPath);
     async function derivedAddress() {
       loading.value = true;
@@ -104,10 +105,7 @@ export default defineComponent({
           router.push(fromPath);
         }
       } catch (e) {
-        ElMessage({
-          message: t("login.login3"),
-          type: "warning"
-        });
+        toast.error(t("login.login3"));
       }
       loading.value = false;
     }

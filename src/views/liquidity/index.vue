@@ -120,7 +120,7 @@ export default defineComponent({
     });
     let isLoaded = false;
     watch(
-      store.state.assetList,
+      () => store.state.assetList,
       val => {
         if (val && val.length) {
           state.assetsList = val;

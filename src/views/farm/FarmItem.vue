@@ -12,19 +12,19 @@
           <ul>
             <li class="fl">
               <p>{{ $t("farm.farm2") }}</p>
-              <h2>{{ item.pendingReward }} {{ item.syrupTokenSymbol }}</h2>
+              <h2>{{ $thousands(item.pendingReward) }} {{ item.syrupTokenSymbol }}</h2>
             </li>
             <li class="fl">
               <p>{{ $t("farm.farm3") }}</p>
-              <h2>{{ item.apr }}%</h2>
+              <h2>{{ Number(item.apr) ? item.apr + "%" : "--" }}</h2>
             </li>
             <li class="fl">
               <p>{{ $t("farm.farm4") }}</p>
-              <h2>${{ item.tatalStakeTokenUSD }}</h2>
+              <h2>{{ Number(item.tatalStakeTokenUSD) ? "$" + $thousands(item.tatalStakeTokenUSD) : "--" }}</h2>
             </li>
             <li class="fl">
               <p>{{ $t("farm.farm5") }}</p>
-              <h2>{{ item.syrupTokenBalance }} {{ item.syrupTokenSymbol }}</h2>
+              <h2>{{ $thousands(item.syrupTokenBalance) }} {{ item.syrupTokenSymbol }}</h2>
             </li>
           </ul>
           <div class="link view" @click="showId(item.farmHash)">
@@ -61,11 +61,15 @@
           <div class="farm-info">
             <div class="farm-info_item">
               <div class="text-7e">{{ $t("farm.farm2") }}</div>
-              <div class="mt-8 size-15">{{ item.pendingReward }}</div>
+              <div class="mt-8 size-15">
+                {{ $thousands(item.pendingReward) }}
+              </div>
             </div>
             <div class="farm-info_item">
               <div class="text-7e">APR</div>
-              <div class="mt-8 size-15">{{ item.apr }}%</div>
+              <div class="mt-8 size-15">
+                {{ Number(item.apr) ? item.apr + "%" : "--" }}
+              </div>
             </div>
           </div>
         </div>
@@ -266,7 +270,7 @@ export default defineComponent({
     font-size: 20px !important;
   }
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1024px) {
   .farm-item {
     display: none !important;
   }
