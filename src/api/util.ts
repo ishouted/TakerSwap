@@ -315,7 +315,12 @@ export const _networkInfo = {
     ropsten: "0x61",
     homestead: "0x38",
     supported: true,
-    logo: bscLogo
+    logo: bscLogo,
+    decimals: 18,
+    rpcUrl: {
+      ropsten: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      homestead: "https://bsc-dataseed.binance.org/"
+    }
   },
   Heco: {
     name: "Heco",
@@ -324,7 +329,12 @@ export const _networkInfo = {
     color: "#336adb",
     mainAsset: "HT",
     ropsten: "0x100",
-    homestead: "0x80"
+    homestead: "0x80",
+    decimals: 18,
+    rpcUrl: {
+      ropsten: "https://http-testnet.hecochain.com",
+      homestead: "https://http-mainnet.hecochain.com"
+    }
   },
   OKExChain: {
     name: "OKExChain",
@@ -333,7 +343,12 @@ export const _networkInfo = {
     color: "#4883ed",
     mainAsset: "OKT",
     ropsten: "0x41",
-    homestead: "0x42"
+    homestead: "0x42",
+    decimals: 18,
+    rpcUrl: {
+      ropsten: "https://exchaintestrpc.okex.org",
+      homestead: "https://exchainrpc.okex.org"
+    }
   },
   Harmony: {
     name: "Harmony",
@@ -342,7 +357,12 @@ export const _networkInfo = {
     color: "#5cc9c0",
     mainAsset: "ONE",
     ropsten: "0x6357d2e0",
-    homestead: "0x63564c40"
+    homestead: "0x63564c40",
+    decimals: 18,
+    rpcUrl: {
+      ropsten: "https://api.s0.b.hmny.io",
+      homestead: "https://api.harmony.one"
+    }
   },
   Polygon: {
     name: "Polygon",
@@ -351,7 +371,12 @@ export const _networkInfo = {
     color: "#7449df",
     mainAsset: "MATIC",
     ropsten: "0x13881",
-    homestead: "0x89"
+    homestead: "0x89",
+    decimals: 18,
+    rpcUrl: {
+      ropsten: "https://rpc-mumbai.maticvigil.com",
+      homestead: "https://rpc-mainnet.maticvigil.com"
+    }
   },
   KCC: {
     name: "KCC",
@@ -360,7 +385,12 @@ export const _networkInfo = {
     color: "#66ac90",
     mainAsset: "KCS",
     ropsten: "0x142",
-    homestead: "0x141"
+    homestead: "0x141",
+    decimals: 18,
+    rpcUrl: {
+      ropsten: "https://rpc-testnet.kcc.network",
+      homestead: "https://rpc-mainnet.kcc.network"
+    }
   }
 };
 

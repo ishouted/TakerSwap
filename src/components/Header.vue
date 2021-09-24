@@ -37,13 +37,25 @@
           class="wrong-chain"
           v-else-if="wrongChain"
           style="color: red; font-size: 14px"
-          @click="switchChain"
         >
-          {{ $t("public.public18") }}
+          <SwitchChain
+            v-model="showSwitchChain"
+            :chainId="chainId"
+          >
+            <span @click="showSwitchChain = true">{{ $t("public.public18") }}</span>
+          </SwitchChain>
         </div>
-        <div v-else @click="manageAccount = true" class="address-warp">
-          <img :src="chainLogo" alt="" />
-          {{ superLong(address, 4) }}
+        <div v-else class="address-warp">
+          <SwitchChain
+              v-model="showSwitchChain"
+              :chainId="chainId"
+          >
+            <div class="chain-wrap" @click="showSwitchChain = true">
+              <img :src="chainLogo" alt="" />
+              <i class="el-icon-caret-bottom"></i>
+            </div>
+          </SwitchChain>
+          <span @click="manageAccount = true">{{ superLong(address, 4) }}</span>
         </div>
       </div>
     </div>
@@ -109,11 +121,13 @@ import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import config from "@/config";
 import AuthButton from "./AuthButton.vue";
+import SwitchChain from "./SwitchChain.vue";
 
 export default defineComponent({
   name: "Header",
   components: {
-    AuthButton
+    AuthButton,
+    SwitchChain
   },
   props: {
     collapseMenu: Boolean
@@ -230,6 +244,8 @@ export default defineComponent({
       return logo;
     });
 
+    const showSwitchChain = ref(false);
+
     return {
       address,
       showConnect,
@@ -247,7 +263,9 @@ export default defineComponent({
       switchChain,
       authRef,
       derivedAddress,
-      chainLogo
+      chainLogo,
+      showSwitchChain,
+      chainId
     };
   },
   data() {
@@ -327,7 +345,7 @@ export default defineComponent({
     }
   }
   .account {
-    width: 130px;
+    width: 144px;
     height: 36px;
     margin-left: 30px;
     background: #fff;
@@ -337,18 +355,29 @@ export default defineComponent({
     color: #4a5ef2;
     line-height: 36px;
     text-align: center;
-    &:hover {
-      opacity: 0.7;
-    }
     .address-warp {
       display: flex;
       align-items: center;
-      //justify-content: space-between;
+      justify-content: space-between;
       padding: 0 10px 0 5px;
+      height: 100%;
+      line-height: 1;
+      position: relative;
+      .chain-wrap {
+        display: flex;
+        align-items: center;
+        position: relative;
+      }
       img {
         width: 28px;
         height: 28px;
-        margin-right: 7px;
+        cursor: pointer;
+      }
+      span {
+        cursor: pointer;
+        &:hover {
+          opacity: 0.6;
+        }
       }
     }
   }

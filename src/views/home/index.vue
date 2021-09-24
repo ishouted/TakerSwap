@@ -78,13 +78,6 @@
                     <p class="value">{{ item.syrupTokenSymbol }}</p>
                   </div>
                 </div>
-                <div
-                  class="handle click"
-                  @click="addLP(item)"
-                  v-if="talonAddress"
-                >
-                  {{ $t("home.home11") }}
-                </div>
               </div>
             </div>
           </div>
@@ -118,13 +111,6 @@
                   <p class="value">{{ item.syrupTokenSymbol }}</p>
                 </div>
               </div>
-<!--              <div-->
-<!--                class="handle click"-->
-<!--                @click="addLP(item)"-->
-<!--                v-if="talonAddress"-->
-<!--              >-->
-<!--                {{ $t("home.home11") }}-->
-<!--              </div>-->
             </div>
           </div>
         </div>
@@ -223,35 +209,21 @@
         </div>
       </div>
     </div>
-    <lp-dialog
-      v-model:showLPDialog="showLPDialog"
-      :loading="dialogLoading"
-      :balance="lpBalance"
-      addOrMinus="add"
-      :lpName="addLpInfo.name"
-      :decimal="addLpInfo.stakeTokenDecimals"
-      @confirm="confirmAddOrMinus"
-    ></lp-dialog>
   </div>
 </template>
 
 <script>
 import FarmSymbol from "@/views/farm/FarmSymbol.vue";
-import LpDialog from "@/components/LpDialog";
 import { listen } from "@/api/websocket";
 import config from "@/config";
-import { genId, divisionDecimals, timesDecimals } from "@/api/util";
-import { getAssetBalance } from "@/model";
-import { NTransfer } from "@/api/api";
-import nerve from "nerve-sdk-js";
+import { genId, divisionDecimals } from "@/api/util";
 
 const url = config.WS_URL;
 
 export default {
   name: "Home",
   components: {
-    FarmSymbol,
-    LpDialog
+    FarmSymbol
   },
   props: {},
   data() {
@@ -261,7 +233,6 @@ export default {
       rewardInfo: {},
       farmList: [],
       txInfo: {},
-      showLPDialog: false,
       dialogLoading: false,
       addLpInfo: {},
       lpBalance: ""
@@ -304,9 +275,9 @@ export default {
           const decimal = data.decimals;
           this.overviewData = {
             priceUSD: data.priceUSD,
-            circulation: divisionDecimals(data.circulation, decimal),
-            destroyed: divisionDecimals(data.destroyed, decimal),
-            totalAmount: divisionDecimals(data.totalAmount, decimal)
+            circulation: divisionDecimals(data.circulation, decimal).split(".")[0],
+            destroyed: divisionDecimals(data.destroyed, decimal).split(".")[0],
+            totalAmount: divisionDecimals(data.totalAmount, decimal).split(".")[0]
           };
           // this.loading.close();
         }
@@ -326,6 +297,10 @@ export default {
           channel: "cmd:" + JSON.stringify(params)
         },
         success: data => {
+          console.log(data, 999)
+          for (let i in data) {
+            data[i] = data[i].toString().split(".")[0];
+          }
           this.rewardInfo = data;
         }
       });
@@ -372,75 +347,11 @@ export default {
         success: data => {
           this.txInfo = {
             ...data,
-            amount: divisionDecimals(data.amount, 6),
-            fee: divisionDecimals(data.fee, 6)
+            amount: divisionDecimals(data.amount, 6).split(".")[0],
+            fee: divisionDecimals(data.fee, 6).split(".")[0]
           };
         }
       });
-    },
-    addLP(item) {
-      this.showLPDialog = true;
-      this.addLpInfo = item;
-      this.getBalance();
-    },
-    async getBalance() {
-      const { stakeTokenChainId, stakeTokenAssetId, stakeTokenDecimals } =
-        this.addLpInfo;
-      const res = await getAssetBalance(
-        stakeTokenChainId,
-        stakeTokenAssetId,
-        this.talonAddress
-      );
-      this.lpBalance = divisionDecimals(res.balance, stakeTokenDecimals);
-    },
-    async confirmAddOrMinus(amount) {
-      this.dialogLoading = true;
-      try {
-        const {
-          stakeTokenChainId,
-          stakeTokenAssetId,
-          stakeTokenDecimals,
-          farmHash
-        } = this.addLpInfo;
-        const ammount = timesDecimals(amount, stakeTokenDecimals);
-        const tx = await nerve.swap.farmStake(
-          this.talonAddress,
-          nerve.swap.token(stakeTokenChainId, stakeTokenAssetId),
-          config.chainId,
-          config.prefix,
-          ammount,
-          farmHash,
-          ""
-        );
-        await this.handleHex(tx.hex);
-      } catch (e) {
-        console.log(e, "add-lp-error");
-        this.$toast(e.message || e, {
-          type: "error"
-        });
-      }
-      this.dialogLoading = false;
-    },
-    async handleHex(hex) {
-      const tAssemble = nerve.deserializationTx(hex);
-
-      const transfer = new NTransfer({ chain: "NERVE" });
-      const addressInfo = this.$store.state.addressInfo;
-      const txHex = await transfer.getTxHex({
-        tAssemble,
-        pub: addressInfo.pub,
-        signAddress: addressInfo.address.Ethereum
-      });
-      console.log(txHex, 666);
-      const result = await transfer.broadcastHex(txHex);
-      if (result && result.hash) {
-        this.showLPDialog = false;
-        this.$toast(this.$t("transfer.transfer14"));
-      } else {
-        this.$toast("Failed", {
-          type: "error"
-        });
-      }
     },
     toUrl() {
       this.$router.push("/farm");

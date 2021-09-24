@@ -155,7 +155,13 @@
       </div>
       <div class="d-flex align-items-center space-between mt-8 size-14">
         <span class="text-7e">{{ $t("farm.farm4") }}</span>
-        <span>{{ Number(tokenInfo.tatalStakeTokenUSD) ? $thousands(tokenInfo.tatalStakeTokenUSD) : "--" }}</span>
+        <span>
+          {{
+            Number(tokenInfo.tatalStakeTokenUSD)
+              ? $thousands(tokenInfo.tatalStakeTokenUSD)
+              : "--"
+          }}
+        </span>
       </div>
       <div class="d-flex align-items-center space-between mt-8 size-14">
         <span class="text-7e">{{ $t("farm.farm5") }}</span>
@@ -641,7 +647,7 @@ export default defineComponent({
     width: 264px;
   }
   .info-title {
-    width: 80px;
+    width: 120px;
   }
 }
 @media screen and (max-width: 1100px) {
