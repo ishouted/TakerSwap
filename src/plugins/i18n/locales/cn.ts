@@ -99,7 +99,9 @@ const cn = {
     trading15: "最多卖出",
     trading16: "请填写0-100的数字",
     trading17: "交易流动性不足",
-    trading18: "已确认"
+    trading18: "已确认",
+    trading19: "仍然兑换",
+    trading20: "价格影响很大"
   },
   liquidity: {
     liquidity1: "流动性",

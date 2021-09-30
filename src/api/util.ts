@@ -3,7 +3,7 @@ import copy from "copy-to-clipboard";
 import config from "@/config";
 
 import ethLogo from "@/assets/img/eth-logo.png";
-import bscLogo from "@/assets/img/BNB-logo.png";
+import bscLogo from "@/assets/img/BSC.svg";
 
 interface Obj {
   [key: string]: unknown;

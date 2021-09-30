@@ -99,7 +99,9 @@ const en = {
     trading15: "Max",
     trading16: "Enter 0-100",
     trading17: "Insufficient Liquidity",
-    trading18: "Confirmed"
+    trading18: "Confirmed",
+    trading19: "Swap Anyway",
+    trading20: "Price Impact Too High"
   },
   liquidity: {
     liquidity1: "Liquidity",

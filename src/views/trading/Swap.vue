@@ -79,13 +79,20 @@
               !insufficient &&
               priceImpactColor === 'red'
           }"
-          :disabled="disableTx || !!fromAmountError || !!toAmountError"
+          :disabled="
+            disableTx ||
+            !!fromAmountError ||
+            !!toAmountError ||
+            impactButton === 2
+          "
           @click="swapTrade"
         >
-          {{
-            insufficient
+          {{confirmText
+           /* insufficient
               ? $t("trading.trading17")
-              : fromAmountError || $t("public.public10")
+              : impactButton === 1
+              ? $t("trading.trading19")
+              : fromAmountError || $t("public.public10")*/
           }}
         </el-button>
         <template v-else>
@@ -511,7 +518,7 @@ export default defineComponent({
       val => {
         if (val) {
           state.fromAsset = val.from;
-          state.toAsset = val.to || {};
+          state.toAsset = val.to || null;
           storeSwapPairInfo();
         }
       },
@@ -817,16 +824,51 @@ export default defineComponent({
         !talonAddress.value
       );
     });
-
+    const impactButton = ref(0);
     const priceImpactFloat = computed(() => {
       const tempPriceImpact = state.priceImpact.toString().slice(0, 6);
       let str = tofix(Times(tempPriceImpact, 100), 2, -1);
+
       if (Minus(str, 0.01) < 0) {
         return `<${0.01}%`;
       }
       str += "%";
       return str;
     });
+
+    watch(
+      () => state.priceImpact,
+      val => {
+        impactButton.value = 0;
+        if (!val) return;
+        const tempPriceImpact = state.priceImpact.toString().slice(0, 6);
+        let str = tofix(Times(tempPriceImpact, 100), 2, -1);
+        if (Minus(str, 10) > 0) {
+          impactButton.value = 1;
+        }
+        if (Minus(str, 20) > 0) {
+          impactButton.value = 2;
+        }
+      }
+    );
+
+    const confirmText = computed(() => {
+      if (state.insufficient) {
+        return t("trading.trading17");
+      } else if (impactButton.value === 1) {
+        return t("trading.trading19");
+      } else if (impactButton.value === 2) {
+        return t("trading.trading20");
+      } else {
+        return state.fromAmountError.value || t("public.public10");
+      }
+      // insufficient
+      //     ? $t("trading.trading17")
+      //     : impactButton === 1
+      //         ? $t("trading.trading19")
+      //         : fromAmountError || $t("public.public10")
+    });
+
 
     const priceImpactColor = computed(() => {
       let { value } = priceImpactFloat;
@@ -837,7 +879,7 @@ export default defineComponent({
       } else if (Minus(floatNum, 0.003) > 0 && Minus(floatNum, 0.03) < 0) {
         return "";
       } else if (Minus(floatNum, 0.03) > 0) {
-        return "red";
+        return "#c33030";
       } else {
         return "";
       }
@@ -968,7 +1010,9 @@ export default defineComponent({
       talonAddress,
       handleLoading,
       canRefresh,
-      copyPair
+      copyPair,
+      impactButton,
+      confirmText
     };
   }
 });
@@ -1062,7 +1106,8 @@ export default defineComponent({
       * {
         line-height: 1;
       }
-      .left, .right {
+      .left,
+      .right {
         color: $labelColor;
       }
       .left,
@@ -1234,7 +1279,7 @@ export default defineComponent({
 //  }
 //}
 .deep_color {
-  background-color: red !important;
+  background-color: #c33030 !important;
   color: #ffffff;
   border: none;
 }
