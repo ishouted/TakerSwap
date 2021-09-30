@@ -2,7 +2,7 @@
   <div
     class="common-transfer"
     v-loading="loading"
-    element-loading-background="rgba(255, 255, 255, 0.8)"
+    element-loading-background="rgba(24, 24, 55, 0.8)"
   >
     <div class="to-input">
       <el-input

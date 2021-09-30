@@ -2,7 +2,7 @@
   <div class="w1300 home">
     <div class="pc-cont">
       <div class="overview-total lh_1">
-        {{ $t("home.home1") }}{{ rewardInfo.locked }}
+        {{ $t("home.home1") }}${{ rewardInfo.locked }}
       </div>
       <div class="info-top pd_40">
         <div class="title">{{ $t("home.home2") }}</div>
@@ -361,6 +361,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../../assets/css/base.scss";
 .home {
   //padding-bottom: 60px;
   //margin-top: -15px;
@@ -369,18 +370,18 @@ export default {
   }
   .pd_40 {
     padding: 40px;
-    background-color: #fff;
+    background-color: $BgColor;
     border-radius: 20px;
   }
   .title {
     font-size: 20px;
     line-height: 1;
     margin-bottom: 28px;
-    font-weight: 600;
+    //font-weight: 600;
   }
   .label {
     font-size: 16px;
-    color: #7e87c2;
+    color: $labelColor;
   }
   .info-item {
     flex: 1;
@@ -412,7 +413,7 @@ export default {
         p {
           font-size: 30px;
           line-height: 1;
-          font-weight: 600;
+          //font-weight: 600;
         }
         .flex1-tr {
           flex: 1;
@@ -420,7 +421,7 @@ export default {
         }
         .iconfont {
           font-size: 80px;
-          color: #d7dcfc;
+          color: #004884;
         }
       }
       .left-top {
@@ -444,7 +445,7 @@ export default {
           position: absolute;
           right: 0;
           top: 0;
-          color: #4a5ef2;
+          color: $linkColor;
           font-size: 16px;
           cursor: pointer;
           font-weight: 400;
@@ -478,7 +479,7 @@ export default {
           }
           .value {
             font-size: 18px;
-            font-weight: 600;
+            //font-weight: 600;
           }
         }
         .handle {
@@ -546,7 +547,7 @@ export default {
       }
       .value {
         font-size: 18px;
-        font-weight: 600;
+        //font-weight: 600;
       }
     }
     .handle {
@@ -559,7 +560,7 @@ export default {
   display: none;
   .mobile-total {
     padding: 20px 15px;
-    background-color: #ffffff;
+    background-color: $BgColor;
     border-radius: 10px;
     .img-cont {
       width: 60px;
@@ -567,7 +568,7 @@ export default {
       line-height: 63px;
       margin-right: 10px;
       i {
-        color: #d7dcfc;
+        color: #004884;
         font-size: 60px;
       }
     }
@@ -595,7 +596,7 @@ export default {
   }
   .coin_name {
     font-size: 14px;
-    font-weight: bold;
+    //font-weight: bold;
     width: 180px;
   }
   .home .value {
@@ -619,7 +620,7 @@ export default {
   }
   .coin_name {
     font-size: 14px;
-    font-weight: bold;
+    //font-weight: bold;
     width: 80px;
   }
   .info-wrap {
@@ -683,7 +684,7 @@ export default {
   width: 90px;
 }
 .text-3a {
-  color: #3a3c44;
+  color: $txColor;
 }
 .size-14 {
   font-size: 14px;
@@ -695,10 +696,7 @@ export default {
   font-size: 19px;
 }
 .font-bold {
-  font-weight: bold;
-}
-.text-7e {
-  color: #7e87c2;
+  //font-weight: bold;
 }
 .mt-15 {
   margin-top: 15px;
@@ -708,9 +706,6 @@ export default {
 }
 .rotate-30 {
   transform: rotate(30deg);
-}
-.text-4a {
-  color: #4a5ef2;
 }
 .text-right {
   text-align: right;

@@ -296,6 +296,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../assets/css/base.scss";
 .header {
   position: fixed;
   z-index: 20;
@@ -304,8 +305,9 @@ export default defineComponent({
   left: 0;
   height: 64px;
   padding: 0 16px 0 8px;
-  background: #4a5ff2;
-  border: 2px solid #3345c7;
+  //background: #4a5ff2;
+  background: $BgColor;
+  border-bottom: 2px solid $navBorder;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -348,11 +350,12 @@ export default defineComponent({
     width: 144px;
     height: 36px;
     margin-left: 30px;
-    background: #fff;
+    //background: #fff;
+    background-color: $btnColor;
     border-radius: 18px;
     font-size: 15px;
     cursor: pointer;
-    color: #4a5ef2;
+    color: $txColor;
     line-height: 36px;
     text-align: center;
     .address-warp {
@@ -395,10 +398,11 @@ export default defineComponent({
           padding: 0 15px;
           margin-bottom: 15px;
           border-radius: 15px;
-          background: rgb(239, 244, 245);
+          //background: rgb(239, 244, 245);
+          background: $btnColor;
           cursor: pointer;
           &:hover {
-            background-color: rgb(237, 238, 242);
+            opacity: 0.64;
           }
           img {
             margin-top: 7px;
@@ -420,11 +424,13 @@ export default defineComponent({
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding-top: 10px;
         span {
           font-size: 24px;
+          color: $txColor;
         }
         i {
-          color: #4a5ef2;
+          color: $linkColor;
           font-size: 32px;
           cursor: pointer;
           margin-left: 20px;

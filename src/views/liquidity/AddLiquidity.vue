@@ -2,7 +2,7 @@
   <div
     class="add-liquidity"
     v-loading="loading"
-    element-loading-background="rgba(255, 255, 255, 0.8)"
+    element-loading-background="rgba(24, 24, 55, 0.8)"
   >
     <div class="head">
       <div class="back"><i class="el-icon-back" @click="back"></i></div>
@@ -650,6 +650,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/css/base.scss";
 .add-liquidity {
   overflow: hidden;
   padding: 30px;
@@ -675,10 +676,10 @@ export default defineComponent({
     padding: 16px 20px;
     font-size: 14px;
     text-align: center;
-    color: #4a5ef2;
-    background-color: #f8f9ff;
+    background-color: #004884;
     margin: -20px 0 20px;
     border-radius: 10px;
+    color: #91BFFF;
   }
   .add {
     display: flex;
@@ -689,11 +690,12 @@ export default defineComponent({
   .liquidity-info {
     margin-top: 30px;
     .name {
-      color: #7e87c2;
+      color: $labelColor;
       margin-bottom: 8px;
     }
     .content {
-      border: 1px solid #e4efff;
+      //border: 1px solid #e4efff;
+      background-color: #242449;
       border-radius: 15px;
       display: flex;
       flex-wrap: wrap;
@@ -712,7 +714,7 @@ export default defineComponent({
         }
         p {
           font-size: 14px;
-          color: #7e87c2;
+          color: $labelColor;
         }
       }
     }

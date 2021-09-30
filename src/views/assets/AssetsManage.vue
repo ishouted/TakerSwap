@@ -156,6 +156,7 @@ export default {
 };
 </script>
 <style lang="scss">
+@import "../../assets/css/base.scss";
 .add-assets-dialog {
   max-width: 470px !important;
   .el-input {
@@ -186,11 +187,11 @@ export default {
         /* width: 120px; */
         div {
           font-size: 18px;
-          font-weight: 600;
+          //font-weight: 600;
         }
         span {
           font-size: 14px;
-          color: #7e87c2;
+          color: $labelColor;
           font-weight: 400;
         }
       }

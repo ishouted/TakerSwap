@@ -2,7 +2,7 @@
   <div
     class="cross-in"
     v-loading="loading"
-    element-loading-background="rgba(255, 255, 255, 0.8)"
+    element-loading-background="rgba(24, 24, 55, 0.8)"
   >
     <div class="title">
       {{ "From " + $store.getters.chain }}
@@ -307,11 +307,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../../assets/css/base.scss";
 .cross-in {
   .title {
     font-size: 18px;
+    color: $labelColor;
     span {
-      color: #4a5ef2;
+      color: $linkColor;
     }
   }
   .transfer-content {

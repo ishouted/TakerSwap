@@ -95,6 +95,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../assets/css/base.scss";
 .switch-chain-wrapper {
   position: relative;
 }
@@ -106,20 +107,21 @@ export default {
   width: 140px;
   padding: 6px 0;
   margin-top: 8px;
-  border: 1px solid #e4e7ed;
+  border: 1px solid $btnColor;
   border-radius: 4px;
-  background-color: #fff;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  //background-color: #fff;
+  background-color: $btnColor;
+  //box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   li {
     padding: 0 20px;
     text-align: left;
     line-height: 28px;
-    color: #3a3c44;
+    color: $txColor;
     &:hover {
-      background-color: #f5f7fa;
+      opacity: 0.65;
     }
     &.active {
-      color: #409eff;
+      color: $linkColor;
       font-weight: 700;
     }
   }
@@ -137,12 +139,12 @@ export default {
   .pop-arrow {
     top: -6px;
     left: 30px;
-    border-bottom-color: #ebeef5;
+    border-bottom-color: $btnColor;
     &:after {
       content: " ";
       top: 1px;
       margin-left: -6px;
-      border-bottom-color: #fff;
+      border-bottom-color: $btnColor;
     }
   }
 }

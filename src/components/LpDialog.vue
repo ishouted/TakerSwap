@@ -11,7 +11,7 @@
   >
     <div
       v-loading="loading"
-      element-loading-background="rgba(255, 255, 255, 0.8)"
+      element-loading-background="rgba(24, 24, 55, 0.8)"
     >
       <div class="titles">
         {{ addOrMinus === "add" ? $t("farm.farm20") : $t("farm.farm10") }}LP
@@ -143,6 +143,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../assets/css/base.scss";
 .add-minus-dialog {
   border-radius: 10px;
   .el-dialog__header {
@@ -151,7 +152,7 @@ export default defineComponent({
   .el-dialog__body {
     .titles {
       font-size: 24px;
-      font-weight: 600;
+      //font-weight: 600;
       line-height: 36px;
       text-align: center;
       margin: 0 0 20px 20px;
@@ -160,8 +161,8 @@ export default defineComponent({
       width: 417px;
       height: 98px;
       padding: 15px 20px;
-      background: #ffffff;
-      border: 1px solid #e3eeff;
+      background: #242449;
+      //border: 1px solid #e3eeff;
       border-radius: 15px;
       position: relative;
       .in {
@@ -173,10 +174,17 @@ export default defineComponent({
       .to {
         display: flex;
         align-items: center;
+        //:deep(.el-input) {
+        //  flex: 1;
+        //  input {
+        //    background-color: transparent;
+        //  }
+        //}
         .el-input {
           flex: 1;
           .el-input__inner {
             font-size: 20px;
+            background-color: transparent!important;
           }
         }
         .el-input-group__append,
@@ -187,8 +195,8 @@ export default defineComponent({
           span {
             display: inline-block;
             padding: 3px 6px;
-            color: #4b7cf7;
-            background-color: #e4e7ff;
+            color: $labelColor;
+            background-color: #34345A;
             cursor: pointer;
             border-radius: 5px;
           }
@@ -196,7 +204,7 @@ export default defineComponent({
         .lp {
           margin-left: 30px;
           font-size: 14px;
-          font-weight: 600;
+          //font-weight: 600;
           text-align: right;
         }
       }

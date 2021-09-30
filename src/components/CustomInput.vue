@@ -216,11 +216,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../assets/css/base.scss";
 .custom-input {
-  border: 1px solid #e3eeff;
+  //border: 1px solid #e3eeff;
   border-radius: 15px;
   padding: 15px 20px;
   position: relative;
+  background-color: $navBorder;
   .error-tip {
     position: absolute;
     left: 0;
@@ -230,7 +232,7 @@ export default {
   }
   .info {
     margin-bottom: 5px;
-    color: #7e87c2;
+    color: $txColor;
     font-size: 12px;
     & span:first-child {
       font-size: 14px;
@@ -238,6 +240,9 @@ export default {
   }
   .el-input {
     margin-right: 20px;
+    ::-webkit-input-placeholder {
+      color: $labelColor;
+    }
   }
   .inner {
     :deep(.el-input) {
@@ -258,9 +263,9 @@ export default {
     }
     span {
       font-size: 14px;
-      font-weight: 600;
+      //font-weight: 600;
       margin: 0 5px;
-      color: #3a3c44;
+      color: $txColor;
       max-width: 80px;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
@@ -281,8 +286,8 @@ export default {
       span {
         display: inline-block;
         padding: 3px 6px;
-        color: #4b7cf7;
-        background-color: #e4e7ff;
+        color: $labelColor;
+        background-color: #26263F;
         cursor: pointer;
         border-radius: 5px;
       }
@@ -318,11 +323,11 @@ export default {
           flex: 1;
           div {
             font-size: 18px;
-            font-weight: 600;
+            //font-weight: 600;
           }
           span {
             font-size: 14px;
-            color: #7e87c2;
+            color: $labelColor;
             font-weight: 400;
           }
           .mobile-span {
@@ -338,7 +343,7 @@ export default {
           span:nth-child(1) {
             text-align: right;
             font-size: 20px;
-            font-weight: bold;
+            //font-weight: bold;
           }
         }
       }

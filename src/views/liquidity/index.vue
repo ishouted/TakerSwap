@@ -3,7 +3,7 @@
     <div
       class="liquidity"
       v-loading="loading"
-      element-loading-background="rgba(255, 255, 255, 0.8)"
+      element-loading-background="rgba(24, 24, 55, 0.8)"
     >
       <div class="overview" v-if="!addLiquidity">
         <div class="top-part">
@@ -260,14 +260,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../assets/css/base.scss";
 .liquidity {
   overflow: hidden;
   max-width: 470px;
   margin: 0 auto;
   border-radius: 20px;
-  background-color: #fff;
+  background-color: $BgColor;
   h3 {
     font-size: 24px;
+    font-weight: 400;
   }
   .top-part {
     padding: 40px;
@@ -280,13 +282,16 @@ export default defineComponent({
   }
   .your-liquidity {
     padding: 35px 40px 30px;
-    border-top: 1px solid #e4efff;
+    border-top: 1px solid #202049;
+    h3 {
+      color: $labelColor;
+    }
     .liquidity-list {
       margin-top: 10px;
       .list-item {
         height: 74px;
         padding: 20px 0;
-        border-bottom: 1px solid #e4efff;
+        border-bottom: 1px solid #202049;
         display: flex;
         align-items: center;
         &.hide-border {
@@ -305,6 +310,7 @@ export default defineComponent({
             width: 32px;
             height: 32px;
             overflow: hidden;
+            border-radius: 50%;
           }
           .img-wrap {
             display: flex;
@@ -320,6 +326,7 @@ export default defineComponent({
         }
         .amount-cont {
           margin-top: 5px;
+          color: $labelColor;
         }
       }
       .value {
@@ -328,7 +335,7 @@ export default defineComponent({
       }
       .view-detail {
         flex: 2;
-        color: #4a5ef2;
+        color: $linkColor;
         text-align: right;
         cursor: pointer;
       }

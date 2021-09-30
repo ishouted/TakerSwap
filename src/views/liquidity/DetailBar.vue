@@ -33,7 +33,7 @@
         </span>
       </div>
       <div class="confirm-wrap">
-        <el-button :disabled="quitNumber === ''" @click="quit">
+        <el-button :disabled="quitNumber === ''" @click="quit" type="primary">
           {{ $t("liquidity.liquidity6") }}
         </el-button>
       </div>
@@ -239,19 +239,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/css/base.scss";
 .detail-bar {
   height: 174px;
   padding: 20px;
   border-radius: 20px;
-  border: 1px solid #e4efff;
+  background-color: $detailBar;
+  //border: 1px solid #e4efff;
   .rate {
     margin: 10px 0 20px;
     display: flex;
     span {
       width: 65px;
       height: 28px;
-      background-color: #e3eeff;
-      color: #4a5ef2;
+      background-color: #313161;
+      color: $labelColor;
       text-align: center;
       line-height: 28px;
       border-radius: 6px;
@@ -262,7 +264,10 @@ export default defineComponent({
     }
   }
   :deep(.el-input) {
-    border: 1px solid #e4efff;
+    //border: 1px solid #e4efff;
+    .el-input__inner {
+      //border: 0;
+    }
   }
   @media screen and (max-width: 500px) {
     padding: 16px;
@@ -286,12 +291,12 @@ export default defineComponent({
   }
 }
 .active_click {
-  background-color: #4a5ef2 !important;
+  background-color: #004884 !important;
   color: #ffffff !important;
 }
 .info-bar {
   .text-e3 {
-    color: #4a5ef2;
+    color: $labelColor;
   }
   .size-20 {
     font-size: 14px;

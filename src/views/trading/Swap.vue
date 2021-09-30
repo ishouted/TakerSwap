@@ -2,7 +2,7 @@
   <div
     class="swap pd_40_rd_20 mobile-p"
     v-loading="loading"
-    element-loading-background="rgba(255, 255, 255, 0.8)"
+    element-loading-background="rgba(24, 24, 55, 0.8)"
   >
     <div class="icon-wrap flex-between">
       <div class="left">
@@ -975,6 +975,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/css/base.scss";
 .swap {
   //width: 470px;
   width: 37%;
@@ -988,6 +989,7 @@ export default defineComponent({
       height: 25px;
       i {
         font-size: 22px;
+        color: $labelColor;
       }
     }
     .right {
@@ -1002,6 +1004,7 @@ export default defineComponent({
         }
         i {
           font-size: 22px;
+          color: $labelColor;
         }
       }
       .refreshing {
@@ -1024,6 +1027,7 @@ export default defineComponent({
     margin-bottom: -5px;
     display: flex;
     justify-content: center;
+    color: $labelColor;
     i {
       font-size: 16px;
       margin: 3px 0 0 5px;
@@ -1047,8 +1051,8 @@ export default defineComponent({
     }
   }
   .swap-setting-info {
-    border-top: 1px solid #e3eeff;
-    border-bottom: 1px solid #e3eeff;
+    border-top: 1px solid $borderColor;
+    border-bottom: 1px solid $borderColor;
     padding: 18px 0;
     .info-item {
       margin-bottom: 12px;
@@ -1058,8 +1062,8 @@ export default defineComponent({
       * {
         line-height: 1;
       }
-      .left {
-        color: #7e87c2;
+      .left, .right {
+        color: $labelColor;
       }
       .left,
       .right {
@@ -1076,7 +1080,7 @@ export default defineComponent({
   .swap-route {
     .name {
       padding: 12px 0;
-      color: #7e87c2;
+      color: $labelColor;
     }
     .route-network {
       flex-wrap: wrap;
@@ -1097,7 +1101,8 @@ export default defineComponent({
       }
       span {
         font-size: 14px;
-        font-weight: 600;
+        //font-weight: 600;
+        color: $labelColor;
       }
       .el-icon-arrow-right {
         margin: 0 10px;
@@ -1112,6 +1117,7 @@ export default defineComponent({
       }
       .name {
         margin-bottom: 10px;
+        color: $labelColor;
       }
       .protect {
         .number {
@@ -1119,13 +1125,13 @@ export default defineComponent({
           height: 44px;
           line-height: 44px;
           text-align: center;
-          color: #4a5ef2;
-          background-color: #e4e7ff;
+          color: $txColor2;
+          background-color: $borderColor;
           margin-right: 20px;
           border-radius: 15px;
           &.active {
             color: #fff;
-            background-color: #4a5ef2;
+            background-color: #004884;
           }
         }
       }
@@ -1134,6 +1140,7 @@ export default defineComponent({
         margin-right: 3px;
         .el-input__inner {
           border-radius: 10px;
+          border: none;
         }
       }
       .bottom {

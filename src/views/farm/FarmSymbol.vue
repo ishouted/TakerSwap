@@ -69,7 +69,7 @@ export default defineComponent({
   }
   .name {
     font-size: 20px;
-    font-weight: bold;
+    //font-weight: bold;
   }
 }
 </style>

@@ -10,16 +10,16 @@
       :class="['menu', isCollapse ? 'collapse' : '']"
       @select="handleSelect"
       :default-active="activeIndex"
-      background-color="#4A5FF2"
+      background-color="#181837"
       text-color="#fff"
       active-text-color="#8dc8d6"
     >
-      <el-menu-item index="home">
+<!--      <el-menu-item index="home">
         <i class="iconfont icon-Home"></i>
         <template #title>
           <span class="title">{{ $t("header.header4") }}</span>
         </template>
-      </el-menu-item>
+      </el-menu-item>-->
       <el-menu-item index="trading">
         <i class="iconfont icon-Swap"></i>
         <template #title>
@@ -50,12 +50,12 @@
           <span class="title">{{ $t("header.header5") }}</span>
         </template>
       </el-menu-item>
-      <el-menu-item index="none" disabled>
+<!--      <el-menu-item index="none" disabled>
         <i class="iconfont icon-liulanqi2"></i>
         <template #title>
           <span class="title">{{ $t("header.header9") }}</span>
         </template>
-      </el-menu-item>
+      </el-menu-item>-->
       <div class="custom-item">
         <i class="iconfont icon-Docs"></i>
         <span class="title">
@@ -139,8 +139,12 @@ export default {
         if (path === "create-farm") {
           activeIndex.value = "createFarm";
         } else {
-          activeIndex.value = path || "home";
+          activeIndex.value = path || "trading";
         }
+        console.log(activeIndex, 45646);
+      },
+      {
+        immediate: true
       }
     );
 
@@ -197,6 +201,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../assets/css/base.scss";
 .left-nav {
   position: fixed;
   left: 0;
@@ -205,8 +210,8 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #4a5ff2;
-  border-right: 2px solid #3345c7;
+  background-color: $BgColor;
+  border-right: 2px solid $navBorder;
   z-index: 11;
   .menu {
     border-right: none;
@@ -236,7 +241,7 @@ export default {
       line-height: 56px;
       cursor: pointer;
       &:hover {
-        background-color: #3b4cc2;
+        background-color: #13132c;
       }
     }
     .iconfont {
@@ -257,7 +262,7 @@ export default {
   }
   .nav-bottom {
     height: 110px;
-    border-top: 2px solid #3345c7;
+    border-top: 2px solid $navBorder;
     color: #fff;
     padding: 20px 20px 0;
     //transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s;

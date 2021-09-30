@@ -3,7 +3,7 @@
     <div
       class="create-farm"
       v-loading="loading"
-      element-loading-background="rgba(255, 255, 255, 0.8)"
+      element-loading-background="rgba(24, 24, 55, 0.8)"
     >
       <div class="head">
         <!--        <div class="back"><i class="el-icon-back" @click="back"></i></div>-->
@@ -55,8 +55,8 @@
         <div class="advanced">
           <el-switch
             v-model="advanced"
-            active-color="#5F71F5"
-            inactive-color="#D0D6FF"
+            active-color="#315D9B"
+            inactive-color="#004884"
             :active-text="$t('createFarm.createFarm12')"
             :width="35"
           ></el-switch>
@@ -341,13 +341,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../assets/css/base.scss";
 .create-farm {
   max-width: 470px;
   width: 100%;
   margin: 0 auto;
   border-radius: 20px;
   padding: 40px;
-  background: #fff;
+  background: $BgColor;
   .head {
     position: relative;
     margin-bottom: 20px;
@@ -373,7 +374,7 @@ export default defineComponent({
     .el-form-item__label {
       line-height: 30px;
       padding-bottom: 0;
-      color: #7e87c2;
+      color: $labelColor;
     }
     .balance {
       float: right;
@@ -401,7 +402,7 @@ export default defineComponent({
       background-color: #4a5ef2;
     }
     .el-checkbox__label {
-      color: #4a5ef2;
+      color: #58587B;
       display: inline;
     }
     .el-date-editor.el-input,
@@ -415,6 +416,9 @@ export default defineComponent({
   .advanced {
     display: flex;
     justify-content: flex-end;
+    .el-switch__label {
+      color: $labelColor;
+    }
   }
 }
 @media screen and (max-width: 1200px) {

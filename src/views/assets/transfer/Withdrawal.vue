@@ -2,7 +2,7 @@
   <div
     class="cross-out"
     v-loading="loading"
-    element-loading-background="rgba(255, 255, 255, 0.8)"
+    element-loading-background="rgba(24, 24, 55, 0.8)"
   >
     <div class="title">
       {{ "To " + $store.getters.chain }}
@@ -269,11 +269,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../../assets/css/base.scss";
 .cross-out {
   .title {
     font-size: 18px;
+    color: $labelColor;
     span {
-      color: #4a5ef2;
+      color: $linkColor;
     }
   }
   .transfer-content {

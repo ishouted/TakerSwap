@@ -509,33 +509,38 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../assets/css/base.scss";
 .mobile-cont {
   display: none;
   width: 100%;
   .option-cont {
     padding: 20px 20px 18px 18px;
-    border: 1px solid #aab2c9;
+    //border: 1px solid #aab2c9;
     border-radius: 10px;
+    background-color: #313161;
     .count-cont {
-      color: #333333;
-      font-weight: bold;
+      //font-weight: bold;
       font-size: 20px;
       width: 160px;
       span {
         font-size: 14px;
-        font-weight: bold;
+        //font-weight: bold;
         color: #858fb1;
       }
     }
     .btn {
       height: 36px;
       width: 80px;
-      background-color: #4a5ef2;
+      background-color: $btnColor;
       line-height: 36px;
       text-align: center;
       font-size: 15px;
-      color: #ffffff;
+      color: $txColor;
       border-radius: 10px;
+      &.btn_disabled {
+        opacity: 0.2;
+        background-color: $btnColor!important;
+      }
     }
   }
   .mt-8 {
@@ -544,10 +549,10 @@ export default defineComponent({
 }
 .farm-details {
   /* height: 148px; */
+  background-color: #21214D;
   .pc-cont {
     padding: 20px 40px 20px 30px;
-    background: #fafcff;
-    border-bottom: 1px solid #e4efff;
+    //border-bottom: 1px solid #e4efff;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -556,7 +561,7 @@ export default defineComponent({
       p {
         font-size: 16px;
         font-weight: 500;
-        color: #4a5ef2;
+        color: #FCFCFC;
         line-height: 24px;
         margin-top: 8px;
         //cursor: not-allowed;
@@ -577,22 +582,23 @@ export default defineComponent({
         margin-left: 60px;
         height: 108px;
         padding: 20px;
-        background: #fff;
-        border: 1px solid #e4efff;
+        background: #313161;
+        //border: 1px solid #e4efff;
         border-radius: 10px;
         .left {
           max-width: 200px;
           .info-title {
             font-size: 14px;
             margin-bottom: 5px;
+            color: $labelColor;
           }
           p {
             font-size: 20px;
-            font-weight: bold;
+            //font-weight: bold;
           }
           span {
             font-size: 14px;
-            font-weight: bold;
+            //font-weight: bold;
             color: #858fb1;
           }
         }
@@ -697,7 +703,7 @@ export default defineComponent({
   }
 }
 .text-90 {
-  color: #9095a6;
+  color: $labelColor;
   font-size: 14px;
 }
 </style>

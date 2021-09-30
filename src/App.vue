@@ -116,13 +116,13 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(69, 42, 122);
+  background-color: $BgColor;
   transition: opacity 0.4s ease 0s;
   opacity: 0;
   z-index: 10;
   pointer-events: none;
   &.show {
-    opacity: 0.6;
+    opacity: 0.65;
     pointer-events: initial;
   }
 }
@@ -153,6 +153,8 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url("assets/img/bg.jpg");
+  //background-image: linear-gradient(to bottom right, #2D1D57, #1D1539);
+  //opacity: 0.26;
   z-index: -1;
 }
 </style>

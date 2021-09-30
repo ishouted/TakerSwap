@@ -24,7 +24,7 @@
             height="480"
             class="show_table"
             v-loading="loading"
-            element-loading-background="rgba(255, 255, 255, 0.8)"
+            element-loading-background="rgba(24, 24, 55, 0.8)"
           >
             <el-table-column width="20px"></el-table-column>
             <el-table-column :label="$t('public.public1')">
@@ -420,6 +420,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/css/base.scss";
 .assets-wrap {
   padding: 0 20px;
 }
@@ -430,28 +431,31 @@ export default defineComponent({
   align-items: center;
   .iconfont {
     font-size: 24px;
-    color: #4a5ef2;
+    color: $linkColor;
     margin: 0 10px;
     cursor: pointer;
     &.disable {
       cursor: not-allowed;
     }
   }
+  .el-divider {
+    background-color: $labelColor;
+  }
 }
 .mobile-cont {
   display: none;
   //padding: 24px 15px 28px 15px;
-  background-color: #ffffff;
+  background-color: $BgColor;
   overflow: hidden;
   border-radius: 10px;
 
   .address-wrap {
     justify-content: space-between;
     font-size: 16px;
-    color: #333;
+    //color: #333;
     margin: 20px 0 10px;
     i {
-      color: #4a5ef2;
+      color: $linkColor;
       font-size: 20px;
       cursor: pointer;
       margin-left: 10px;
@@ -459,10 +463,10 @@ export default defineComponent({
   }
   .asset-cont-wrap {
     padding: 10px 15px;
-    border-bottom: 1px solid #e9ebf3;
+    border-bottom: 1px solid #202049;
     .t_info {
       font-size: 12px;
-      color: #7e87c2;
+      color: $labelColor;
       display: flex;
       justify-content: space-between;
       //padding-top: 2px;
@@ -489,7 +493,7 @@ export default defineComponent({
         }
       }
       .font-bold span {
-        color: #7e87c2;
+        color: $labelColor;
         font-weight: 400;
         font-size: 12px;
       }
@@ -509,7 +513,7 @@ export default defineComponent({
   }
   .option-btn {
     padding: 20px 0;
-    background-color: #f8f8fc;
+    background-color: #313161;
     .btn-cont {
       display: flex;
       align-items: center;
@@ -519,8 +523,8 @@ export default defineComponent({
         height: 36px;
         width: 88px;
         font-size: 15px;
-        background-color: #4a5ef2;
-        color: #ffffff;
+        background-color: $btnColor;
+        //color: #ffffff;
         line-height: 36px;
         text-align: center;
         border-radius: 10px;
@@ -530,7 +534,7 @@ export default defineComponent({
   }
 }
 .font-bold {
-  font-weight: bolder;
+  //font-weight: bolder;
 }
 .p-24 {
   padding: 0 15px 0 15px;
@@ -550,8 +554,8 @@ export default defineComponent({
 }
 .assets {
   max-height: 721px;
-  background: #ffffff;
-  box-shadow: 0px 2px 0px 0px #e9eaf4;
+  background-color: $BgColor;
+  //box-shadow: 0px 2px 0px 0px #e9eaf4;
   border-radius: 30px;
   padding: 35px 40px;
   .font_20 {
@@ -560,10 +564,10 @@ export default defineComponent({
   .address-wrap {
     justify-content: space-between;
     font-size: 24px;
-    color: #333;
+    color: $txColor;
     margin: 10px 0 30px;
     i {
-      color: #4a5ef2;
+      color: $linkColor;
       font-size: 32px;
       cursor: pointer;
       margin-left: 20px;
@@ -575,7 +579,7 @@ export default defineComponent({
     }
     tr .cell {
       font-size: 16px;
-      color: #333;
+      color: #fff!important;
     }
     tr .flex-center {
       span {
@@ -585,14 +589,14 @@ export default defineComponent({
       .t_info {
         margin-left: 10px;
         span {
-          font-weight: 600;
+          //font-weight: 600;
           line-height: 1;
           margin-bottom: 5px;
         }
         p {
           font-size: 14px;
           text-align: left;
-          color: #7e87c2;
+          color: $labelColor;
           line-height: 1;
         }
       }
@@ -601,7 +605,7 @@ export default defineComponent({
       color: #4a5ef2;
     }
     .ydy {
-      color: #7e87c2;
+      color: $labelColor;
     }
   }
 }

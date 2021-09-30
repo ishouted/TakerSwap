@@ -14,7 +14,7 @@
         :data="list"
         max-height="435"
         v-loading="loading"
-        element-loading-background="rgba(255, 255, 255, 0.8)"
+        element-loading-background="rgba(24, 24, 55, 0.8)"
       >
         <el-table-column width="20px"></el-table-column>
         <el-table-column
@@ -108,6 +108,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/css/base.scss";
 .overview {
   //width: 790px;
   width: 60%;
@@ -138,6 +139,7 @@ export default defineComponent({
     .title {
       font-size: 24px;
       margin-bottom: 15px;
+      color: $labelColor;
     }
     :deep(.el-table) {
       th .cell {
@@ -150,7 +152,7 @@ export default defineComponent({
         color: #333;
       }
       .iconfont {
-        color: #21d8ba;
+        color: #1678FF;
         font-size: 28px;
       }
     }
@@ -217,7 +219,7 @@ export default defineComponent({
       }
       li {
         padding: 10px 0;
-        border-bottom: 1px solid #e3eeff;
+        border-bottom: 1px solid #202049;
         &:first-child {
           padding-top: 0;
         }
@@ -232,7 +234,7 @@ export default defineComponent({
         }
         span {
           font-size: 14px;
-          color: #7e87c2;
+          color: $labelColor;
         }
         p {
           font-size: 14px;

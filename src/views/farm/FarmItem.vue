@@ -2,7 +2,7 @@
   <div
     class="farm-item"
     v-loading="loading"
-    element-loading-background="rgba(255, 255, 255, 0.8)"
+    element-loading-background="rgba(24, 24, 55, 0.8)"
   >
     <el-empty description="No Data" v-if="!list.length" />
     <template v-if="true">
@@ -156,23 +156,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/css/base.scss";
 .mobile-cont {
   display: none;
   border-radius: 10px;
-  background-color: #ffffff;
+  background-color: $BgColor;
   overflow: hidden;
-  padding-bottom: 20px;
+  //padding-bottom: 20px;
   .farm-item_cont {
     display: flex;
     padding: 15px 15px 15px 15px;
-    border-bottom: 1px solid #e9ebf3;
+    border-bottom: 1px solid #202049;
     justify-content: space-between;
     align-items: center;
     .farm-item_list {
       .symbol-cont {
         display: flex;
         font-size: 15px;
-        font-weight: bold;
+        //font-weight: bold;
         :deep(.farm-item-symbol) {
           width: auto;
           padding: 0;
@@ -208,7 +209,7 @@ export default defineComponent({
 }
 .farm-item {
   display: block;
-  background: #ffffff;
+  background: $BgColor;
   border-radius: 20px;
   padding: 20px 0 20px;
   min-height: 200px;
@@ -218,7 +219,7 @@ export default defineComponent({
     font-family: PingFang SC;
     .title {
       height: 90px;
-      border-bottom: 1px solid #e4efff;
+      border-bottom: 1px solid #20204A;
       display: flex;
       align-items: center;
       padding: 0 30px;
@@ -226,7 +227,7 @@ export default defineComponent({
         min-width: 200px;
         .names {
           font-size: 20px;
-          font-weight: bold;
+          //font-weight: bold;
         }
       }
       ul {
@@ -237,14 +238,14 @@ export default defineComponent({
           text-align: center;
           p {
             font-size: 14px;
-            color: #7e87c2;
+            color: $labelColor;
             line-height: 1;
             margin-bottom: 8px;
           }
           h2 {
             font-size: 18px;
             font-family: Roboto;
-            font-weight: bold;
+            font-weight: 400;
             line-height: 1;
           }
         }
@@ -281,18 +282,12 @@ export default defineComponent({
     padding: 15px;
   }
 }
-.text-7e {
-  color: #7e87c2;
-}
-.text-4a {
-  color: #4a5ef2;
-}
 .mt-8 {
   margin-top: 7.5px;
 }
 .size-15 {
   font-size: 15px;
-  font-weight: bold;
+  //font-weight: bold;
 }
 .size-14 {
   font-size: 14px;

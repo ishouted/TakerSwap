@@ -36,8 +36,8 @@
       <div class="mortgage">
         <el-switch
           v-model="mortgageValue"
-          active-color="#5F71F5"
-          inactive-color="#D0D6FF"
+          active-color="#315D9B"
+          inactive-color="#004884"
           :active-text="$t('farm.farm1')"
           :width="35"
         ></el-switch>
@@ -871,13 +871,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../assets/css/base.scss";
 .tab-bar {
   display: none;
   margin-left: 30px;
   align-items: center;
   font-size: 16px;
   border-bottom: 1px solid #ffffff;
-  color: #b0b5eb;
+  color: $labelColor;
   span {
     cursor: pointer;
     box-sizing: border-box;
@@ -885,7 +886,7 @@ export default defineComponent({
     margin-right: 15px;
   }
   .active {
-    color: #ffffff;
+    color: $txColor;
     border-bottom: 2px solid #ffffff;
   }
 }
@@ -897,22 +898,22 @@ export default defineComponent({
     height: 48px;
     margin: 0 auto;
     border-radius: 24px;
-    background-color: #fff;
+    background-color: #2A2A56;
     .tab-item {
       width: 180px;
       height: 48px;
       text-align: center;
       line-height: 48px;
-      color: #4a5ef2;
+      color: $labelColor;
       font-size: 16px;
       cursor: pointer;
     }
     .isActive {
-      background-color: #5f71f5;
+      background-color: #004884;
       border-radius: 24px;
       margin: 0 0 0 -1px;
       color: #fff;
-      border: 0 solid #5f71f5;
+      //border: 0 solid #5f71f5;
     }
   }
   .search {
@@ -937,9 +938,14 @@ export default defineComponent({
         color: #fff;
       }
     }
+    .el-select {
+      input {
+        background: #2A2A56;
+      }
+    }
     .el-switch {
       .el-switch__label {
-        color: #fff;
+        color: $labelColor;
       }
     }
   }
@@ -1001,23 +1007,31 @@ export default defineComponent({
   }
 }
 .farm-select.el-select__popper.el-popper[role="tooltip"] {
-  background: #5f71f5 !important;
+  background: $btnColor !important;
   border: 0 !important;
   border-radius: 10px;
-  .el-select-dropdown__item.hover,
-  .el-select-dropdown__item:hover {
-    background: #5f71f5;
+  //.el-select-dropdown__item.hover,
+  //.el-select-dropdown__item:hover {
+  //  background: $btnColor!important;
+  //}
+  .el-select-dropdown__item {
+    color: $labelColor;
+    &:hover, &.selected {
+      background: $btnColor !important;
+      opacity: 0.65;
+    }
   }
   .el-select-dropdown__item {
     span {
       color: #fff;
     }
     &:hover {
-      background: #596ae8;
+      background: $btnColor;
+      opacity: 0.65;
     }
   }
   .el-popper__arrow:before {
-    background: #5f71f5;
+    background: $btnColor;
     border: 0 !important;
   }
 }

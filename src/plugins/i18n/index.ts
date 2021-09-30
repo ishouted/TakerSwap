@@ -18,7 +18,7 @@ const messages = {
     ...en
   }
 };
-const navigatorLang = window.navigator.language === "zh-CN" ? "zh-cn" : "en";
+const navigatorLang = "en"; //window.navigator.language === "zh-CN" ? "zh-cn" : "en";
 const fallLang = enLocale.name;
 const lang = localStorage.getItem("lang") || navigatorLang;
 localStorage.setItem("lang", lang);

@@ -101,11 +101,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "../../../assets/css/base.scss";
 .transfer-page {
   max-width: 470px;
   margin: 0 auto;
   border-radius: 20px;
-  background-color: #5b6fff;
+  background-color: #2A2A56;
   .top {
     height: 173px;
     padding: 40px;
@@ -134,7 +135,7 @@ export default defineComponent({
   .bottom {
     padding: 50px 40px;
     min-height: 400px;
-    background-color: #fff;
+    background-color: $BgColor;
     border-radius: 20px;
   }
   @media screen and (max-width: 500px) {
