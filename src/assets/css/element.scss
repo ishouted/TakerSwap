@@ -273,6 +273,32 @@
   .el-picker-panel__icon-btn {
     color: $labelColor;
   }
+  .el-time-panel {
+    background: $BgColor;
+    border: 0;
+    .el-time-spinner__item {
+      color: $labelColor;
+      &:hover {
+        opacity: 0.65;
+        background: $BgColor;
+      }
+    }
+    .el-time-spinner__item.active:not(.disabled) {
+      color: $txColor;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  .el-time-panel__content:after, .el-time-panel__content:before {
+    border-color: #20204a;
+  }
+  .el-time-panel__footer {
+    border-color: #20204a;
+    .cancel {
+      color: $txColor;
+    }
+  }
 }
 
 
