@@ -92,7 +92,7 @@ export default defineComponent({
             const defaultAsset = {};
             const { fromAsset, toAsset } = route.params;
             const default_nvt = state.assetsList.find(
-              item => item.symbol === "NVT"
+              item => item.symbol === "ETH"
             );
             if (fromAsset || toAsset) {
               const from = state.assetsList.find(
