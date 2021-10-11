@@ -15,6 +15,7 @@
             v-model="model.tokenA"
             filterable
             :placeholder="$t('createFarm.createFarm1')"
+            popper-class="asset-select"
           >
             <el-option
               :label="item.symbol + '(' + item.assetKey + ')'"
@@ -30,6 +31,7 @@
             v-model="model.tokenB"
             filterable
             :placeholder="$t('createFarm.createFarm3')"
+            popper-class="asset-select"
           >
             <el-option
               :label="item.symbol + '(' + item.assetKey + ')'"
@@ -98,6 +100,14 @@
           <auth-button v-else></auth-button>
         </el-form-item>
       </el-form>
+      <div class="my-farms" v-if="myFarms.length">
+        <h3>{{ $t("createFarm.createFarm13") }}</h3>
+        <ul>
+          <li v-for="item in myFarms" :key="item.hash">
+            <span @click="toMyFarm(item)">{{ item.name }}</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -123,6 +133,7 @@ import { divisionAndFix, _networkInfo, Minus, timesDecimals } from "@/api/util";
 import config from "@/config";
 import dayjs from "dayjs";
 import AuthButton from "@/components/AuthButton";
+import useMyFarm from "./useMyFarm"
 
 function parseChainInfo(key) {
   const arrry = key.split("-");
@@ -152,6 +163,7 @@ export default defineComponent({
       startTime: "", // 开始时间
       check: false
     });
+    const { myFarms, toMyFarm, updateMyFarms } = useMyFarm();
     const rules = reactive({
       tokenA: [
         {
@@ -282,7 +294,7 @@ export default defineComponent({
           : 1;
         const lockTo = advanced.value ? dayjs(lockedTime).unix() : 1;
         const tx = await nerve.swap.farmCreate(
-          talonAddress,
+          talonAddress.value,
           nerve.swap.token(tokenA.chainId, tokenA.assetId),
           nerve.swap.token(tokenB.chainId, tokenB.assetId),
           config.chainId,
@@ -306,6 +318,11 @@ export default defineComponent({
         const result = await transfer.broadcastHex(txHex);
         if (result && result.hash) {
           toast.success(t("transfer.transfer14"));
+          updateMyFarms({
+            type: tokenA.symbol.indexOf("_") > -1 ? "farm" : "pool",
+            hash: result.hash,
+            name: tokenA.symbol
+          });
           back();
         } else {
           toast.error("Create farm failed");
@@ -318,7 +335,7 @@ export default defineComponent({
     }
     const router = useRouter();
     function back() {
-      router.go(-1);
+      // router.go(-1);
     }
 
     const advanced = ref(false);
@@ -334,7 +351,9 @@ export default defineComponent({
       submitForm,
       back,
       advanced,
-      talonAddress
+      talonAddress,
+      myFarms,
+      toMyFarm
     };
   }
 });
@@ -419,6 +438,25 @@ export default defineComponent({
     .el-switch__label {
       color: $labelColor;
     }
+  }
+  .my-farms {
+    padding-top: 20px;
+    h3 {
+      font-size: 16px;
+    }
+    li {
+      span {
+        font-size: 14px;
+        cursor: pointer;
+        color: $linkColor;
+      }
+    }
+  }
+}
+.asset-select.el-select__popper.el-popper[role="tooltip"] {
+  .el-popper__arrow:before {
+    background: $formItemColor;
+    border: 0 !important;
   }
 }
 @media screen and (max-width: 1200px) {

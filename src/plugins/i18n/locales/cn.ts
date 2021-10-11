@@ -163,7 +163,8 @@ const cn = {
     createFarm9: "请输入数字并且小数点后最多位数为",
     createFarm10: "当前账户可用余额不足",
     createFarm11: "请输入数字",
-    createFarm12: "高级"
+    createFarm12: "高级",
+    createFarm13: "我的Pool/Farm:"
   },
   farmRankType: {
     apr: "按照收益排名",

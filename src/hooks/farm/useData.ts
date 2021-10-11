@@ -83,19 +83,25 @@ export default function useData(isPool: boolean) {
     unListen(url, "farmList");
     subSocket.unListen(url, "farmListSub");
   });
-  async function getFarmData() {
+  async function getFarmData(farmHash?: string) {
     const times = +new Date();
     const channel = "farmList";
     const params = {
       method: channel,
-      id: genId()
+      id: genId(),
+      params: {
+        farmHash: ""
+      }
     };
+    if (farmHash) {
+      params.params.farmHash = farmHash;
+    }
     const data: any = await listen({
       url,
       channel,
       params: {
         cmd: true,
-        channel: "cmd:" + JSON.stringify(params)
+        channel: "cmd:" + JSON.stringify(params),
       }
     });
     data.map((v: TalonFarmItem) => {

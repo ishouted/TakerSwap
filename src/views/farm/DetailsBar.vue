@@ -2,7 +2,7 @@
   <div class="farm-details">
     <div class="pc-cont">
       <div class="getLp">
-        <p class="click" @click="toAddLiquidity" v-if="isTalon">
+        <p class="click" @click="toAddLiquidity" v-if="isTalon&&tokenInfo.name">
           {{ $t("farm.farm7") + " " + tokenInfo.name }}{{ !isPool ? " LP" : "" }}
           <i class=""></i>
         </p>
@@ -172,7 +172,7 @@
       <div
         class="text-4a mt-8"
         @click="toAddLiquidity"
-        v-if="isTalon"
+        v-if="isTalon&&tokenInfo.name"
       >
         {{ $t("farm.farm7") + " " + tokenInfo.name + " Lp" }}
       </div>

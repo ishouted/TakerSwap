@@ -72,6 +72,7 @@ import {
 } from "vue";
 import FarmItem from "./FarmItem.vue";
 import useFarmData from "@/hooks/farm/useData";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "Farm",
@@ -79,7 +80,8 @@ export default defineComponent({
     isPool: Boolean
   },
   setup(props) {
-    console.log(props, 111)
+    // console.log(props, 111)
+    const route = useRoute();
     const uniLoading = ref(true);
     const talonLoading = ref(true);
     const current = ref(1); // uniFarm -1 / talonFarm -2
@@ -107,8 +109,13 @@ export default defineComponent({
       }
     );
     onMounted(async () => {
+      const hash = route.params?.hash as string;
+      // console.log(hash, 123, route)
+      if (hash) {
+        current.value = 2;
+      }
       // init();
-      await getFarmData();
+      await getFarmData(hash);
       getUserFarm();
       talonLoading.value = false;
     });

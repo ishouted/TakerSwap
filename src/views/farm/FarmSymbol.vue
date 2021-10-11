@@ -22,7 +22,7 @@ export default defineComponent({
     SymbolIcon
   },
   setup(props) {
-    const symbols = computed(() => props.name?.split("-"));
+    const symbols = computed(() => props.name?.split("-") || []);
     return {
       symbols
     };

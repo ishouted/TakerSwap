@@ -31,14 +31,14 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requireAuth: true }
   },
   {
-    path: "/farm",
+    path: "/farm/:hash?",
     name: "farm",
     // component: () => import("@/views/farm/index.vue"),
     component: Farm,
     meta: { requireAuth: true }
   },
   {
-    path: "/pool",
+    path: "/pool/:hash?",
     name: "pool",
     // component: () => import("@/views/farm/index.vue"),
     component: Pool,

@@ -163,7 +163,8 @@ const en = {
     createFarm9: "Please enter amount and digit limit",
     createFarm10: "Insufficient balance",
     createFarm11: "Enter Amount",
-    createFarm12: "Advanced"
+    createFarm12: "Advanced",
+    createFarm13: "My Pool/Farm:"
   },
   farmRankType: {
     apr: "Rank by APR",
