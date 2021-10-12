@@ -101,7 +101,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import "../../../assets/css/base.scss";
+@import "../../../assets/css/style.scss";
 .transfer-page {
   max-width: 470px;
   margin: 0 auto;

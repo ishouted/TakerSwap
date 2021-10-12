@@ -95,7 +95,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../assets/css/base.scss";
+@import "../assets/css/style.scss";
 .switch-chain-wrapper {
   position: relative;
 }

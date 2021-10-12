@@ -650,7 +650,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .add-liquidity {
   overflow: hidden;
   padding: 30px;

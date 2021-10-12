@@ -878,7 +878,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .tab-bar {
   display: none;
   margin-left: 30px;

@@ -239,7 +239,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .detail-bar {
   height: 174px;
   padding: 20px;

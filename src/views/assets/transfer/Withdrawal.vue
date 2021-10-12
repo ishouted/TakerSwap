@@ -269,7 +269,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../../../assets/css/base.scss";
+@import "../../../assets/css/style.scss";
 .cross-out {
   .title {
     font-size: 18px;

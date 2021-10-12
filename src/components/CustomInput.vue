@@ -216,7 +216,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/css/base.scss";
+@import "../assets/css/style.scss";
 .custom-input {
   //border: 1px solid #e3eeff;
   border-radius: 15px;

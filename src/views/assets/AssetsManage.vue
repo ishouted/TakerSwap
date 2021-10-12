@@ -156,7 +156,7 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .add-assets-dialog {
   max-width: 470px !important;
   .el-input {

@@ -108,7 +108,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .overview {
   //width: 790px;
   width: 60%;

@@ -360,7 +360,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .create-farm {
   max-width: 470px;
   width: 100%;

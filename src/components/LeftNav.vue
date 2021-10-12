@@ -201,7 +201,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../assets/css/base.scss";
+@import "../assets/css/style.scss";
 .left-nav {
   position: fixed;
   left: 0;

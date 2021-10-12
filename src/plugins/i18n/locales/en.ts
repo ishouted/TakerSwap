@@ -129,7 +129,7 @@ const en = {
   farm: {
     farm1: "Staked Only",
     farm2: " Yield",
-    farm3: "APY",
+    farm3: "APR",
     farm4: "Total value of liquidity",
     farm5: "Total Reward remaining",
     farm6: "Details",

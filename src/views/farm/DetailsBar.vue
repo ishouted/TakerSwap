@@ -197,7 +197,7 @@ import nerve from "nerve-sdk-js";
 import { useToast } from "vue-toastification";
 import { useStore } from "vuex";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ETransfer, NTransfer } from "@/api/api";
 import { timesDecimals, divisionDecimals, isBeta } from "@/api/util";
 // import { contractAddress, txAbi } from "@/hooks/farm/contractConfig";
@@ -237,6 +237,7 @@ export default defineComponent({
   emits: ["loading"],
   setup(props, { emit }) {
     const router = useRouter();
+    const route = useRoute();
     const store = useStore();
     const { t } = useI18n();
     const toast = useToast();
@@ -314,10 +315,11 @@ export default defineComponent({
         const {
           stakeTokenChainId,
           stakeTokenAssetId,
-          stakeTokenDecimals,
-          farmHash
+          stakeTokenDecimals
         } = props.tokenInfo;
+        const farmHash = props.tokenInfo.farmHash || route.params?.hash
         const ammount = timesDecimals(number, stakeTokenDecimals);
+        debugger
         const tx = await nerve.swap.farmStake(
           addressInfo.value?.address?.Talon,
           nerve.swap.token(stakeTokenChainId, stakeTokenAssetId),
@@ -509,7 +511,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import "../../assets/css/base.scss";
+@import "../../assets/css/style.scss";
 .mobile-cont {
   display: none;
   width: 100%;

@@ -143,13 +143,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import "../assets/css/base.scss";
+@import "../assets/css/style.scss";
 .add-minus-dialog {
   border-radius: 10px;
   .el-dialog__header {
     padding: 0;
   }
   .el-dialog__body {
+    padding-left: 20px!important;
+    padding-right: 20px!important;
     .titles {
       font-size: 24px;
       //font-weight: 600;
@@ -158,7 +160,8 @@ export default defineComponent({
       margin: 0 0 20px 20px;
     }
     .infos {
-      width: 417px;
+      //width: 417px;
+      width: 100%;
       height: 98px;
       padding: 15px 20px;
       background: #242449;
