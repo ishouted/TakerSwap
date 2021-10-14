@@ -233,7 +233,7 @@ export default defineComponent({
       return superLong(str, len);
     },
     max() {
-      if (!this.balance) return;
+      if (!this.balance || !Number(this.balance)) return;
       if (this.heterogeneousInfo.isToken) {
         this.amount = this.balance;
       } else {

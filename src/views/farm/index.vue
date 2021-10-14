@@ -116,7 +116,7 @@ export default defineComponent({
       }
       // init();
       await getFarmData(hash);
-      getUserFarm();
+      getUserFarm(hash);
       talonLoading.value = false;
     });
 

@@ -31,7 +31,7 @@
         </template>
       </div>
     </div>
-    <!--<span class="error-tip" v-if="errorTip">{{ errorTip }}</span>-->
+    <span class="error-tip" v-if="errorTip">{{ errorTip }}</span>
     <el-dialog
       custom-class="select-assets-dialog"
       :title="$t('transfer.transfer12')"
@@ -227,7 +227,7 @@ export default {
     position: absolute;
     left: 0;
     top: 98px;
-    font-size: 13px;
+    font-size: 12px;
     color: #f56c6c;
   }
   .info {

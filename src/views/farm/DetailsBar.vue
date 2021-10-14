@@ -312,14 +312,10 @@ export default defineComponent({
     // 收取收益(number = 0) / 增加LP
     async function farmStake(number) {
       try {
-        const {
-          stakeTokenChainId,
-          stakeTokenAssetId,
-          stakeTokenDecimals
-        } = props.tokenInfo;
-        const farmHash = props.tokenInfo.farmHash || route.params?.hash
+        const { stakeTokenChainId, stakeTokenAssetId, stakeTokenDecimals } =
+          props.tokenInfo;
+        const farmHash = props.tokenInfo.farmHash || route.params?.hash;
         const ammount = timesDecimals(number, stakeTokenDecimals);
-        debugger
         const tx = await nerve.swap.farmStake(
           addressInfo.value?.address?.Talon,
           nerve.swap.token(stakeTokenChainId, stakeTokenAssetId),

@@ -35,7 +35,6 @@
           :icon="fromAsset && fromAsset.symbol"
           :assetList="assetsList"
           :balance="fromAsset && fromAsset.available"
-          :errorTip="fromAmountError"
           :selectedAsset="fromAsset || null"
           @selectAsset="selectAsset($event, 'from')"
           @max="max('from')"
@@ -56,7 +55,6 @@
           :icon="toAsset && toAsset.symbol"
           :assetList="assetsList"
           :balance="toAsset && toAsset.available"
-          :errorTip="toAmountError"
           :selectedAsset="toAsset || null"
           @selectAsset="asset => selectAsset(asset, 'to')"
           @max="max('to')"
@@ -622,7 +620,7 @@ export default defineComponent({
           // setTimeout(() => {
           //   getSwapAmount(amount, type);
           // }, 500);
-          return;
+          return [0, 0];
         }
         const fromDecimal =
           type === "from" ? state.toAsset.decimals : state.fromAsset.decimals;

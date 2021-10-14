@@ -215,7 +215,7 @@ export default defineComponent({
         position: absolute;
         left: 0;
         top: 98px;
-        font-size: 13px;
+        font-size: 12px;
         color: #f56c6c;
       }
     }

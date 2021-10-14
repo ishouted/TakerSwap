@@ -118,7 +118,7 @@ export default function useData(isPool: boolean) {
 
   const addressInfo = computed(() => store.state.addressInfo);
   // 用户参与的farm
-  function getUserFarm() {
+  function getUserFarm(farmHash?: string) {
     const address = addressInfo.value?.address?.Talon;
     if (!address) return;
     const channel = "farmListSub";
@@ -127,7 +127,7 @@ export default function useData(isPool: boolean) {
       channel,
       params: {
         cmd: false,
-        channel: channel + ":" + address
+        channel: channel + ":" + address + (farmHash ? "," + farmHash : "")
       },
       success(data) {
         const totalList = [...state.talonList];

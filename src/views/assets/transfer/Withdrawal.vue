@@ -46,9 +46,10 @@ import {
   _networkInfo,
   divisionDecimals,
   Times,
-  Plus
-} from "@/api/util";
-import { NTransfer, ETransfer, getSymbolUSD } from "@/api/api";
+  Plus,
+  floatToCeil
+} from '@/api/util'
+import { NTransfer, ETransfer } from "@/api/api";
 import config from "@/config";
 export default defineComponent({
   name: "withdrawal",
@@ -66,41 +67,33 @@ export default defineComponent({
       transferAsset: {},
       amountErrorTip: "",
       fee: 0,
-      feeSymbol: config.symbol
+      feeSymbol: "",
+      fee_mainAsset: {} // 手续费资产信息--L1网络在nerve上的主资产
     };
   },
   watch: {
     amount(val) {
       if (val) {
-        const nvtBalance = this.assetsList.find(v => {
-          return v.chainId === config.chainId && v.assetId === config.assetId;
+        const { chainId, assetId } = this.fee_mainAsset;
+        const L1MainAssetBalance = this.assetsList.find(v => {
+          return v.chainId === chainId && v.assetId === assetId;
         }).available;
-        const isNVT =
-          this.transferAsset.chainId === config.chainId &&
-          this.transferAsset.assetId === config.assetId;
-        /* let decimals = this.transferAsset.decimals || 0;
-        let patrn = "";
-        if (!decimals) {
-          patrn = new RegExp("^([1-9][\\d]{0,20}|0)(\\.[\\d])?$");
-        } else {
-          patrn = new RegExp(
-            "^([1-9][\\d]{0,20}|0)(\\.[\\d]{0," + decimals + "})?$"
-          );
-        }
-        if (!patrn.exec(val)) {
-          this.amountErrorTip = this.$t("transfer.transfer17") + decimals;
-        } else  */
+        const isL1MainAsset =
+          this.transferAsset.chainId === chainId &&
+          this.transferAsset.assetId === assetId;
+        console.log(this.balance, Minus(this.balance, this.amount) < 0, isL1MainAsset && Minus(this.balance, Plus(this.amount, this.fee)) < 0)
         if (
           !Number(this.balance) ||
           Minus(this.balance, this.amount) < 0 ||
-          (isNVT && Minus(this.balance, Plus(this.amount, this.fee)) < 0)
+          (isL1MainAsset && Minus(this.balance, Plus(this.amount, this.fee)) < 0)
         ) {
           this.amountErrorTip = this.$t("transfer.transfer15");
-        } else if (Minus(nvtBalance, this.fee) < 0) {
+        } else if (Minus(L1MainAssetBalance, this.fee) < 0) {
           this.amountErrorTip = this.$t("transfer.transfer18");
         } else {
           this.amountErrorTip = "";
         }
+        console.log(this.amountErrorTip);
       }
     },
     "father.crossInOutSymbol": {
@@ -130,7 +123,10 @@ export default defineComponent({
     // console.log(this.father, "===commontransfer===");
     // console.log(this.$store.state.addressInfo, "===addressInfo===");
     this.filterAssets();
-    this.selectAsset(this.father.transferAsset);
+    const { transferAsset, network } = this.father;
+    this.selectAsset(transferAsset);
+    this.feeSymbol = _networkInfo[network].mainAsset;
+    this.fee_mainAsset = config.htgMainAsset[network];
   },
   beforeUnmount() {
     if (this.timer) clearInterval(this.timer);
@@ -176,30 +172,36 @@ export default defineComponent({
     },
     async getCrossOutFee() {
       const transfer = new ETransfer(this.father.network);
-      const nvtUSD = await getSymbolUSD();
+      /*const nvtUSD = await getSymbolUSD();
       const mainAsset = this.assetsList.find(
         v => v.symbol === this.heterogeneousInfo.chainName
       );
       const heterogeneousChainUSD = await getSymbolUSD({
         chaiId: mainAsset.chaiId,
         assetId: mainAsset.assetId
-      });
-      const res = await transfer.calWithdrawalNVTFee(
+      });*/
+      /*const res = await transfer.calWithdrawalNVTFee(
         String(nvtUSD),
         String(heterogeneousChainUSD),
         this.heterogeneousInfo.isToken
-      );
+      );*/
+      const res = await transfer.calWithdrawFee(this.heterogeneousInfo.isToken);
       console.log(res, 111, divisionDecimals(res, 8));
-      this.fee = Times(divisionDecimals(res, 8), 1.2).toString();
+      // this.fee = Times(divisionDecimals(res, 8), 1.2).toString();
+      this.fee = floatToCeil(res, 6);
     },
     max() {
-      if (!this.balance) return;
-      const isNVT =
-        this.transferAsset.chainId === config.chainId &&
-        this.transferAsset.assetId === config.assetId;
-      if (isNVT) {
+      if (!this.balance || !Number(this.balance)) return;
+      const isL1MainAsset =
+        this.transferAsset.chainId === this.fee_mainAsset.chainId &&
+        this.transferAsset.assetId === this.fee_mainAsset.assetId;
+      if (isL1MainAsset) {
         if (!this.fee) return;
-        this.amount = Minus(this.balance, this.fee).toString();
+        if (Minus(this.balance, this.fee).toString() > 0) {
+          this.amount = Minus(this.balance, this.fee).toString();
+        } else {
+          this.amount = this.balance;
+        }
       } else {
         this.amount = this.balance;
       }
@@ -209,14 +211,18 @@ export default defineComponent({
       try {
         const { chainId, assetId, decimals } = this.transferAsset;
         const { talonAddress, address } = this.father;
-
+        const withdrawalFee = timesDecimals(this.fee, this.fee_mainAsset.decimals);
         const transferInfo = {
           from: talonAddress,
           assetsChainId: chainId,
           assetsId: assetId,
           amount: timesDecimals(this.amount, decimals),
           fee: 0,
-          proposalPrice: timesDecimals(this.fee, 8)
+          withdrawalFee,
+          fee_mainAsset: {
+            chainId: this.fee_mainAsset.chainId,
+            assetId: this.fee_mainAsset.assetId
+          }
         };
 
         console.log(transferInfo);

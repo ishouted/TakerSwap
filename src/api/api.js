@@ -184,41 +184,42 @@ export class NTransfer {
     }
     // const nonce = await this.getNonce(transferInfo);
     const { chainId, assetId } = config;
-    const mainAssetNonce = await this.getNonce({
-      from: transferInfo.from,
-      assetsChainId: chainId,
-      assetsId: assetId
-    });
+    const { from, assetsChainId, assetsId, amount, withdrawalFee, fee_mainAsset, fee } = transferInfo;
     let inputs = [];
-    const totalFee = Number(Plus(transferInfo.proposalPrice, transferInfo.fee));
+    const totalFee = Plus(withdrawalFee, fee).toFixed();
     if (
-      chainId === transferInfo.assetsChainId &&
-      assetId === transferInfo.assetsId
+      fee_mainAsset.chainId === assetsChainId &&
+      fee_mainAsset.assetId === assetsId
     ) {
-      const newAmount = Number(Plus(transferInfo.amount, totalFee));
+      const newAmount = Plus(amount, totalFee).toFixed();
       inputs.push({
         address: transferInfo.from,
         amount: newAmount,
-        assetsChainId: transferInfo.assetsChainId,
-        assetsId: transferInfo.assetsId,
-        nonce: nonce,
+        assetsChainId,
+        assetsId,
+        nonce,
         locked: 0
       });
     } else {
+      const mainAssetNonce = await this.getNonce({
+        from: from,
+        assetsChainId: fee_mainAsset.chainId,
+        assetsId: fee_mainAsset.assetId
+      });
       inputs = [
         {
-          address: transferInfo.from,
-          amount: transferInfo.amount,
-          assetsChainId: transferInfo.assetsChainId,
-          assetsId: transferInfo.assetsId,
-          nonce: nonce,
+          address: from,
+          amount: amount,
+          assetsChainId,
+          assetsId,
+          nonce,
           locked: 0
         },
         {
-          address: transferInfo.from,
+          address: from,
           amount: totalFee,
-          assetsChainId: chainId,
-          assetsId: assetId,
+          assetsChainId: fee_mainAsset.chainId,
+          assetsId: fee_mainAsset.assetId,
           nonce: mainAssetNonce,
           locked: 0
         }
@@ -230,16 +231,16 @@ export class NTransfer {
     let outputs = [
       {
         address: blockHoleAddress, //黑洞地址
-        amount: transferInfo.amount,
-        assetsChainId: transferInfo.assetsChainId,
-        assetsId: transferInfo.assetsId,
+        amount: amount,
+        assetsChainId,
+        assetsId,
         locked: 0
       },
       {
         address: feeAddress, //提现费用地址
-        amount: transferInfo.proposalPrice,
-        assetsChainId: chainId,
-        assetsId: assetId,
+        amount: withdrawalFee,
+        assetsChainId: fee_mainAsset.chainId,
+        assetsId: fee_mainAsset.assetId,
         locked: 0
       }
     ];

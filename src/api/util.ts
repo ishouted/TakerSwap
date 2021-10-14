@@ -448,3 +448,9 @@ export function formatFloat(num: string, digit: number) {
     return `${int}.${float}`;
   }
 }
+
+// 保留有效小数位数&小数末位进1
+export function floatToCeil(num: string, decimal = 6) {
+  // @ts-ignore
+  return Math.ceil(num * Math.pow(10, decimal)) / Math.pow(10, decimal);
+}
