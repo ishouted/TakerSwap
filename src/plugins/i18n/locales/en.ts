@@ -79,7 +79,8 @@ const en = {
     transfer18: "Insufficient balance",
     transfer19: "Amount",
     transfer20: "Amount",
-    transfer21: "Ethereum"
+    transfer21: "Ethereum",
+    transfer22: "Use other asset"
   },
   trading: {
     trading1: "Order History",

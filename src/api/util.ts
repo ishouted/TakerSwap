@@ -279,6 +279,9 @@ const PolygonOrigin = isBeta
 const KCCOrigin = isBeta
   ? "https://scan-testnet.kcc.network"
   : "https://explorer.kcc.io";
+const TRXOrigin = isBeta
+  ? "https://shasta.tronscan.org/#"
+  : "https://tronscan.org/#";
 
 export const _networkInfo = {
  NULS: {
@@ -391,6 +394,16 @@ export const _networkInfo = {
       ropsten: "https://rpc-testnet.kcc.network",
       homestead: "https://rpc-mainnet.kcc.network"
     }
+  },
+  TRON: {
+    name: "TRON",
+    chainId: 108,
+    origin: TRXOrigin,
+    color: "#c23631",
+    mainAsset: "TRX",
+    ropsten: "",
+    homestead: "",
+    decimals: 6
   }
 };
 

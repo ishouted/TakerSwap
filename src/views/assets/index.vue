@@ -335,7 +335,7 @@ export default defineComponent({
           let supportedChain = false;
           item.heterogeneousList.map(v => {
             Object.keys(_networkInfo).map(key => {
-              if (_networkInfo[key].chainId === v.heterogeneousChainId) {
+              if (_networkInfo[key].chainId === v.heterogeneousChainId && key === this.network) {
                 supportedChain = true;
               }
             });
@@ -392,7 +392,7 @@ export default defineComponent({
       let supportedChain = false;
       item.heterogeneousList.map(v => {
         Object.keys(_networkInfo).map(key => {
-          if (_networkInfo[key].chainId === v.heterogeneousChainId && _networkInfo[key].supported) {
+          if (_networkInfo[key].chainId === v.heterogeneousChainId && key === this.network) {
             supportedChain = true;
           }
         });

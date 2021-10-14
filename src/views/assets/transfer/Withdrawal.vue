@@ -19,6 +19,7 @@
         :assetList="assetsList"
         :balance="balance"
         :errorTip="amountErrorTip"
+        :selectedAsset="transferAsset"
         @selectAsset="selectAsset"
         @max="max"
       ></custom-input>
@@ -26,6 +27,13 @@
         {{ $t("public.public15") }}
         <span class="el-icon-loading" v-if="!fee"></span>
         <span v-else>{{ fee + " " + feeSymbol }}</span>
+        <span
+          class="link"
+          style="margin-left: 10px"
+          @click="showFeeDialog = true"
+        >
+          {{ $t("transfer.transfer22") }}
+        </span>
       </div>
     </div>
     <div class="confirm-wrap">
@@ -33,12 +41,22 @@
         {{ $t("transfer.transfer11") }}
       </el-button>
     </div>
+    <AssetsDialog
+      v-model:showDialog="showFeeDialog"
+      hideSearchInput
+      :assetList="supportedFeeAssets"
+      :showBalance="true"
+      :showAmount="true"
+      :selectedAsset="selectedFeeAsset"
+      @changeSelect="changeFeeAsset"
+    ></AssetsDialog>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import CustomInput from "@/components/CustomInput.vue";
+import AssetsDialog from "@/components/AssetsDialog";
 import {
   superLong,
   Minus,
@@ -48,14 +66,15 @@ import {
   Times,
   Plus,
   floatToCeil
-} from '@/api/util'
-import { NTransfer, ETransfer } from "@/api/api";
+} from "@/api/util";
+import { NTransfer, ETransfer, getSymbolUSD } from "@/api/api";
 import config from "@/config";
 export default defineComponent({
   name: "withdrawal",
   inject: ["father"],
   components: {
-    CustomInput
+    CustomInput,
+    AssetsDialog
   },
   data() {
     this.timer = null;
@@ -68,32 +87,15 @@ export default defineComponent({
       amountErrorTip: "",
       fee: 0,
       feeSymbol: "",
-      fee_mainAsset: {} // 手续费资产信息--L1网络在nerve上的主资产
+      showFeeDialog: false,
+      selectedFeeAsset: {}, // 手续费资产信息--L1网络在nerve上的主资产
+      supportedFeeAssets: [] // 可充当提现手续费的资产
     };
   },
   watch: {
     amount(val) {
       if (val) {
-        const { chainId, assetId } = this.fee_mainAsset;
-        const L1MainAssetBalance = this.assetsList.find(v => {
-          return v.chainId === chainId && v.assetId === assetId;
-        }).available;
-        const isL1MainAsset =
-          this.transferAsset.chainId === chainId &&
-          this.transferAsset.assetId === assetId;
-        console.log(this.balance, Minus(this.balance, this.amount) < 0, isL1MainAsset && Minus(this.balance, Plus(this.amount, this.fee)) < 0)
-        if (
-          !Number(this.balance) ||
-          Minus(this.balance, this.amount) < 0 ||
-          (isL1MainAsset && Minus(this.balance, Plus(this.amount, this.fee)) < 0)
-        ) {
-          this.amountErrorTip = this.$t("transfer.transfer15");
-        } else if (Minus(L1MainAssetBalance, this.fee) < 0) {
-          this.amountErrorTip = this.$t("transfer.transfer18");
-        } else {
-          this.amountErrorTip = "";
-        }
-        console.log(this.amountErrorTip);
+        this.validateAmount();
       }
     },
     "father.crossInOutSymbol": {
@@ -124,9 +126,19 @@ export default defineComponent({
     // console.log(this.$store.state.addressInfo, "===addressInfo===");
     this.filterAssets();
     const { transferAsset, network } = this.father;
-    this.selectAsset(transferAsset);
+    const supportedFeeAssets = [];
+    const htgMainAsset = Object.values(config.htgMainAsset);
+    this.father.allAssetsList.map(v => {
+      htgMainAsset.map(item => {
+        if (item.chainId === v.chainId && item.assetId === v.assetId) {
+          supportedFeeAssets.push(v);
+        }
+      });
+    });
+    this.selectedFeeAsset = config.htgMainAsset[network];
     this.feeSymbol = _networkInfo[network].mainAsset;
-    this.fee_mainAsset = config.htgMainAsset[network];
+    this.supportedFeeAssets = supportedFeeAssets;
+    this.selectAsset(transferAsset);
   },
   beforeUnmount() {
     if (this.timer) clearInterval(this.timer);
@@ -163,38 +175,99 @@ export default defineComponent({
         this.heterogeneousInfo = heterogeneousInfo;
         if (this.timer) clearInterval(this.timer);
         this.getCrossOutFee();
-        this.timer = setInterval(() => {
+        /*this.timer = setInterval(() => {
           this.getCrossOutFee();
-        }, 5000);
+        }, 10000);*/
       } else {
         this.transferAsset = {};
       }
     },
+    validateAmount() {
+      const { chainId, assetId } = this.selectedFeeAsset;
+      const L1MainAssetBalance = this.father.allAssetsList.find(v => {
+        return v.chainId === chainId && v.assetId === assetId;
+      }).available;
+      const isL1MainAsset =
+        this.transferAsset.chainId === chainId &&
+        this.transferAsset.assetId === assetId;
+      if (
+        !Number(this.balance) ||
+        Minus(this.balance, this.amount) < 0 ||
+        (isL1MainAsset && Minus(this.balance, Plus(this.amount, this.fee)) < 0)
+      ) {
+        this.amountErrorTip = this.$t("transfer.transfer15");
+      } else if (Minus(L1MainAssetBalance, this.fee) < 0) {
+        this.amountErrorTip = this.$t("transfer.transfer18");
+      } else {
+        this.amountErrorTip = "";
+      }
+    },
+    async changeFeeAsset(asset) {
+      this.showFeeDialog = false;
+      this.selectedFeeAsset = asset;
+      this.feeSymbol = this.selectedFeeAsset.symbol;
+      this.fee = 0;
+      await this.getCrossOutFee();
+      this.validateAmount();
+    },
     async getCrossOutFee() {
-      const transfer = new ETransfer(this.father.network);
-      /*const nvtUSD = await getSymbolUSD();
-      const mainAsset = this.assetsList.find(
-        v => v.symbol === this.heterogeneousInfo.chainName
-      );
-      const heterogeneousChainUSD = await getSymbolUSD({
-        chaiId: mainAsset.chaiId,
-        assetId: mainAsset.assetId
-      });*/
-      /*const res = await transfer.calWithdrawalNVTFee(
-        String(nvtUSD),
-        String(heterogeneousChainUSD),
-        this.heterogeneousInfo.isToken
-      );*/
-      const res = await transfer.calWithdrawFee(this.heterogeneousInfo.isToken);
-      console.log(res, 111, divisionDecimals(res, 8));
-      // this.fee = Times(divisionDecimals(res, 8), 1.2).toString();
+      const withdrawalChain = this.father.network;
+      const feeChain = this.selectedFeeAsset.originNetwork;
+      // console.log(feeChain, 465465)
+      const { chainId, assetId, decimals } = this.selectedFeeAsset;
+      const { isToken } = this.heterogeneousInfo;
+      const feeIsNVT = chainId === config.chainId && assetId === config.assetId;
+      const transfer = new ETransfer(withdrawalChain);
+      let res = "";
+      if (feeChain === withdrawalChain) {
+        // 手续费资产为L1网络主资产
+        if (withdrawalChain === "TRON") {
+          res = transfer.calWithdrawalFeeForTRON("", "", decimals, true);
+        } else {
+          res = await transfer.calWithdrawalFee(
+            "",
+            "",
+            isToken,
+            decimals,
+            true
+          );
+        }
+      } else {
+        const feeAssetUSD = await getSymbolUSD({
+          chainId,
+          assetId
+        });
+        const mainAsset = this.supportedFeeAssets.find(
+          v => v.symbol === this.heterogeneousInfo.chainName
+        );
+        const L1MainAssetUSD = await getSymbolUSD({
+          chaiId: mainAsset.chaiId,
+          assetId: mainAsset.assetId
+        });
+        if (withdrawalChain === "TRON") {
+          res = transfer.calWithdrawalFeeForTRON(
+            L1MainAssetUSD,
+            feeAssetUSD,
+            decimals
+          );
+        } else {
+          res = await transfer.calWithdrawalFee(
+            L1MainAssetUSD,
+            feeAssetUSD,
+            isToken,
+            decimals,
+            false,
+            feeIsNVT
+          );
+        }
+      }
       this.fee = floatToCeil(res, 6);
     },
     max() {
       if (!this.balance || !Number(this.balance)) return;
       const isL1MainAsset =
-        this.transferAsset.chainId === this.fee_mainAsset.chainId &&
-        this.transferAsset.assetId === this.fee_mainAsset.assetId;
+        this.transferAsset.chainId === this.selectedFeeAsset.chainId &&
+        this.transferAsset.assetId === this.selectedFeeAsset.assetId;
       if (isL1MainAsset) {
         if (!this.fee) return;
         if (Minus(this.balance, this.fee).toString() > 0) {
@@ -211,7 +284,7 @@ export default defineComponent({
       try {
         const { chainId, assetId, decimals } = this.transferAsset;
         const { talonAddress, address } = this.father;
-        const withdrawalFee = timesDecimals(this.fee, this.fee_mainAsset.decimals);
+        const withdrawalFee = timesDecimals(this.fee, this.selectedFeeAsset.decimals);
         const transferInfo = {
           from: talonAddress,
           assetsChainId: chainId,
@@ -219,9 +292,9 @@ export default defineComponent({
           amount: timesDecimals(this.amount, decimals),
           fee: 0,
           withdrawalFee,
-          fee_mainAsset: {
-            chainId: this.fee_mainAsset.chainId,
-            assetId: this.fee_mainAsset.assetId
+          fee_asset: {
+            chainId: this.selectedFeeAsset.chainId,
+            assetId: this.selectedFeeAsset.assetId
           }
         };
 

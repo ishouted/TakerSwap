@@ -79,7 +79,8 @@ const cn = {
     transfer18: "手续费不足",
     transfer19: "转账金额",
     transfer20: "提现金额",
-    transfer21: "以太坊"
+    transfer21: "以太坊",
+    transfer22: "使用其他资产"
   },
   trading: {
     trading1: "订单历史",

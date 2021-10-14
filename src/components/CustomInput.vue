@@ -32,60 +32,21 @@
       </div>
     </div>
     <span class="error-tip" v-if="errorTip">{{ errorTip }}</span>
-    <el-dialog
-      custom-class="select-assets-dialog"
-      :title="$t('transfer.transfer12')"
-      :show-close="true"
-      top="10vh"
-      v-model="showDialog"
-      @closed="searchVal = ''"
-    >
-      <el-input
-        v-model="searchVal"
-        :placeholder="$t(showAmount ? 'assets.assets8' : 'assets.assets9')"
-      ></el-input>
-      <ul class="list-wrap">
-        <li
-          v-for="item in list"
-          :key="item.assetKey"
-          :class="{
-            disable_asset:
-              selectedAsset &&
-              selectedAsset.chainId === item.chainId &&
-              selectedAsset.assetId === item.assetId
-          }"
-          @click="changeSelect(item)"
-        >
-          <div class="flex-center flex-1" style="width: 100%">
-            <symbol-icon :icon="item.symbol"></symbol-icon>
-            <div class="asset-base-info">
-              <div>
-                {{ item.symbol }}
-                <span>({{ item.originNetwork }})</span>
-              </div>
-              <span v-if="showAmount">ID: {{ item.assetKey }}</span>
-              <template v-else>
-                <span class="pc-span">{{ item.contractAddress }}</span>
-                <span class="mobile-span">
-                  {{ superLong(item.contractAddress, 15) }}
-                </span>
-              </template>
-            </div>
-            <div class="asset-price ellipsis" v-if="talonAddress">
-              <span class="ellipsis" v-if="showAmount">
-                {{ item.listAvailable }}
-              </span>
-              <!--<span>≈{{ item.usdPrice }}</span>-->
-            </div>
-          </div>
-        </li>
-      </ul>
-    </el-dialog>
+    <AssetsDialog
+      v-model:showDialog="showDialog"
+      :assetList="list"
+      :showBalance="talonAddress ? true : false"
+      :showAmount="showAmount"
+      :selectedAsset="selectedAsset"
+      @filterAsset="filter"
+      @changeSelect="changeSelect"
+    ></AssetsDialog>
   </div>
 </template>
 
 <script>
 import SymbolIcon from "@/components/SymbolIcon.vue";
+import AssetsDialog from "@/components/AssetsDialog";
 import { superLong } from "@/api/util";
 export default {
   props: {
@@ -99,7 +60,7 @@ export default {
       default: () => []
     },
     inputVal: String,
-    balance: String,
+    balance: [String, Number],
     errorTip: String,
     selectedAsset: {
       type: Object,
@@ -111,7 +72,8 @@ export default {
     }
   },
   components: {
-    SymbolIcon
+    SymbolIcon,
+    AssetsDialog
   },
   data() {
     this.allAssetsList = [];
@@ -293,78 +255,6 @@ export default {
       }
     }
   }
-  :deep(.select-assets-dialog) {
-    //max-width: 450px !important;
-    //min-width: 360px !important;
-    .el-input {
-      .el-input__inner {
-        border-radius: 10px;
-        line-height: 45px;
-        height: 45px;
-      }
-      margin-bottom: 15px;
-    }
-    .list-wrap {
-      max-height: 50vh;
-      overflow-y: auto;
-      li {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        height: 66px;
-        padding: 9px 0;
-        cursor: pointer;
-        img {
-          width: 48px;
-          height: 48px;
-          margin-right: 15px;
-        }
-        .asset-base-info {
-          flex: 1;
-          div {
-            font-size: 18px;
-            //font-weight: 600;
-          }
-          span {
-            font-size: 14px;
-            color: $labelColor;
-            font-weight: 400;
-          }
-          .mobile-span {
-            display: none;
-          }
-        }
-        .asset-price {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          text-align: right;
-          max-width: 70%;
-          span:nth-child(1) {
-            text-align: right;
-            font-size: 20px;
-            //font-weight: bold;
-          }
-        }
-      }
-    }
-  }
-  @media screen and (max-width: 1200px) {
-    :deep(.select-assets-dialog) {
-      .list-wrap {
-        li {
-          .asset-base-info {
-            .pc-span {
-              display: none;
-            }
-            .mobile-span {
-              display: block;
-            }
-          }
-        }
-      }
-    }
-  }
   @media screen and (max-width: 500px) {
     padding: 10px 15px;
     .el-input {
@@ -389,44 +279,6 @@ export default {
         padding-left: 10px;
         span {
           padding: 2px 4px;
-        }
-      }
-    }
-    :deep(.select-assets-dialog) {
-      .el-input {
-        .el-input__inner {
-          line-height: 36px;
-          height: 36px;
-        }
-        margin-bottom: 10px;
-      }
-      .list-wrap {
-        li {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          height: 48px;
-          cursor: pointer;
-          img {
-            width: 30px;
-            height: 30px;
-            margin-right: 10px;
-          }
-          .asset-base-info {
-            flex: 1;
-            div {
-              font-size: 14px;
-            }
-            span {
-              font-size: 12px;
-            }
-          }
-          .asset-price {
-            max-width: 60%;
-            span:nth-child(1) {
-              font-size: 16px;
-            }
-          }
         }
       }
     }

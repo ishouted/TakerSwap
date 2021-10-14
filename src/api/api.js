@@ -183,14 +183,18 @@ export class NTransfer {
       nonce = await this.getNonce(transferInfo);
     }
     // const nonce = await this.getNonce(transferInfo);
-    const { chainId, assetId } = config;
-    const { from, assetsChainId, assetsId, amount, withdrawalFee, fee_mainAsset, fee } = transferInfo;
+    const {
+      from,
+      assetsChainId,
+      assetsId,
+      amount,
+      withdrawalFee,
+      fee_asset,
+      fee
+    } = transferInfo;
     let inputs = [];
     const totalFee = Plus(withdrawalFee, fee).toFixed();
-    if (
-      fee_mainAsset.chainId === assetsChainId &&
-      fee_mainAsset.assetId === assetsId
-    ) {
+    if (fee_asset.chainId === assetsChainId && fee_asset.assetId === assetsId) {
       const newAmount = Plus(amount, totalFee).toFixed();
       inputs.push({
         address: transferInfo.from,
@@ -203,8 +207,8 @@ export class NTransfer {
     } else {
       const mainAssetNonce = await this.getNonce({
         from: from,
-        assetsChainId: fee_mainAsset.chainId,
-        assetsId: fee_mainAsset.assetId
+        assetsChainId: fee_asset.chainId,
+        assetsId: fee_asset.assetId
       });
       inputs = [
         {
@@ -218,8 +222,8 @@ export class NTransfer {
         {
           address: from,
           amount: totalFee,
-          assetsChainId: fee_mainAsset.chainId,
-          assetsId: fee_mainAsset.assetId,
+          assetsChainId: fee_asset.chainId,
+          assetsId: fee_asset.assetId,
           nonce: mainAssetNonce,
           locked: 0
         }
@@ -239,8 +243,8 @@ export class NTransfer {
       {
         address: feeAddress, //提现费用地址
         amount: withdrawalFee,
-        assetsChainId: fee_mainAsset.chainId,
-        assetsId: fee_mainAsset.assetId,
+        assetsChainId: fee_asset.chainId,
+        assetsId: fee_asset.assetId,
         locked: 0
       }
     ];
@@ -619,35 +623,6 @@ export class ETransfer {
     });
   }
 
-  /**
-   * 提现默认手续费--nvt
-   * @param nvtUSD    nvt的USDT价格
-   * @param heterogeneousChainUSD    异构链币种的USDT价格
-   * @param isToken   是否token资产
-   */
-  async calWithdrawalNVTFee(nvtUSD, heterogeneousChainUSD, isToken) {
-    // console.log(nvtUSD, heterogeneousChainUSD, isToken);
-    const gasPrice = await this.getWithdrawGas();
-    let gasLimit;
-    if (isToken) {
-      gasLimit = new ethers.utils.BigNumber("210000");
-    } else {
-      gasLimit = new ethers.utils.BigNumber("190000");
-    }
-    const nvtUSDBig = ethers.utils.parseUnits(nvtUSD, 6);
-    const ethUSDBig = ethers.utils.parseUnits(heterogeneousChainUSD, 6);
-    const result = ethUSDBig
-      .mul(gasPrice)
-      .mul(gasLimit)
-      .div(ethers.utils.parseUnits(nvtUSDBig.toString(), 10));
-    // console.log('result: ' + result.toString());
-    const numberStr = ethers.utils.formatUnits(result, 8).toString();
-    const ceil = Math.ceil(numberStr);
-    // console.log('ceil: ' + ceil);
-    const finalResult = ethers.utils.parseUnits(ceil.toString(), 8);
-    // console.log('finalResult: ' + finalResult);
-    return finalResult;
-  }
 
   // 提现gas
   getWithdrawGas() {
@@ -657,9 +632,14 @@ export class ETransfer {
   }
 
   /**
-   * 计算提现手续费  eth/bnb
-   */
-  async calWithdrawFee(isToken) {
+   * @param mainAssetUSD 提现网络主资产USD
+   * @param feeUSD 手续费USD
+   * @param isToken 提现资产是否是token
+   * @param feeDecimals 手续费精度
+   * @param isMainAsset 手续费是否是提现网络主资产
+   * @param isNVT 手续费是否是NVT
+   * */
+  async calWithdrawalFee(mainAssetUSD, feeUSD, isToken, feeDecimals, isMainAsset, isNVT) {
     const gasPrice = await this.getWithdrawGas();
     let gasLimit;
     if (isToken) {
@@ -667,12 +647,57 @@ export class ETransfer {
     } else {
       gasLimit = new ethers.utils.BigNumber("190000");
     }
-    // console.log(gasPrice);
-    // console.log(gasLimit);
-    const result = gasLimit.mul(gasPrice);
-    const finalResult = ethers.utils.formatEther(result);
-    // console.log('finalResult: ' + finalResult);
-    return finalResult.toString();
+    if (isMainAsset) {
+      return this.formatEthers(gasLimit.mul(gasPrice), feeDecimals);
+    }
+    const feeUSDBig = ethers.utils.parseUnits(feeUSD.toString(), 6);
+    const mainAssetUSDBig = ethers.utils.parseUnits(mainAssetUSD.toString(), 6);
+    let result = mainAssetUSDBig
+      .mul(gasPrice)
+      .mul(gasLimit)
+      .mul(ethers.utils.parseUnits("1", feeDecimals))
+      .div(ethers.utils.parseUnits("1", 18))
+      .div(feeUSDBig);
+    if (isNVT) {
+      // 如果是nvt，向上取整
+      const numberStr = ethers.utils.formatUnits(result, feeDecimals);
+      const ceil = Math.ceil(numberStr);
+      result = ethers.utils.parseUnits(ceil.toString(), feeDecimals).toString();
+    }
+    return this.formatEthers(result, feeDecimals);
+  }
+
+  /**
+   * @desc 计算提现到tron的手续费
+   * @param mainAssetUSD 提现网络主资产USD
+   * @param feeUSD 手续费USD
+   * @param feeDecimals 手续费精度
+   * @param isTRX 手续费为trx
+   * @param isNVT 是否是NVT
+   * */
+  calWithdrawalFeeForTRON(mainAssetUSD = "", feeUSD = "", feeDecimals, isTRX, isNVT) {
+    if (isTRX) {
+      return this.formatEthers(config.trxWithdrawFee, feeDecimals);
+    } else {
+      const feeUSDBig = ethers.utils.parseUnits(feeUSD.toString(), 6);
+      const mainAssetUSDBig = ethers.utils.parseUnits(mainAssetUSD.toString(), 6);
+      let result = mainAssetUSDBig
+        .mul(config.trxWithdrawFee)
+        .mul(ethers.utils.parseUnits("1", feeDecimals))
+        .div(ethers.utils.parseUnits("1", 6))
+        .div(feeUSDBig);
+      if (isNVT) {
+        // 如果是nvt，向上取整
+        const numberStr = ethers.utils.formatUnits(result, feeDecimals);
+        const ceil = Math.ceil(numberStr);
+        result = ethers.utils.parseUnits(ceil.toString(), feeDecimals).toString();
+      }
+      return this.formatEthers(result, feeDecimals);
+    }
+  }
+
+  formatEthers(amount, decimals) {
+    return ethers.utils.formatUnits(amount, decimals).toString();
   }
 
   /**
