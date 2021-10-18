@@ -28,7 +28,7 @@
               <span>ID: {{ item.assetKey }}</span>
             </div>
           </div>
-          <el-checkbox v-model="item.added"></el-checkbox>
+          <el-checkbox v-model="item.added" disabled></el-checkbox>
         </li>
       </ul>
       <div class="footer-wrap">
@@ -125,6 +125,7 @@ export default {
           v.added = !v.added;
         }
       });
+      this.filter(this.searchVal);
     },
     close() {
       this.$emit("update:showAssetManage", false);
@@ -206,6 +207,12 @@ export default {
             top: 2px;
             font-weight: 600;
             width: 5px;
+          }
+        }
+        .el-checkbox__input .el-checkbox__inner {
+          cursor: pointer!important;
+          &:after {
+            cursor: pointer!important;
           }
         }
       }

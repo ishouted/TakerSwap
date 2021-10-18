@@ -37,7 +37,7 @@
         <el-switch
           v-model="mortgageValue"
           active-color="#315D9B"
-          inactive-color="#004884"
+          inactive-color="#565a69"
           :active-text="$t('farm.farm1')"
           :width="35"
         ></el-switch>

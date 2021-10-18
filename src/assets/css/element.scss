@@ -35,8 +35,10 @@
     }
   }
   .el-checkbox__inner {
-    background: $navBorder;
-    border: 0;
+    //background: $navBorder;
+    background: #232349;
+    border: 1px solid #333364;
+    border-radius: 4px;
   }
   
   .el-button {

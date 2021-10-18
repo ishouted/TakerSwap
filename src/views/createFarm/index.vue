@@ -58,7 +58,7 @@
           <el-switch
             v-model="advanced"
             active-color="#315D9B"
-            inactive-color="#004884"
+            inactive-color="#565a69"
             :active-text="$t('createFarm.createFarm12')"
             :width="35"
           ></el-switch>
@@ -414,12 +414,20 @@ export default defineComponent({
       white-space: inherit;
     }
     .el-checkbox__inner {
-      border-color: #4a5ef2;
+      //border-color: #4a5ef2;
+      width: 18px;
+      height: 18px;
+      &::after {
+        height: 8px;
+        left: 6px;
+        top: 2px;
+        width: 4px;
+      }
     }
-    .el-checkbox__input.is-checked .el-checkbox__inner,
+    /*.el-checkbox__input.is-checked .el-checkbox__inner,
     .el-checkbox__input.is-indeterminate .el-checkbox__inner {
       background-color: #4a5ef2;
-    }
+    }*/
     .el-checkbox__label {
       color: #58587B;
       display: inline;
