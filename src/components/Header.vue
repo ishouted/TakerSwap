@@ -16,6 +16,7 @@
         <img class="pc-mobile" src="./../assets/TakerSwap.svg" alt="" />
         <img class="mobile-logo" src="./../assets/s-logo.png" alt="" />
       </div>
+      <span>&nbsp;_&nbsp;Beta</span>
     </div>
     <div class="account-wrap">
       <div class="asset-icon" v-if="address">

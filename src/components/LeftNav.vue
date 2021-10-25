@@ -67,7 +67,7 @@
     </el-menu>
     <div class="nav-bottom">
       <template v-if="!isCollapse">
-        <div class="wrap">
+        <div class="wrap" v-if="false">
           <div class="left flex-center">
             <img src="../assets/s-logo-w.svg" alt="" />
             ${{ usdValue }}
@@ -274,7 +274,7 @@ export default {
       overflow: hidden;
     }
     .icon-wrap {
-      padding-top: 15px;
+      //padding-top: 15px;
       height: 40px;
       display: flex;
       align-items: center;
