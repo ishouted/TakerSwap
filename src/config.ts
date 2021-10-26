@@ -7,14 +7,19 @@ const IS_DEV = process.env.NODE_ENV === "development";
 
 function getWSUrl(): string {
   let url;
-  if (IS_DEV) {
-    // url = "ws://192.168.1.111:8009/ws";
+  if (env === "beta") {
     url = "ws://seeda.nuls.io:8009/ws";
   } else {
-    const { host, protocol } = window.location;
-    const wsProtocol = protocol === "http:" ? "ws:" : "wss:";
-    url = wsProtocol + "//" + host + "/ws";
+    url = "ws://api.swap.nerve.network/ws";
   }
+  // if (IS_DEV) {
+  //   // url = "ws://192.168.1.111:8009/ws";
+  //   url = "ws://seeda.nuls.io:8009/ws";
+  // } else {
+  //   const { host, protocol } = window.location;
+  //   const wsProtocol = protocol === "http:" ? "ws:" : "wss:";
+  //   url = wsProtocol + "//" + host + "/ws";
+  // }
   return url;
 }
 
