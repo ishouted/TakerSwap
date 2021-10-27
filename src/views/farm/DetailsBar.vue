@@ -32,7 +32,7 @@
               type="primary"
               size="small"
               @click="gether"
-              :disabled="!!!Number(tokenInfo.pendingReward) || !talonAddress"
+              :disabled="!Number(tokenInfo.pendingReward) || !talonAddress"
             >
               {{ $t("farm.farm21") }}
             </el-button>
@@ -68,7 +68,8 @@
                 size="small"
                 icon="el-icon-minus"
                 :disabled="
-                  !!!Number(tokenInfo.stakeAmount) ||
+                  !Number(tokenInfo.stakeAmount) ||
+                  !Number(tokenInfo.pendingReward) ||
                   !talonAddress ||
                   (!tokenInfo.isLocked && isTalon)
                 "
@@ -133,7 +134,8 @@
                 size="small"
                 icon="el-icon-minus"
                 :disabled="
-                  !!!Number(tokenInfo.stakeAmount) ||
+                  !Number(tokenInfo.stakeAmount) ||
+                  !Number(tokenInfo.pendingReward) ||
                   !talonAddress ||
                   (!tokenInfo.isLocked && isTalon)
                 "
