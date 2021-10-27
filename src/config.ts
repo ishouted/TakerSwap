@@ -10,7 +10,9 @@ function getWSUrl(): string {
   if (env === "beta") {
     url = "ws://seeda.nuls.io:8009/ws";
   } else {
-    url = "ws://api.swap.nerve.network/ws";
+    const { protocol } = window.location;
+    const wsProtocol = protocol === "http:" ? "ws:" : "wss:";
+    url = `${wsProtocol}//api.swap.nerve.network/ws`;
   }
   // if (IS_DEV) {
   //   // url = "ws://192.168.1.111:8009/ws";
