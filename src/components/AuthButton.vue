@@ -63,7 +63,7 @@ export default {
         const provider = getProvider();
         const EProvider = new ethers.providers.Web3Provider(provider);
         const jsonRpcSigner = EProvider.getSigner();
-        let message = "Generate Taker address";
+        let message = "Generate L2 address";
         const signature = await jsonRpcSigner.signMessage(message);
         const msgHash = ethers.utils.hashMessage(message);
         const msgHashBytes = ethers.utils.arrayify(msgHash);

@@ -9,6 +9,7 @@ function getWSUrl(): string {
   let url;
   if (env === "beta") {
     url = "ws://seeda.nuls.io:8009/ws";
+    // url = "ws://api.swap.nerve.network/ws"
   } else {
     const { protocol } = window.location;
     const wsProtocol = protocol === "http:" ? "ws:" : "wss:";
@@ -51,14 +52,14 @@ const config = {
       Harmony: { chainId: 5, assetId: 33, decimals: 18, symbol: "ONE" },
       Polygon: { chainId: 5, assetId: 34, decimals: 18, symbol: "MATIC" },
       KCC: { chainId: 5, assetId: 35, decimals: 18, symbol: "KCS" },
-      TRON: { chainId: 5, assetId: 55, decimals: 6, symbol: "TRX"}
+      TRON: { chainId: 5, assetId: 55, decimals: 6, symbol: "TRX" }
     },
-    trxWithdrawFee: "20000000"
+    trxWithdrawFee: "40000000"
   },
   prod: {
     isBeta: false,
     API_URL: "https://public.nerve.network",
-    WS_URL,
+    WS_URL, //: "wss://api.swap.nerve.network/ws",
     chainId: 9,
     assetId: 1,
     prefix: "NERVE",
@@ -78,7 +79,7 @@ const config = {
       KCC: { chainId: 9, assetId: 161, decimals: 18, symbol: "KCS" },
       TRON: { chainId: 9, assetId: 0, decimals: 6, symbol: "TRX" }
     },
-    trxWithdrawFee: "20000000"
+    trxWithdrawFee: "40000000"
   }
 };
 

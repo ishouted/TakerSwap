@@ -16,10 +16,14 @@ const toastOptions = {
   timeout: 2000,
   closeOnClick: false,
   draggable: false,
-  container: () => document.querySelector("#inner_content"),
+  // container: () => document.querySelector("#inner_content"),
   transition: "Vue-Toastification__fade",
   hideProgressBar: true
 };
+
+if (process.env.NODE_ENV !== "development") {
+  window.console.log = () => {};
+}
 
 setTimeout(() => {
   // 不延迟有时刷新会拿不到ethereum.selectedAddress???

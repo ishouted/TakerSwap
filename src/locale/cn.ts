@@ -122,9 +122,9 @@ const cn = {
     liquidity15: "你将收到"
   },
   login: {
-    login1: "请先生成TAKER地址",
-    login2: "立即生成TAKER地址",
-    login3: "生成TAKER地址失败: ",
+    login1: "请先生成L2地址",
+    login2: "立即生成L2地址",
+    login3: "生成L2地址失败: ",
     login4: "连接钱包"
   },
   farm: {

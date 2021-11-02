@@ -115,7 +115,6 @@ export default defineComponent({
         !Number(this.amount) ||
         !Number(this.balance) ||
         !Number(this.fee) ||
-        this.addressError ||
         this.amountErrorTip ||
         this.father.disableTx
       );

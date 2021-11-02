@@ -16,7 +16,7 @@
     "element-plus": "^1.1.0-beta.9",
     "ethers": "4",
     "lib-flexible": "^0.3.2",
-    "nerve-sdk-js": "^1.0.13",
+    "nerve-sdk-js": "^1.0.16",
     "normalize.css": "^8.0.1",
     "path": "^0.12.7",
     "postcss-px2rem-exclude": "^0.0.6",
