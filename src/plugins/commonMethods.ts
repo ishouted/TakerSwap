@@ -12,7 +12,10 @@ export function useCommonMethods(app: App) {
   app.config.globalProperties.$thousands = function (str: string | number) {
     return toThousands(str);
   };
-  app.config.globalProperties.$toast = function (msg: string, options: ToastOptions = {}) {
+  app.config.globalProperties.$toast = function (
+    msg: string,
+    options: ToastOptions = {}
+  ) {
     // let type = "success";
     // if (options) {
     //   type = options.type;

@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import { getProvider } from "@/hooks/useEthereum";
 import { getCurrentAccount } from "@/api/util";
-import Farm from "@/views/farm/index.vue";
-import Pool from "@/views/pool/index.vue";
+// import Farm from "@/views/farm/index.vue";
+// import Pool from "@/views/pool/index.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/assets",
     name: "assets",
-    component: () => import("../views/assets/index.vue"),
+    component: () => import("@/views/assets/index.vue"),
     meta: { requireAuth: true }
   },
   {
@@ -33,15 +33,15 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/farm/:hash?",
     name: "farm",
-    // component: () => import("@/views/farm/index.vue"),
-    component: Farm,
+    component: () => import("@/views/farm/index.vue"),
+    // component: Farm,
     meta: { requireAuth: true }
   },
   {
     path: "/pool/:hash?",
     name: "pool",
-    // component: () => import("@/views/farm/index.vue"),
-    component: Pool,
+    component: () => import("@/views/pool/index.vue"),
+    // component: Pool,
     meta: { requireAuth: true }
   },
   {

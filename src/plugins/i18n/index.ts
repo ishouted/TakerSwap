@@ -1,8 +1,8 @@
 import { App } from "vue";
 import { createI18n } from "vue-i18n";
 // import {i18n as Ei18n} from "element-plus/lib/locale";
-import cn from "./locales/cn";
-import en from "./locales/en";
+import cn from "@/locale/cn";
+import en from "@/locale/en";
 import zhLocale from "element-plus/lib/locale/lang/zh-cn";
 import enLocale from "element-plus/lib/locale/lang/en";
 

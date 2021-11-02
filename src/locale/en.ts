@@ -122,8 +122,8 @@ const en = {
     liquidity15: "You will receive"
   },
   login: {
-    login1: "Please generate TAKER address",
-    login2: "Generate TAKER address",
+    login1: "Please generate L2 address",
+    login2: "Generate L2 address",
     login3: "Address generation failed: ",
     login4: "Connect Wallet"
   },

@@ -88,7 +88,7 @@ export default {
   position: relative;
   z-index: 10;
   padding-top: 50px;
-  margin-left: 210px;
+  margin-left: 208px;
   margin-top: 80px;
   flex: 1;
   transition: padding-top 0.2s ease 0s,
@@ -143,6 +143,9 @@ export default {
     display: flex;
   }*/
 }
+body {
+  background-color: #141228;
+}
 .cover-bg {
   position: fixed;
   left: 0;
@@ -156,5 +159,18 @@ export default {
   //background-image: linear-gradient(to bottom right, #2D1D57, #1D1539);
   //opacity: 0.26;
   z-index: -1;
+}
+.Vue-Toastification__container.top-right {
+  top: 80px!important;
+  @media only screen and (max-width: 600px){
+    top: 60px!important;
+    width: 96%;
+    left: 2%;
+    .Vue-Toastification__toast {
+      padding: 0 24px;
+      align-items: center;
+      min-height: 54px;
+    }
+  }
 }
 </style>
