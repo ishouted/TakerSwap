@@ -11,9 +11,10 @@ function getWSUrl(): string {
     url = "ws://seeda.nuls.io:8009/ws";
     // url = "ws://api.swap.nerve.network/ws"
   } else {
-    const { protocol } = window.location;
+    /*const { protocol } = window.location;
     const wsProtocol = protocol === "http:" ? "ws:" : "wss:";
-    url = `${wsProtocol}//api.swap.nerve.network/ws`;
+    url = `${wsProtocol}//api.swap.nerve.network/ws`;*/
+    url = "wss://api.swap.nerve.network/ws";
   }
   // if (IS_DEV) {
   //   // url = "ws://192.168.1.111:8009/ws";

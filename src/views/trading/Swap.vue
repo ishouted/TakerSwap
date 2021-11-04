@@ -978,7 +978,7 @@ export default defineComponent({
       const toKey = toAsset.assetKey;
       if (!fromKey || !toKey) return;
       const defaultUrl = window.location.origin;
-      const routeName = route.name;
+      const routeName = "trading"; //route.name;
       // console.log(fromKey, toKey, 222, `${defaultUrl}/${routeName}/${fromKey}/${toKey}`, route)
       // console.log(proxy, 666)
       proxy.$copy(`${defaultUrl}/${routeName}/${fromKey}/${toKey}`);
