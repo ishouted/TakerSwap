@@ -8,6 +8,7 @@
         :class="{ active: item.chainId === chainId }"
         @click="switchChain(item)"
       >
+        <img :src="item.logo" alt="" />
         {{ item.chainName }}
       </li>
       <div class="pop-arrow"></div>
@@ -37,9 +38,10 @@ export default {
           nativeCurrency: {
             name: v.name,
             symbol: v.mainAsset,
-            decimals: v.decimals,
+            decimals: v.decimals
           },
-          blockExplorerUrls: [v.origin]
+          blockExplorerUrls: [v.origin],
+          logo: v.logo
         });
       }
     });
@@ -58,9 +60,10 @@ export default {
         const providerType = localStorage.getItem("providerType");
         const provider = window[providerType];
         if (item.chainName !== "Ethereum") {
+          const { logo, ...rest } = item;
           await provider.request({
             method: "wallet_addEthereumChain",
-            params: [item]
+            params: [rest]
           });
         } else {
           await provider.request({
@@ -105,24 +108,27 @@ export default {
   left: -20px;
   z-index: 1;
   width: 140px;
-  padding: 6px 0;
+  //padding: 6px 0;
   margin-top: 8px;
   border: 1px solid $btnColor;
   border-radius: 4px;
-  //background-color: #fff;
   background-color: $btnColor;
   //box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   li {
-    padding: 0 20px;
-    text-align: left;
-    line-height: 28px;
+    padding-left: 10px;
+    height: 40px;
     color: $txColor;
+    display: flex;
+    align-items: center;
     &:hover {
       opacity: 0.65;
     }
     &.active {
       color: $linkColor;
       font-weight: 700;
+    }
+    img {
+      margin-right: 10px;
     }
   }
   .pop-arrow,
@@ -131,13 +137,13 @@ export default {
     display: block;
     width: 0;
     height: 0;
-    border-width: 6px;
+    border-width: 8px;
     border-top-width: 0;
     border-color: transparent;
     border-style: solid;
   }
   .pop-arrow {
-    top: -6px;
+    top: -8px;
     left: 30px;
     border-bottom-color: $btnColor;
     &:after {
