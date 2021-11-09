@@ -75,7 +75,9 @@
         </div>
         <div class="icon-wrap">
           <div class="icon">
-            <i class="iconfont icon-Telegram"></i>
+            <a href="https://t.me/takerswap" target="_blank">
+              <i class="iconfont icon-Telegram"></i>
+            </a>
             <a href="https://twitter.com/Takerswap" target="_blank">
               <i class="iconfont icon-Twitter"></i>
             </a>
